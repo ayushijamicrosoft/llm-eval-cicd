@@ -28,9 +28,9 @@ jobs:
       - name: Azure login (OIDC)
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}     # App registration's Application (client) ID
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}     # Directory (tenant) ID
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.OIDC_AZURE_CLIENT_ID }}     # App registration's Application (client) ID
+          tenant-id: ${{ secrets.OIDC_AZURE_TENANT_ID }}     # Directory (tenant) ID
+          subscription-id: ${{ secrets.OIDC_AZURE_SUBSCRIPTION_ID }}
 
       - uses: actions/setup-python@v5
         with:
