@@ -1,4 +1,4 @@
-name: Run Python Script
+name: Run Groundedness Evals python script
 
 on:
   push:
@@ -41,4 +41,4 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Python
-        run: python helloworld.py
+        run: python groundedness-evals.py
