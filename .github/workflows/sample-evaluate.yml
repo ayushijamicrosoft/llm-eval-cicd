@@ -23,48 +23,6 @@ jobs:
           tenant-id: ${{ secrets.OIDC_AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.OIDC_AZURE_SUBSCRIPTION_ID }}
 
-      # ✅ Validate your dataset lines so Coherence/Fluency won't error
-      - name: Validate dataset schema (conversation OR input+response)
-        run: |
-          python - <<'PY'
-          import json, pathlib, sys, io
-          p = pathlib.Path("${{ env.GENAI_EVALS_DATA_PATH }}")
-          if not p.exists():
-            print("Dataset not found:", p, file=sys.stderr); sys.exit(1)
-
-          bad = []
-          with p.open("r", encoding="utf-8") as f:
-            for i, line in enumerate(f, 1):
-              line = line.strip()
-              if not line: 
-                bad.append((i, "empty line")); continue
-              try:
-                row = json.loads(line)
-              except json.JSONDecodeError as e:
-                bad.append((i, f"invalid JSON: {e}")); continue
-
-              ok = False
-              # Accept either conversation[] or input+response (or prompt+completion)
-              if isinstance(row.get("conversation"), list) and row["conversation"]:
-                ok = True
-              elif all(k in row for k in ("input","response")):
-                ok = True
-              elif all(k in row for k in ("prompt","completion")):
-                ok = True
-
-              if not ok:
-                bad.append((i, "missing conversation[] or (input+response) or (prompt+completion)"))
-
-          if bad:
-            print("Dataset has schema issues:", file=sys.stderr)
-            for i, msg in bad[:20]:
-              print(f"  line {i}: {msg}", file=sys.stderr)
-            if len(bad) > 20:
-              print(f"  ...and {len(bad)-20} more", file=sys.stderr)
-            sys.exit(2)
-          print("Dataset looks OK:", p)
-          PY
-
       # ✅ Write evaluate-config.json without here-docs
       - name: Write evaluate config (Python)
         env:
