@@ -1,26 +1,38 @@
 name: Run Python Script
 
 on:
-  push:          # Triggers on every push
-  pull_request:  # Also triggers on PRs
+  push:
+  pull_request:
 
 jobs:
   run-python:
     runs-on: ubuntu-latest
 
-    env:   # make secrets available to every step in this job
+    permissions:
+      id-token: write   # REQUIRED for OIDC
+      contents: read
+
+    env:
+      # your existing OpenAI envs (provided as repo secrets)
       AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
       AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
       AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
       AZURE_OPENAI_CHAT_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_CHAT_DEPLOYMENT }}
-      OIDC_AZURE_SUBSCRIPTION_ID: ${{ secrets.OIDC_AZURE_SUBSCRIPTION_ID }}
+      # prevent interactive prompts on CI
+      AZURE_IDENTITY_ENABLE_INTERACTIVE: "0"
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      # OIDC login: NO client secret needed
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}     # App registration's Application (client) ID
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}     # Directory (tenant) ID
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -28,5 +40,5 @@ jobs:
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run Python file
+      - name: Run Python
         run: python helloworld.py
