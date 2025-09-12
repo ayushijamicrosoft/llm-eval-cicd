@@ -1,2 +1,2 @@
-{"description":"{\"id\":1,\"title\":\"gravity\"}","conversation":"[{\"role\":\"user\",\"content\":\"Explain gravity in one sentence.\"},{\"role\":\"assistant\",\"content\":\"Gravity is the force that pulls objects together.\"}]"}
-{"description":"{\"id\":2,\"title\":\"greeting\"}","conversation":"[{\"role\":\"user\",\"content\":\"Say hello politely.\"},{\"role\":\"assistant\",\"content\":\"Hello! Hope you’re doing well.\"}]"}
+{"description":"{\"id\":1,\"title\":\"gravity\"}","input":"Explain gravity in one sentence.","response":"Gravity is the force that pulls objects together."}
+{"description":"{\"id\":2,\"title\":\"greeting\"}","input":"Say hello politely.","response":"Hello! Hope you’re doing well."}
