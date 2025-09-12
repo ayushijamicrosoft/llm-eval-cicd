@@ -8,19 +8,25 @@ jobs:
   run-python:
     runs-on: ubuntu-latest
 
+    env:   # make secrets available to every step in this job
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+      AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
+      AZURE_OPENAI_CHAT_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_CHAT_DEPLOYMENT }}
+      OIDC_AZURE_SUBSCRIPTION_ID: ${{ secrets.OIDC_AZURE_SUBSCRIPTION_ID }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'   # or your preferred version
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
       - name: Run Python file
-        run: |
-          python helloworld.py
+        run: python helloworld.py
