@@ -1,0 +1,34 @@
+name: "AI Agent Evaluation"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  run-action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login using Federated Credentials
+        uses: azure/login@v2
+        with:
+          client-id: "bc29056e-e11f-4354-9531-38e9443b50de"
+          tenant-id: "72f988bf-86f1-41af-91ab-2d7cd011db47"
+          subscription-id: "49d64d54-e966-4c46-a868-1999802b762c"
+
+      - name: Run Evaluation
+        uses: microsoft/ai-agent-evals@v2-beta
+        with:
+          # Replace placeholders with values for your Azure AI Project
+          azure-ai-project-endpoint: "https://ayushija-2422-resource.services.ai.azure.com/api/projects/ayushija-2422"
+          deployment-name: "gpt-4o"
+          agent-ids: "asst_PXPfWCnRH0IycicUixpClAK8"
+          data-path: ${{ github.workspace }}/grounding.json
