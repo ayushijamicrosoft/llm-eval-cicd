@@ -1,2 +1,2 @@
-{"query": "Tell me about Tokyo?"}
-{"query": "Where is Italy?"}
+{"input":"Explain gravity in one sentence.","response":"Gravity is the force that pulls objects together."}
+{"input":"Say hello politely.","response":"Hello! Hope you’re doing well."}
