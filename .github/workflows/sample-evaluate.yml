@@ -36,15 +36,12 @@ jobs:
           cfg = {
             "data": os.environ["GENAI_EVALS_DATA_PATH"],
             "evaluators": {
-              "evaluators": {
                   "coherence": {
                     "type": "CoherenceEvaluator",
                     "input_column": "input",
                     "response_column": "response"
                   }
                 },
-              "fluency": "FluencyEvaluator"
-            },
             "ai_model_configuration": {
               "type": "azure_openai",
               "azure_endpoint": os.environ["AZURE_OPENAI_ENDPOINT"],
