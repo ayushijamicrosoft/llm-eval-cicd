@@ -36,7 +36,13 @@ jobs:
           cfg = {
             "data": os.environ["GENAI_EVALS_DATA_PATH"],
             "evaluators": {
-              "coherence": "CoherenceEvaluator",
+              "evaluators": {
+                  "coherence": {
+                    "type": "CoherenceEvaluator",
+                    "input_column": "input",
+                    "response_column": "response"
+                  }
+                },
               "fluency": "FluencyEvaluator"
             },
             "ai_model_configuration": {
