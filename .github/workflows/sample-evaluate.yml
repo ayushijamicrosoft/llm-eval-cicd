@@ -36,8 +36,8 @@ jobs:
               "api_key": "${{ secrets.AZURE_OPENAI_API_KEY }}", 
               "api_version": "${{ secrets.AZURE_OPENAI_API_VERSION }}" 
             } 
-          }
-EOF
+          } 
+          << EOF
 
       - name: Run AI Evaluation 
         id: run-ai-evaluation 
