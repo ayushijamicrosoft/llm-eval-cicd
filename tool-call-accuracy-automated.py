@@ -40,6 +40,8 @@ run = project_client.agents.runs.create_and_process(thread_id=thread.id, agent_i
 if run.status == "failed":
     print(f"Run failed: {run.last_error}")
 
+print(run.as_dict());
+
 # Print thread messages
 for message in project_client.agents.messages.list(thread_id=thread.id).text_messages:
     print(message)
