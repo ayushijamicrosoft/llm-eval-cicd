@@ -125,7 +125,7 @@ response = evaluate(
         "tool_call_accuracy": tool_call_accuracy,
     },
     azure_ai_project={
-        "subscription_id": os.environ["AZURE_SUBSCRIPTION_ID"],
+        "subscription_id": os.environ.get("OIDC_AZURE_SUBSCRIPTION_ID"),
         "project_name": os.environ["PROJECT_NAME"],
         "resource_group_name": os.environ["RESOURCE_GROUP_NAME"],
     },
