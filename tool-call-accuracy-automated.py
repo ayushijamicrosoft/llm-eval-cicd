@@ -42,8 +42,23 @@ if run.status == "failed":
 
 print(run.as_dict());
 
+messages = project_client.agents.messages.list(thread_id=thread.id)
+
+for message in messages:
+    # Each `message` is an AgentMessage object (dict-like)
+    print("Role:", message.role)
+
+    # Messages can have multiple content parts
+    for content in message.content:
+        if content.type == "text":
+            print("Text:", content.text)
+        elif content.type == "tool_call":
+            print("Tool call:", content.name, content.arguments)
+        elif content.type == "tool_result":
+            print("Tool result:", content.tool_result)
+            
 # Print thread messages
-for message in project_client.agents.messages.list(thread_id=thread.id).text_messages:
+for message in messages:
     print(message)
     
 
