@@ -11,6 +11,7 @@ import os
 from openai import AzureOpenAI
 import importlib.resources as pkg_resources
 import asyncio
+import json
 
 openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
 model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
@@ -29,7 +30,6 @@ async def content_safety_callback(
 ) -> dict:
     deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
     endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
-    token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
     # Get a client handle for the model
     client = AzureOpenAI(
         api_version=api_version,
@@ -87,7 +87,6 @@ async def main():
     azure_ai_project = {
     "subscription_id": os.environ.get("OIDC_AZURE_SUBSCRIPTION_ID"),
     "resource_group_name": "rg-ayushija-2422",
-#    "workspace_name": "ayushija-dummy-resource",
     "project_name": "ayushija-dummy-resource"
 }
 
@@ -124,9 +123,6 @@ async def main():
         max_simulation_results=5,  # define the number of simulation results
         target=content_safety_callback,  # define the target model callback
     )
-
-    import json
-    from pathlib import Path
 
     with Path("adv_convo_eval.jsonl").open("w") as f:
         for output in content_safety_outputs:
