@@ -2,6 +2,8 @@ import os
 from azure.ai.evaluation import evaluate, ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
+from azure.ai.projects.models import EvaluatorIds
+
 
 openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
 model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
@@ -15,53 +17,91 @@ os.environ["AZURE_DEPLOYMENT_NAME"] = deployment
 os.environ["AZURE_API_VERSION"] = api_version
 os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 
-# -------------------------------------------------------------------
-# 1. Setup Model Config (Azure OpenAI)
-# -------------------------------------------------------------------
-model_config = AzureOpenAIModelConfiguration(
-    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
-    api_key=os.environ["AZURE_OPENAI_API_KEY"],
-    api_version=os.environ["AZURE_API_VERSION"],
-    azure_deployment=os.environ["AZURE_DEPLOYMENT_NAME"],
-)
-
-tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
-
-# -------------------------------------------------------------------
-# 2. Connect to AI Foundry Project
-# -------------------------------------------------------------------
-subscription_id = "49d64d54-e966-4c46-a868-1999802b762c"
-resource_group = "rg-ayushija-2422"
-project_name = "ayushija-dummy-resource"
-
-# Create project client (needs correct auth; DefaultAzureCredential works too)
-client = AIProjectClient(
+project_client = AIProjectClient(
     credential=DefaultAzureCredential(), endpoint=openai_endpoint
 )
 
-# -------------------------------------------------------------------
-# 3. Create Dataset Automatically from Agent Runs
-# -------------------------------------------------------------------
-# This grabs the most recent runs for a given agent
-dataset = client.datasets.create_from_agent_runs(
-    name="latest_agent_dataset",             # dataset name (auto-created if not exists)
-    run_filter={"agent_name": "Agent396"},   # replace with your agent's name in Foundry
+agent = project_client.agents.create_agent(
+    model=deployment,
+    name="my-assistant",
+    instructions="You are a helpful assistant",
+    tools=file_search_tool.definitions,
+    tool_resources=file_search_tool.resources,
 )
 
-print(f"✅ Dataset created from agent runs: {dataset.name}")
+# Create thread and process user message
+thread = project_client.agents.threads.create()
+project_client.agents.messages.create(thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?")
+run = project_client.agents.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
 
-# -------------------------------------------------------------------
-# 4. Run Evaluation against the Auto Dataset
-# -------------------------------------------------------------------
-response = evaluate(
-    evaluation_name="Tool Call Accuracy Evaluation",
-    evaluators={"tool_call_accuracy": tool_call_accuracy},
-    azure_ai_project={
-        "subscription_id": subscription_id,
-        "project_name": project_name,
-        "resource_group_name": resource_group,
-    },
-    dataset_name=dataset.name,  # 👈 directly use dataset from runs
+# Handle run status
+if run.status == "failed":
+    print(f"Run failed: {run.last_error}")
+
+# Print thread messages
+for message in project_client.agents.messages.list(thread_id=thread.id).text_messages:
+    print(message)
+
+evaluators={
+"Relevance": {"Id": EvaluatorIds.Relevance.value},
+"Fluency": {"Id": EvaluatorIds.Fluency.value},
+"Coherence": {"Id": EvaluatorIds.Coherence.value},
+},
+
+                      
+project_client.evaluation.create_agent_evaluation(
+    AgentEvaluationRequest(  
+        thread=thread.id,  
+        run=run.id,   
+        evaluators=evaluators,
+        appInsightsConnectionString = project_client.telemetry.get_application_insights_connection_string(),
+    )
 )
 
-print(f"📊 AI Foundry Results: {response.get('studio_url')}")
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+import pandas as pd
+
+
+credential = DefaultAzureCredential()
+client = LogsQueryClient(credential)
+
+query = r"""
+traces
+| where message == "gen_ai.evaluation.result"
+| where customDimensions["gen_ai.thread.run.id"] == "{run.id}"
+"""
+
+try:
+    response = client.query_workspace("DefaultWorkspace-49d64d54-e966-4c46-a868-1999802b762c-EUS", query, timespan=timedelta(days=1))
+    if response.status == LogsQueryStatus.SUCCESS:
+        data = response.tables
+    else:
+        # LogsQueryPartialResult - handle error here
+        error = response.partial_error
+        data = response.partial_data
+        print(error)
+
+    for table in data:
+        df = pd.DataFrame(data=table.rows, columns=table.columns)
+        key_value = df.to_dict(orient="records")
+        pprint(key_value)
+except HttpResponseError as err:
+    print("something fatal happened")
+    print(err)
+
+from azure.ai.projects.models import AgentEvaluationRedactionConfiguration
+              
+project_client.evaluation.create_agent_evaluation(
+    AgentEvaluationRequest(  
+        thread=thread.id,  
+        run=run.id,   
+        evaluators=evaluators,  
+        redaction_configuration=AgentEvaluationRedactionConfiguration(
+            redact_score_properties=False,
+       ),
+        app_insights_connection_string=app_insights_connection_string,
+    )
+)
+
