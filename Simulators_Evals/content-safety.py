@@ -12,18 +12,29 @@ from openai import AzureOpenAI
 import importlib.resources as pkg_resources
 import asyncio
 
+openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
+model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+
+openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
+api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
+
+os.environ["AZURE_OPENAI_ENDPOINT"] = openai_endpoint
+os.environ["AZURE_DEPLOYMENT_NAME"] = deployment
+os.environ["AZURE_API_VERSION"] = api_version
+os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 
 async def content_safety_callback(
     messages: List[Dict], stream: bool = False, session_state: Optional[str] = None, context: Optional[Dict] = None
 ) -> dict:
-    deployment = os.environ.get("AZURE_DEPLOYMENT_NAME")
-    endpoint = os.environ.get("AZURE_ENDPOINT")
+    deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+    endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
     token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
     # Get a client handle for the model
     client = AzureOpenAI(
-        azure_endpoint=endpoint,
-        api_version=os.environ.get("AZURE_API_VERSION"),
-        azure_ad_token_provider=token_provider,
+        api_version=api_version,
+        azure_endpoint=openai_endpoint,
+        api_key=openai_key
     )
     # Call the model
     try:
@@ -74,11 +85,11 @@ async def main():
 
 
     azure_ai_project = {
-        "subscription_id": "40449e6d-a5d2-40f1-a151-0b76f21a48c0",
-        "resource_group_name": "rg-ayushija-6112",
-        "workspace_name": "ayushija-dummy-resource",
-        "project_name": "ayushija-dummy-resource"
-    }
+    "subscription_id": os.environ.get("OIDC_AZURE_SUBSCRIPTION_ID"),
+    "resource_group_name": "rg-ayushija-2422",
+#    "workspace_name": "ayushija-dummy-resource",
+    "project_name": "ayushija-dummy-resource"
+}
 
     client = AzureOpenAI(
         api_version=api_version,
