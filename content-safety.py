@@ -127,7 +127,7 @@ async def main():
         for output in content_safety_outputs:
             f.write(json.dumps({"conversation": output}))
             f.write("\n")
-
+    print(credential)
     cs_eval = ContentSafetyEvaluator(azure_ai_project=azure_ai_project, credential=credential)
 
     result = evaluate(
