@@ -35,9 +35,7 @@ project_name = "ayushija-dummy-resource"
 
 # Create project client (needs correct auth; DefaultAzureCredential works too)
 client = AIProjectClient(
-    subscription_id=subscription_id,
-    resource_group_name=resource_group,
-    project_name=project_name,
+    credential=DefaultAzureCredential(), endpoint=openai_endpoint
 )
 
 # -------------------------------------------------------------------
