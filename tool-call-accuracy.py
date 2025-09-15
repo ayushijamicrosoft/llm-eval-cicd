@@ -6,7 +6,7 @@ model_config = AzureOpenAIModelConfiguration(
     azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
     api_key=os.environ["AZURE_OPENAI_API_KEY"],
     api_version=os.environ["AZURE_OPENAI_API_VERSION"],
-    azure_deployment=os.environ["MODEL_DEPLOYMENT_NAME"],
+    azure_deployment=os.environ["AZURE_DEPLOYMENT_NAME"],
 )
 
 
