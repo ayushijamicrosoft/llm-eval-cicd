@@ -56,25 +56,7 @@ for message in messages:
             print("Tool call:", content.name, content.arguments)
         elif content.type == "tool_result":
             print("Tool result:", content.tool_result)
-            
-# Print thread messages
-for message in messages:
-    print(message)
-    
-
-print("should work till here")
-#-----------------should work till here ----------------#
-
-project_client.agents.messages.create(thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?")
-run = project_client.agents.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
-
-# Handle run status
-if run.status == "failed":
-    print(f"Run failed: {run.last_error}")
-
-# Print thread messages
-for message in project_client.agents.messages.list(thread_id=thread.id).text_messages:
-    print(message)
+        
 
 evaluators={
 "Relevance": {"Id": EvaluatorIds.Relevance.value},
