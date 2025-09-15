@@ -7,6 +7,20 @@ from pathlib import Path
 import os
 from openai import AzureOpenAI
 import importlib.resources as pkg_resources
+import os, json
+from pathlib import Path
+from openai import AzureOpenAI
+from azure.ai.evaluation import ContentSafetyEvaluator, evaluate
+from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from typing import Any, Dict, List, Optional
+import json
+from pathlib import Path
+import os
+from openai import AzureOpenAI
+import importlib.resources as pkg_resources
+import asyncio
+import json
 
 # Initialize the environment variables for Azure OpenAI and the AI project details
 openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
