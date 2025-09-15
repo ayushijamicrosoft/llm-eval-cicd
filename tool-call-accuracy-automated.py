@@ -65,7 +65,7 @@ evaluators={
 },
 
                       
-project_client.evaluation.create_agent_evaluation(
+project_client.evaluations.create_agent_evaluation(
     AgentEvaluationRequest(  
         thread=thread.id,  
         run=run.id,   
