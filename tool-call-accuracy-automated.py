@@ -24,14 +24,13 @@ project_client = AIProjectClient(
 
 
 
-agent = project_client.agents.create_agent(
-    model=deployment,
-    name="my-assistant",
-    instructions="You are a helpful assistant"
-)
+
 
 # Create thread and process user message
-thread = project_client.agents.threads.create()
+thread = project_client.agents.create_thread_and_process_run(agent_id = "asst_PXPfWCnRH0IycicUixpClAK8")
+print("should work till here")
+#-----------------should work till here ----------------#
+
 project_client.agents.messages.create(thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?")
 run = project_client.agents.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
 
