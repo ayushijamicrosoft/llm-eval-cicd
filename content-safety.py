@@ -22,7 +22,6 @@ print(os.environ.get("OIDC_AZURE_SUBSCRIPTION_ID"))
 openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
 api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
 
-@@ -26,122 +21,124 @@
 os.environ["AZURE_API_VERSION"] = api_version
 os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 
