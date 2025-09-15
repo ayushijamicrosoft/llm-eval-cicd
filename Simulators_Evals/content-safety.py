@@ -17,6 +17,7 @@ openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
 model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
 deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
 
+print(os.environ.get("OIDC_AZURE_SUBSCRIPTION_ID"))
 openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
 api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
 
