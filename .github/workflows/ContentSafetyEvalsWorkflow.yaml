@@ -41,4 +41,4 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Python
-        run: python Simulators_Evals/content-safety.py
+        run: python content-safety.py
