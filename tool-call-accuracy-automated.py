@@ -18,7 +18,7 @@ os.environ["AZURE_API_VERSION"] = api_version
 os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 
 project_client = AIProjectClient(
-    credential=DefaultAzureCredential(), endpoint=openai_endpoint
+    credential=DefaultAzureCredential(), endpoint="https://ayushija-2422-resource.services.ai.azure.com/api/projects/ayushija-2422"
 )
 
 
