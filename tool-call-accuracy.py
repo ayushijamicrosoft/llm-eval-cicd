@@ -98,7 +98,7 @@ tool_definitions = [
 ]
 
 response = tool_call_accuracy(query=query, response=response, tool_definitions=tool_definitions)
-pprint(response
+pprint(response)
        
 from azure.ai.evaluation import evaluate
 
