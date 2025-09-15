@@ -113,8 +113,9 @@ async def main():
         conversation_turns.append([item])
         if len(conversation_turns) == 2:
             break
-    
-    content_safety_simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+            
+    credential=DefaultAzureCredential()
+    content_safety_simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=credential)
 
     content_safety_scenario = AdversarialScenario.ADVERSARIAL_CONVERSATION
     content_safety_outputs = await content_safety_simulator(
