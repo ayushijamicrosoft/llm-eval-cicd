@@ -21,6 +21,20 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(), endpoint=openai_endpoint
 )
 
+from azure.ai.evaluation.simulator import ToolDefinition
+
+file_search_tool = ToolDefinition(
+    name="file_search",
+    description="Search files by keyword",
+    parameters={
+        "type": "object",
+        "properties": {
+            "query": {"type": "string", "description": "sap"}
+        }
+    }
+)
+
+
 agent = project_client.agents.create_agent(
     model=deployment,
     name="my-assistant",
