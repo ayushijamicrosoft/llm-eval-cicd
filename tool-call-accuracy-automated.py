@@ -1,6 +1,6 @@
 import os
 from azure.ai.evaluation import evaluate, ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration
-from azure.ai.project import AIProjectClient
+from azure.ai.projects import AIProjectClient
 
 openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
 model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
