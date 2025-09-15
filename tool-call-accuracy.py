@@ -2,6 +2,18 @@ import os
 from azure.ai.evaluation import ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration
 from pprint import pprint
 
+openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
+model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+
+openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
+api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
+
+os.environ["AZURE_OPENAI_ENDPOINT"] = openai_endpoint
+os.environ["AZURE_DEPLOYMENT_NAME"] = deployment
+os.environ["AZURE_API_VERSION"] = api_version
+os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
+
 model_config = AzureOpenAIModelConfiguration(
     azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
     api_key=os.environ["AZURE_OPENAI_API_KEY"],
