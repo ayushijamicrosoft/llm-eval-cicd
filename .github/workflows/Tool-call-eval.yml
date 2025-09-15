@@ -1,4 +1,4 @@
-name: Run Groundedness Evals python script
+name: Run Tool Call eval python script (Manual inputs)
 
 on:
   push:
