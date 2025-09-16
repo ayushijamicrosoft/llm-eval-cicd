@@ -30,8 +30,7 @@ if updated_agents:
     from azure.ai.agents.models import FunctionTool, ToolSet
     project_client = AIProjectClient(
         endpoint="https://ayushija-2422-resource.services.ai.azure.com/api/projects/ayushija-2422",
-        credential=DefaultAzureCredential(),
-        api_version=api_version
+        credential=DefaultAzureCredential()
     )
 else:
     from azure.ai.projects.models import FunctionTool, ToolSet
