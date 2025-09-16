@@ -21,10 +21,6 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(), endpoint="https://ayushija-2422-resource.services.ai.azure.com/api/projects/ayushija-2422"
 )
 
-
-
-
-
 agent = project_client.agents.create_agent(
     model=deployment,
     name="my-assistant",
@@ -63,7 +59,6 @@ evaluators={
 "Fluency": {"Id": EvaluatorIds.Fluency.value},
 "Coherence": {"Id": EvaluatorIds.Coherence.value},
 },
-
                       
 project_client.evaluations.create_agent_evaluation(
     AgentEvaluationRequest(  
@@ -78,7 +73,6 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 import pandas as pd
-
 
 credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
