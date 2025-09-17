@@ -27,6 +27,8 @@ from packaging.version import Version
 # some dependencies have been updated with breaking changes -- indicates whether to use updated models and APIs or not
 updated_agents = Version(projects_version) > Version("1.0.0b10") or projects_version.startswith("1.0.0a")
 
+credential=DefaultAzureCredential()
+
 if updated_agents:
     from azure.ai.agents.models import FunctionTool, ToolSet
     project_client = AIProjectClient(
@@ -219,31 +221,31 @@ azure_ai_project={
 tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
 intent_resolution = IntentResolutionEvaluator(model_config=model_config)
 task_adherence = TaskAdherenceEvaluator(model_config=model_config)
-violence = ViolenceEvaluator(model_config=model_config)
 relevance = RelevanceEvaluator(model_config=model_config)
 coherence = CoherenceEvaluator(model_config=model_config)
 fluency = FluencyEvaluator(model_config=model_config)
-self_harm = SelfHarmEvaluator(model_config=model_config)
-sexual = SexualEvaluator(model_config=model_config)
-hate_unfairness= HateUnfairnessEvaluator(model_config=model_config)
-code_vulnerability = CodeVulnerabilityEvaluator(model_config=model_config)
-indirect_attack = IndirectAttackEvaluator(model_config=model_config)
-protected_material = ProtectedMaterialEvaluator(model_config=model_config)
+violence = ViolenceEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+self_harm = SelfHarmEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+sexual = SexualEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+hate_unfairness= HateUnfairnessEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+code_vulnerability = CodeVulnerabilityEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+indirect_attack = IndirectAttackEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+protected_material = ProtectedMaterialEvaluator(credential=credential, azure_ai_project=azure_ai_project)
 
 
 tool_call_accuracy(query=converted_data['query'], response=converted_data['response'], tool_definitions=converted_data['tool_definitions'])
 intent_resolution(query=converted_data['query'], response=converted_data['response'])
 task_adherence(query=converted_data['query'], response=converted_data['response'])
-violence(response=converted_data['response'])
+violence(query=converted_data['query'], response=converted_data['response'])
 relevance(query=converted_data['query'], response=converted_data['response'])
 coherence(query=converted_data['query'], response=converted_data['response'])
 fluency(response=converted_data['response'])
-self_harm(response=converted_data['response'])
-sexual(response=converted_data['response'])
-hate_unfairness(response=converted_data['response'])
-code_vulnerability(response=converted_data['response'])
-indirect_attack(response=converted_data['response'])
-protected_material(response=converted_data['response'])
+self_harm(query=converted_data['query'], response=converted_data['response'])
+sexual(query=converted_data['query'], response=converted_data['response'])
+hate_unfairness(query=converted_data['query'], response=converted_data['response'])
+code_vulnerability(query=converted_data['query'], response=converted_data['response'])
+indirect_attack(query=converted_data['query'], response=converted_data['response'])
+protected_material(query=converted_data['query'], response=converted_data['response'])
 
 
 
