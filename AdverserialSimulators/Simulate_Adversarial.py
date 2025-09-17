@@ -130,6 +130,7 @@ async def main():
     )
     print("Messages")
     print(outputs.to_eval_qr_json_line())
+    print(outputs)
     output_file = "ground_sim_output.jsonl"
 
     with Path(output_file).open("w") as file:
