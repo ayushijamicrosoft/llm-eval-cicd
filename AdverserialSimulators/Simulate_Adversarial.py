@@ -134,8 +134,7 @@ async def main():
     output_file = "ground_sim_output.jsonl"
 
     with Path(output_file).open("w") as file:
-        for output in outputs:
-            file.write(output.to_eval_qr_json_lines())
+        file.write(outputs.to_eval_qr_json_lines())
 
 asyncio.run(main())
 output_file = "ground_sim_output.jsonl"
