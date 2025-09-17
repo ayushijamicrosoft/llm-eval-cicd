@@ -58,9 +58,13 @@ evaluators={
 "Relevance": {"Id": EvaluatorIds.Relevance.value},
 "Fluency": {"Id": EvaluatorIds.Fluency.value},
 "Coherence": {"Id": EvaluatorIds.Coherence.value},
-"IntentResolution": {"Id": EvaluatorIds.IntentResolution.value},
-"ToolCallAccuracy": {"Id": EvaluatorIds.ToolCallAccuracy.value},
-"TaskAdherence": {"Id": EvaluatorIds.TaskAdherence.value}
+"IntentResolution": {"Id": EvaluatorIds.Intent_Resolution.value},
+"ToolCallAccuracy": {"Id": EvaluatorIds.Tool_Call_Accuracy.value},
+"TaskAdherence": {"Id": EvaluatorIds.Task_Adherence.value},
+"Violence": {"Id": EvaluatorIds.Violence.value},
+"SelfHarm": {"Id": EvaluatorIds.Self_Harm.value},
+"Sexual": {"Id": EvaluatorIds.Sexual.value},
+"HateUnfairness": {"Id": EvaluatorIds.Hate_Unfairness.value}
 },
                       
 project_client.evaluations.create_agent_evaluation(
