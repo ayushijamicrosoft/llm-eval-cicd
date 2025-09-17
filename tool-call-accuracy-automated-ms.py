@@ -276,3 +276,7 @@ response = evaluate(
 )
 pprint(f'AI Foundary URL: {response.get("studio_url")}')
 pprint(response)
+
+# Save evaluation response to JSON file
+with open("metrics.json", "w") as f:
+    json.dump(response, f, indent=2)
