@@ -125,10 +125,8 @@ import asyncio
 
 async def main():
     outputs = await custom_simulator(
-        target=custom_simulator_callback,
-        conversation_turns=conversation_turns,
-        max_conversation_turns=1,
-        concurrent_async_tasks=10,
+        scenario=AdversarialScenario.ADVERSARIAL_QA, max_simulation_results=10,
+        target=custom_simulator_callback
     )
 
     # print("-=--------------------------------------------------------------")
