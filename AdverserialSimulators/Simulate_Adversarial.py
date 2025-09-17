@@ -24,7 +24,7 @@ os.environ["AZURE_API_VERSION"] = api_version
 os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 
 azure_ai_project = {
-    "subscription_id": os.environ.get("OIDC_AZURE_SUBSCRIPTION_ID"),
+    "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
     "resource_group_name": "rg-ayushija-2422",
 #    "workspace_name": "ayushija-dummy-resource",
     "project_name": "ayushija-dummy-resource"
