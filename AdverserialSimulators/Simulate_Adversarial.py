@@ -131,7 +131,7 @@ async def main():
         target=custom_simulator_callback
     )
     print("Messages")
-    print(outputs["messages"])
+    print(outputs.to_eval_qr_json_lines())
     output_file = "ground_sim_output.jsonl"
 
     with Path(output_file).open("w") as file:
