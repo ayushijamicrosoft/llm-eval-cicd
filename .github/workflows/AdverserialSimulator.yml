@@ -1,5 +1,4 @@
-name: Run Groundedness Evals python script
-
+name: Check for Adverserial Simulated data
 on:
   push:
   pull_request:
