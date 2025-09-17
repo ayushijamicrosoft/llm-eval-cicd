@@ -116,8 +116,6 @@ async def custom_simulator_callback(
         "context": context,
     }
     messages["messages"].append(message)
-    print("Messages")
-    print(messages["messages"])
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
   
 
@@ -131,11 +129,10 @@ async def main():
         target=custom_simulator_callback
     )
     print("Messages")
-    print(outputs.to_eval_qr_json_lines())
+    print(outputs.to_eval_qr_json_line())
     output_file = "ground_sim_output.jsonl"
 
     with Path(output_file).open("w") as file:
-        print(outputs.to_eval_qr_json_lines())
         file.write(outputs.to_eval_qr_json_lines())
 
 asyncio.run(main())
