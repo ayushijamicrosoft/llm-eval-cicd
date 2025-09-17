@@ -116,6 +116,8 @@ async def custom_simulator_callback(
         "context": context,
     }
     messages["messages"].append(message)
+    print("Messages")
+    print(messages["messages"])
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
   
 
