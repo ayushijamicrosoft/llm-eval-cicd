@@ -128,23 +128,11 @@ async def main():
         scenario=AdversarialScenario.ADVERSARIAL_QA, max_simulation_results=10,
         target=custom_simulator_callback
     )
-
-    # print("-=--------------------------------------------------------------")
-    # print(outputs)
+    
     output_file = "ground_sim_output.jsonl"
 
     with Path(output_file).open("w") as file:
+        print(outputs.to_eval_qr_json_lines())
         file.write(outputs.to_eval_qr_json_lines())
 
 asyncio.run(main())
-output_file = "ground_sim_output.jsonl"
-
-groundedness_evaluator = GroundednessEvaluator(model_config=model_config)
-eval_output = evaluate(
-    data=output_file,
-    evaluators={
-        "groundedness": groundedness_evaluator,
-    },
-    tracking_enabled = False
-)
-print(eval_output)
