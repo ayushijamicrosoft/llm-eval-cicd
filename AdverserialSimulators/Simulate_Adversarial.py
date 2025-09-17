@@ -1,6 +1,7 @@
 from azure.ai.evaluation import evaluate
 from azure.ai.evaluation import GroundednessEvaluator
 from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from azure.ai.evaluation.simulator import Simulator
 from typing import Any, Dict, List, Optional
 import json
