@@ -130,7 +130,8 @@ async def main():
         scenario=AdversarialScenario.ADVERSARIAL_QA, max_simulation_results=10,
         target=custom_simulator_callback
     )
-    
+    print("Messages")
+    print(outputs["messages"])
     output_file = "ground_sim_output.jsonl"
 
     with Path(output_file).open("w") as file:
