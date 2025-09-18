@@ -41,7 +41,7 @@ else:
 
 
 agent = project_client.agents.get_agent(
-    agent_id = "asst_aAgU5FeUSgDY2WhIG7KrZxZs"
+    agent_id = "asst_Un6Sw51vsuhlOFjVrW6ksO1D"
 )
 
 print(f"Fetched agent, ID: {agent.id}")
