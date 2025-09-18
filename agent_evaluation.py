@@ -53,7 +53,7 @@ print(f"Created thread, ID: {thread.id}")
 
 # Create message to thread
 
-MESSAGE = "Can you list all sales orders for an SAP system?"
+MESSAGE = "Can you list information about the sales order 5200235?"
 
 if updated_agents:
     message = project_client.agents.messages.create(
@@ -223,8 +223,8 @@ response = evaluate(
     },
     azure_ai_project={
         "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
-      "project_name": "ayushija-dummy-resource",
-      "resource_group_name": "rg-ayushija-2422",
+      "project_name": "padmajat-agenticai-hackathon25",
+      "resource_group_name": "rg-padmajat-2824",
     }
 )
 pprint(f'AI Foundary URL: {response.get("studio_url")}')
