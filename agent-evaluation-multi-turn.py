@@ -56,7 +56,6 @@ for message in project_client.agents.messages.list(thread.id, order="asc"):
 
 print("SHOULD WORK TILL HERE AT LEAST-----------------------")
 
-run = 
 import json
 from azure.ai.evaluation import AIAgentConverter
 
