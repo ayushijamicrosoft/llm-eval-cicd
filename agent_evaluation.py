@@ -31,6 +31,9 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential()
 )
 
+'''
+Fetch the agent from Azure AI Foundry. 
+'''
 
 agent = project_client.agents.get_agent(
     agent_id = "asst_Un6Sw51vsuhlOFjVrW6ksO1D"
@@ -38,6 +41,10 @@ agent = project_client.agents.get_agent(
 
 print(f"Fetched agent, ID: {agent.id}")
 
+
+'''
+Create a new thread
+'''
 
 thread = project_client.agents.threads.create()
 print(f"Created thread, ID: {thread.id}")
