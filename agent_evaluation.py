@@ -200,8 +200,8 @@ model_config = AzureOpenAIModelConfiguration(
 # Needed to use content safety evaluators
 azure_ai_project={
     "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
-    "project_name": "ayushija-dummy-resource",
-    "resource_group_name": "rg-ayushija-2422",
+      "project_name": "padmajat-agenticai-hackathon25",
+      "resource_group_name": "rg-padmajat-2824",
 }
 
 tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
