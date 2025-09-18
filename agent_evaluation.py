@@ -55,7 +55,7 @@ agent = project_client.agents.create_agent(
 )
 
 agent = project_client.agents.get_agent(
-    id = "asst_aAgU5FeUSgDY2WhIG7KrZxZs"
+    agent_id = "asst_aAgU5FeUSgDY2WhIG7KrZxZs"
 )
 
 print(f"Fetched agent, ID: {agent.id}")
