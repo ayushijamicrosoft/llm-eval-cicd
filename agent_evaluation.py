@@ -6,12 +6,12 @@ from azure.identity import DefaultAzureCredential
 from user_functions import user_functions
 from dotenv import load_dotenv
 
-openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT_NEW")
-model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT_NEW")
-deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT_NEW")
+openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
+model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
 
-openai_key = os.environ.get("AZURE_OPENAI_API_KEY_NEW")
-api_version = os.environ.get("AZURE_OPENAI_API_VERSION_NEW")
+openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
+api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
 
 os.environ["AZURE_OPENAI_ENDPOINT"] = openai_endpoint
 os.environ["AZURE_DEPLOYMENT_NAME"] = deployment
