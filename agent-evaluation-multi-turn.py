@@ -55,6 +55,8 @@ for message in project_client.agents.messages.list(thread.id, order="asc"):
     print("-" * 40)
 
 print("SHOULD WORK TILL HERE AT LEAST-----------------------")
+
+run = 
 import json
 from azure.ai.evaluation import AIAgentConverter
 
@@ -62,11 +64,6 @@ from azure.ai.evaluation import AIAgentConverter
 converter = AIAgentConverter(project_client)
 
 thread_id = thread.id
-run_id = run.id
-
-converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
-print(json.dumps(converted_data, indent=4))
-# Save the converted data to a JSONL file
 
 file_name = "freshEvaluationData.jsonl"
 evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
@@ -110,4 +107,3 @@ response = evaluate(
 )
 pprint(f'AI Foundary URL: {response.get("studio_url")}')
 pprint(response)
-
