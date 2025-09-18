@@ -14,10 +14,10 @@ deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT_NEW")
 openai_key = os.environ.get("AZURE_OPENAI_API_KEY_NEW")
 api_version = os.environ.get("AZURE_OPENAI_API_VERSION_NEW")
 
-os.environ["AZURE_OPENAI_ENDPOINT_NEW"] = openai_endpoint
-os.environ["AZURE_DEPLOYMENT_NAME_NEW"] = deployment
-os.environ["AZURE_API_VERSION_NEW"] = api_version
-os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE_NEW"] = "1"
+os.environ["AZURE_OPENAI_ENDPOINT"] = openai_endpoint
+os.environ["AZURE_DEPLOYMENT_NAME"] = deployment
+os.environ["AZURE_API_VERSION"] = api_version
+os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 
 load_dotenv()
 
