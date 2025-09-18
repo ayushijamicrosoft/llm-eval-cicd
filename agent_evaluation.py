@@ -54,7 +54,11 @@ agent = project_client.agents.create_agent(
     toolset=toolset
 )
 
-print(f"Created agent, ID: {agent.id}")
+agent = project_client.agents.get_agent(
+    id = "asst_aAgU5FeUSgDY2WhIG7KrZxZs"
+)
+
+print(f"Fetched agent, ID: {agent.id}")
 
 if updated_agents:
     thread = project_client.agents.threads.create()
