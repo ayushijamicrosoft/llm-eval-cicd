@@ -59,8 +59,7 @@ for thread in list_of_threads:
             print("-" * 40)
         
         print("SHOULD WORK TILL HERE AT LEAST-----------------------")
-        
-        run = 
+
         import json
         from azure.ai.evaluation import AIAgentConverter
         
@@ -71,7 +70,7 @@ for thread in list_of_threads:
         
         file_name = "freshEvaluationData.jsonl"
         evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
-    except(Exception as exp): 
+    except Exception as exp: 
         print("exception occured")
         print(exp)
     try:
@@ -113,7 +112,7 @@ for thread in list_of_threads:
             }
         )
         pprint(f'AI Foundary URL: {response.get("studio_url")}')
-    except(Exception as exp):
+    except Exception as exp:
         print("Exception occurred")
         print(exp)
         pprint(response)
