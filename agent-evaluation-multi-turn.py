@@ -46,7 +46,8 @@ print(f"Fetched agent, ID: {agent.id}")
 Fetch an existing thread Id
 '''
 
-thread = project_client.agents.threads.get(thread_id = "thread_eS137V4b2m36MAoEu58JyXke")
+thread = project_client.agents.threads.get(thread_id = "thread_Rg1IQ5qBQeF0Z8fvn98oeO0x")
+                            
 print(f"Fetched thread with thread ID: {thread.id}")
 
 for message in project_client.agents.messages.list(thread.id, order="asc"):
