@@ -68,7 +68,7 @@ thread_id = thread.id
 # converted_data = converter.convert(thread_id=thread_id, run_id="run_MhHx17PIXfVDvcbil0aM8zrb")
 # print(json.dumps(converted_data, indent=4))
 
-# file_name = "freshEvaluationData.jsonl"
+file_name = "freshEvaluationData.jsonl"
 # evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
 
 # print(evaluation_data)
@@ -82,7 +82,7 @@ for run in list_of_runs:
     #converted_data = converter.convert(thread_id=thread_id, run_id=run.id)
 
     #print(converted_data)
-    
+    '''
     model_config = AzureOpenAIModelConfiguration(
         azure_endpoint=openai_endpoint,
         api_key=openai_key,
@@ -118,3 +118,4 @@ for run in list_of_runs:
     )
     pprint(f'AI Foundary URL: {response.get("studio_url")}')
     pprint(response)
+    '''
