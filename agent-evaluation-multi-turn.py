@@ -49,7 +49,7 @@ thread_id = "thread_Rg1IQ5qBQeF0Z8fvn98oeO0x"
 thread = project_client.agents.threads.get(thread_id = thread_id)
 list_of_runs = project_client.agents.runs.list(thread_id)                    
 print(f"Fetched thread with thread ID: {thread.id}")
-print(f"Fetched all runs for this thread ID: " {list_of_runs})
+print(f"Fetched all runs for this thread ID: {list_of_runs}")
 
 for message in project_client.agents.messages.list(thread.id, order="asc"):
     print(f"Role: {message.role}")
