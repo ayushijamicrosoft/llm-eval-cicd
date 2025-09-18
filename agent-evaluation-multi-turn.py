@@ -45,10 +45,11 @@ print(f"Fetched agent, ID: {agent.id}")
 '''
 Fetch an existing thread Id
 '''
-
-thread = project_client.agents.threads.get(thread_id = "thread_Rg1IQ5qBQeF0Z8fvn98oeO0x")
-                            
+thread_id = "thread_Rg1IQ5qBQeF0Z8fvn98oeO0x"
+thread = project_client.agents.threads.get(thread_id = thread_id)
+list_of_runs = project_client.agents.runs.list(thread_id)                    
 print(f"Fetched thread with thread ID: {thread.id}")
+print(f"Fetched all runs for this thread ID": {list_of_runs})
 
 for message in project_client.agents.messages.list(thread.id, order="asc"):
     print(f"Role: {message.role}")
@@ -68,44 +69,50 @@ converted_data = converter.convert(thread_id=thread_id, run_id="run_MhHx17PIXfVD
 print(json.dumps(converted_data, indent=4))
 
 file_name = "freshEvaluationData.jsonl"
-evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
+# evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
+
+
 
 load_dotenv()
 from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConfiguration, IntentResolutionEvaluator, TaskAdherenceEvaluator, ViolenceEvaluator
 from pprint import pprint
+for run in list_of_runs:
+    
+    converted_data = converter.convert(thread_id=thread_id, run_id=run.id)
 
-model_config = AzureOpenAIModelConfiguration(
-    azure_endpoint=openai_endpoint,
-    api_key=openai_key,
-    api_version=api_version,
-    azure_deployment=deployment,
-)
-# Needed to use content safety evaluators
-azure_ai_project={
-    "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
-      "project_name": "padmajat-agenticai-hackathon25",
-      "resource_group_name": "rg-padmajat-2824",
-}
-
-tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
-intent_resolution = IntentResolutionEvaluator(model_config=model_config)
-task_adherence = TaskAdherenceEvaluator(model_config=model_config)
-
-
-from azure.ai.evaluation import evaluate
-
-response = evaluate(
-    data=file_name,
-    evaluators={
-        "tool_call_accuracy": tool_call_accuracy,
-        "intent_resolution": intent_resolution,
-        "task_adherence": task_adherence,
-    },
+    print(converted_data)
+    model_config = AzureOpenAIModelConfiguration(
+        azure_endpoint=openai_endpoint,
+        api_key=openai_key,
+        api_version=api_version,
+        azure_deployment=deployment,
+    )
+    # Needed to use content safety evaluators
     azure_ai_project={
         "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
-      "project_name": "padmajat-agenticai-hackathon25",
-      "resource_group_name": "rg-padmajat-2824",
+          "project_name": "padmajat-agenticai-hackathon25",
+          "resource_group_name": "rg-padmajat-2824",
     }
-)
-pprint(f'AI Foundary URL: {response.get("studio_url")}')
-pprint(response)
+    
+    tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
+    intent_resolution = IntentResolutionEvaluator(model_config=model_config)
+    task_adherence = TaskAdherenceEvaluator(model_config=model_config)
+    
+    
+    from azure.ai.evaluation import evaluate
+    
+    response = evaluate(
+        data=file_name,
+        evaluators={
+            "tool_call_accuracy": tool_call_accuracy,
+            "intent_resolution": intent_resolution,
+            "task_adherence": task_adherence,
+        },
+        azure_ai_project={
+            "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+          "project_name": "padmajat-agenticai-hackathon25",
+          "resource_group_name": "rg-padmajat-2824",
+        }
+    )
+    pprint(f'AI Foundary URL: {response.get("studio_url")}')
+    pprint(response)
