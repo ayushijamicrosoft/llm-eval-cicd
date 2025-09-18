@@ -7,17 +7,17 @@ from user_functions import user_functions
 from dotenv import load_dotenv
 
 
-openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
-model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
-deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT_NEW")
+model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT_NEW")
+deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT_NEW")
 
-openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
-api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
+openai_key = os.environ.get("AZURE_OPENAI_API_KEY_NEW")
+api_version = os.environ.get("AZURE_OPENAI_API_VERSION_NEW")
 
-os.environ["AZURE_OPENAI_ENDPOINT"] = openai_endpoint
-os.environ["AZURE_DEPLOYMENT_NAME"] = deployment
-os.environ["AZURE_API_VERSION"] = api_version
-os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
+os.environ["AZURE_OPENAI_ENDPOINT_NEW"] = openai_endpoint
+os.environ["AZURE_DEPLOYMENT_NAME_NEW"] = deployment
+os.environ["AZURE_API_VERSION_NEW"] = api_version
+os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE_NEW"] = "1"
 
 load_dotenv()
 
