@@ -39,20 +39,6 @@ else:
         conn_str=os.environ["PROJECT_CONNECTION_STRING"],
     )
 
-AGENT_NAME = "Seattle Tourist Assistant PrP"
-
-# Adding Tools to be used by Agent 
-functions = FunctionTool(user_functions)
-
-toolset = ToolSet()
-toolset.add(functions)
-
-agent = project_client.agents.create_agent(
-    model=deployment,
-    name="my-assistant",
-    instructions="You are a helpful assistant",
-    toolset=toolset
-)
 
 agent = project_client.agents.get_agent(
     agent_id = "asst_aAgU5FeUSgDY2WhIG7KrZxZs"
@@ -68,7 +54,7 @@ print(f"Created thread, ID: {thread.id}")
 
 # Create message to thread
 
-MESSAGE = "Can you send me an email with weather information for Seattle?"
+MESSAGE = "Can you list all sales orders for an SAP system?"
 
 if updated_agents:
     message = project_client.agents.messages.create(
