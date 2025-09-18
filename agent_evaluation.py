@@ -29,7 +29,7 @@ updated_agents = Version(projects_version) > Version("1.0.0b10") or projects_ver
 if updated_agents:
     from azure.ai.agents.models import FunctionTool, ToolSet
     project_client = AIProjectClient(
-        endpoint="https://ayushija-2422-resource.services.ai.azure.com/api/projects/ayushija-2422",
+        endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
         credential=DefaultAzureCredential()
     )
 else:
