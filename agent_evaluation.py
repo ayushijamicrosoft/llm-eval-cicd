@@ -25,18 +25,11 @@ from packaging.version import Version
 # some dependencies have been updated with breaking changes -- indicates whether to use updated models and APIs or not
 updated_agents = Version(projects_version) > Version("1.0.0b10") or projects_version.startswith("1.0.0a")
 
-if updated_agents:
-    from azure.ai.agents.models import FunctionTool, ToolSet
-    project_client = AIProjectClient(
-        endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
-        credential=DefaultAzureCredential()
-    )
-else:
-    from azure.ai.projects.models import FunctionTool, ToolSet
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(),
-        conn_str=os.environ["PROJECT_CONNECTION_STRING"],
-    )
+
+project_client = AIProjectClient(
+    endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+    credential=DefaultAzureCredential()
+)
 
 
 agent = project_client.agents.get_agent(
@@ -45,112 +38,61 @@ agent = project_client.agents.get_agent(
 
 print(f"Fetched agent, ID: {agent.id}")
 
-if updated_agents:
-    thread = project_client.agents.threads.create()
-else:
-    thread = project_client.agents.create_thread()
+
+thread = project_client.agents.threads.create()
 print(f"Created thread, ID: {thread.id}")
 
 # Create message to thread
 
 MESSAGE = "Can you list information about the sales order 5200235?"
 
-if updated_agents:
-    message = project_client.agents.messages.create(
-        thread_id=thread.id,
-        role="user",
-        content=MESSAGE,
-    )        
-else:
-    message = project_client.agents.create_message(
-        thread_id=thread.id,
-        role="user",
-        content=MESSAGE,
-    )
+message = project_client.agents.messages.create(
+    thread_id=thread.id,
+    role="user",
+    content=MESSAGE,
+)        
     
 print(f"Created message, ID: {message.id}")
 
-if updated_agents:
-    from azure.ai.agents.models import (
-        FunctionTool,
-        ListSortOrder,
-        RequiredFunctionToolCall,
-        SubmitToolOutputsAction,
-        ToolOutput,
-    )
-    run = project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
-    
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        time.sleep(1)
-        run = project_client.agents.runs.get(thread_id=thread.id, run_id=run.id)
+from azure.ai.agents.models import (
+    FunctionTool,
+    ListSortOrder,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput,
+)
+run = project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
 
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            tool_calls = run.required_action.submit_tool_outputs.tool_calls
-            if not tool_calls:
-                print("No tool calls provided - cancelling run")
-                project_client.agents.runs.cancel(thread_id=thread.id, run_id=run.id)
-                break
+while run.status in ["queued", "in_progress", "requires_action"]:
+    time.sleep(1)
+    run = project_client.agents.runs.get(thread_id=thread.id, run_id=run.id)
 
-            tool_outputs = []
-            for tool_call in tool_calls:
-                if isinstance(tool_call, RequiredFunctionToolCall):
-                    try:
-                        print(f"Executing tool call: {tool_call}")
-                        output = functions.execute(tool_call)
-                        tool_outputs.append(
-                            ToolOutput(
-                                tool_call_id=tool_call.id,
-                                output=output,
-                            )
+    if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
+        tool_calls = run.required_action.submit_tool_outputs.tool_calls
+        if not tool_calls:
+            print("No tool calls provided - cancelling run")
+            project_client.agents.runs.cancel(thread_id=thread.id, run_id=run.id)
+            break
+
+        tool_outputs = []
+        for tool_call in tool_calls:
+            if isinstance(tool_call, RequiredFunctionToolCall):
+                try:
+                    print(f"Executing tool call: {tool_call}")
+                    output = functions.execute(tool_call)
+                    tool_outputs.append(
+                        ToolOutput(
+                            tool_call_id=tool_call.id,
+                            output=output,
                         )
-                    except Exception as e:
-                        print(f"Error executing tool_call {tool_call.id}: {e}")
+                    )
+                except Exception as e:
+                    print(f"Error executing tool_call {tool_call.id}: {e}")
 
-            print(f"Tool outputs: {tool_outputs}")
-            if tool_outputs:
-                project_client.agents.runs.submit_tool_outputs(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
-    print(f"Run status: {run.status}")
-
-else:
-    from azure.ai.projects.models import (
-        FunctionTool,
-        ListSortOrder,
-        RequiredFunctionToolCall,
-        SubmitToolOutputsAction,
-        ToolOutput,
-    )
-    run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        time.sleep(1)
-        run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
-
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            tool_calls = run.required_action.submit_tool_outputs.tool_calls
-            if not tool_calls:
-                print("No tool calls provided - cancelling run")
-                project_client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
-                break
-
-            tool_outputs = []
-            for tool_call in tool_calls:
-                if isinstance(tool_call, RequiredFunctionToolCall):
-                    try:
-                        print(f"Executing tool call: {tool_call}")
-                        output = functions.execute(tool_call)
-                        tool_outputs.append(
-                            ToolOutput(
-                                tool_call_id=tool_call.id,
-                                output=output,
-                            )
-                        )
-                    except Exception as e:
-                        print(f"Error executing tool_call {tool_call.id}: {e}")
-
-            print(f"Tool outputs: {tool_outputs}")
-            if tool_outputs:
-                project_client.agents.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
-    print(f"Run status: {run.status}")
-
+        print(f"Tool outputs: {tool_outputs}")
+        if tool_outputs:
+            project_client.agents.runs.submit_tool_outputs(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
+print(f"Run status: {run.status}")
 
 print(f"Run finished with status: {run.status}")
 
@@ -159,17 +101,10 @@ if run.status == "failed":
 
 print(f"Run ID: {run.id}")
 
-
-if updated_agents:
-    for message in project_client.agents.messages.list(thread.id, order="asc"):
-        print(f"Role: {message.role}")
-        print(f"Content: {message.content[0].text.value}")
-        print("-" * 40)
-else:
-    for message in project_client.agents.list_messages(thread.id, order="asc").data:
-        print(f"Role: {message.role}")
-        print(f"Content: {message.content[0].text.value}")
-        print("-" * 40)
+for message in project_client.agents.messages.list(thread.id, order="asc"):
+    print(f"Role: {message.role}")
+    print(f"Content: {message.content[0].text.value}")
+    print("-" * 40)
 
 import json
 from azure.ai.evaluation import AIAgentConverter
@@ -207,9 +142,6 @@ azure_ai_project={
 tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
 intent_resolution = IntentResolutionEvaluator(model_config=model_config)
 task_adherence = TaskAdherenceEvaluator(model_config=model_config)
-
-
-tool_call_accuracy(query=converted_data['query'], response=converted_data['response'], tool_definitions=converted_data['tool_definitions'])
 
 
 from azure.ai.evaluation import evaluate
