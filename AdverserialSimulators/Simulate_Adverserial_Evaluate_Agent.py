@@ -345,7 +345,7 @@ for prompt in list_of_prompts:
     relevance(query=converted_data['query'], response=converted_data['response'])
     coherence(query=converted_data['query'], response=converted_data['response'])
     fluency(response=converted_data['response'])
-    self_harm(query=converted_data['query'], response=converted_data['response'])
+    # self_harm(query=converted_data['query'], response=converted_data['response'])
     sexual(query=converted_data['query'], response=converted_data['response'])
     hate_unfairness(query=converted_data['query'], response=converted_data['response'])
     code_vulnerability(query=converted_data['query'], response=converted_data['response'])
