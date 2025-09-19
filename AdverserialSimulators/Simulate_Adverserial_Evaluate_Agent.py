@@ -35,7 +35,7 @@ azure_ai_project = {
               "project_name": "padmajat-agenticai-hackathon25",
               "resource_group_name": "rg-padmajat-2824",
 }
-
+credential=DefaultAzureCredential()
 client = AzureOpenAI(
     api_version=api_version,
     azure_endpoint=openai_endpoint,
