@@ -9,6 +9,7 @@ from pathlib import Path
 import os
 from openai import AzureOpenAI
 import importlib.resources as pkg_resources
+from dotenv import load_dotenv
 
 # Initialize the environment variables for Azure OpenAI and the AI project details
 openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
