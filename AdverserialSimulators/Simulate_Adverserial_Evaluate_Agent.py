@@ -110,9 +110,9 @@ global list_of_prompts;
 list_of_prompts = []
 import asyncio
 
-async def main():
+async def get_output_prompts(scenario):
     outputs = await custom_simulator(
-        scenario=AdversarialScenario.ADVERSARIAL_QA, max_simulation_results=10,
+        scenario=scenario, max_simulation_results=10,
         target=custom_simulator_callback
     )
 
@@ -123,6 +123,15 @@ async def main():
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
+
+async def main():
+    await get_output_prompts(AdversarialScenario.ADVERSARIAL_QA)
+    await get_output_prompts(AdversarialScenario.ADVERSARIAL_CONVERSATION)
+    await get_output_prompts(AdversarialScenario.ADVERSARIAL_SUMMARIZATION)
+    await get_output_prompts(AdversarialScenario.ADVERSARIAL_SEARCH)
+    await get_output_prompts(AdversarialScenario.ADVERSARIAL_REWRITE)
+    await get_output_prompts(AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED)
+    await get_output_prompts(AdversarialScenario.ADVERSARIAL_PROTECTED_MATERIAL)
     
     print(list_of_prompts)
 
