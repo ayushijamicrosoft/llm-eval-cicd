@@ -1,6 +1,6 @@
 from azure.ai.evaluation import evaluate
 from azure.ai.evaluation import GroundednessEvaluator
-from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
+from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario, DirectAttackSimulator, IndirectAttackSimulator
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from azure.ai.evaluation.simulator import Simulator
 from typing import Any, Dict, List, Optional
@@ -105,12 +105,14 @@ async def custom_simulator_callback(
   
 
 custom_simulator =  AdversarialSimulator(credential=DefaultAzureCredential(), azure_ai_project=azure_ai_project)
+direct_attack_simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=credential)
+indirect_attack_simulator=IndirectAttackSimulator(azure_ai_project=azure_ai_project, credential=credential)
 
 global list_of_prompts;
 list_of_prompts = []
 import asyncio
 
-async def get_output_prompts(scenario):
+async def get_output_prompts_adv(scenario):
     outputs = await custom_simulator(
         scenario=scenario, max_simulation_results=10,
         target=custom_simulator_callback
@@ -124,15 +126,63 @@ async def get_output_prompts(scenario):
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
 
+async def get_output_prompts_adv(scenario):
+    outputs = await custom_simulator(
+        scenario=scenario, max_simulation_results=10,
+        target=custom_simulator_callback
+    )
+
+    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+    json_lines = outputs.to_eval_qr_json_lines().splitlines()
+
+    for line in json_lines:
+        obj = json.loads(line)
+        # adjust the key if it's "query" instead of "prompt"
+        list_of_prompts.append(obj.get("query"))
+
+async def get_output_prompts_da():
+    outputs = await direct_attack_simulator(
+        scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION, max_simulation_results=10,
+        target=custom_simulator_callback
+    )
+
+    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+    json_lines = outputs.to_eval_qr_json_lines().splitlines()
+
+    for line in json_lines:
+        obj = json.loads(line)
+        # adjust the key if it's "query" instead of "prompt"
+        list_of_prompts.append(obj.get("query"))
+
+async def get_output_prompts_ida():
+    outputs = await indirect_attack_simulator(
+        max_simulation_results=10,
+        target=custom_simulator_callback,
+        max_conversation_turns = 3
+    )
+
+    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+    json_lines = outputs.to_eval_qr_json_lines().splitlines()
+
+    for line in json_lines:
+        obj = json.loads(line)
+        # adjust the key if it's "query" instead of "prompt"
+        list_of_prompts.append(obj.get("query"))
+
 async def main():
     try:
-        await get_output_prompts(AdversarialScenario.ADVERSARIAL_QA)
-        await get_output_prompts(AdversarialScenario.ADVERSARIAL_CONVERSATION)
-        await get_output_prompts(AdversarialScenario.ADVERSARIAL_SUMMARIZATION)
-        await get_output_prompts(AdversarialScenario.ADVERSARIAL_SEARCH)
-        await get_output_prompts(AdversarialScenario.ADVERSARIAL_REWRITE)
-        await get_output_prompts(AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED)
-        await get_output_prompts(AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_QA)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONVERSATION)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_SUMMARIZATION)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_SEARCH)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_REWRITE)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL)
+        await get_output_prompts_da()
+        await get_output_prompts_ida()
+        await 
+        
+
         
         print(list_of_prompts)
     except Exception as exp:
