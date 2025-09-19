@@ -10,6 +10,13 @@ import os
 from openai import AzureOpenAI
 import importlib.resources as pkg_resources
 from dotenv import load_dotenv
+import os, json
+import pandas as pd
+import time
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+from user_functions import user_functions
+from dotenv import load_dotenv
 
 # Initialize the environment variables for Azure OpenAI and the AI project details
 openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
