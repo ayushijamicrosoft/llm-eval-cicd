@@ -103,9 +103,9 @@ async def custom_simulator_callback(
     messages["messages"].append(message)
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
   
-
+credential = DefaultAzureCredential()
 custom_simulator =  AdversarialSimulator(credential=DefaultAzureCredential(), azure_ai_project=azure_ai_project)
-direct_attack_simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=credential)
+direct_attack_simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
 indirect_attack_simulator=IndirectAttackSimulator(azure_ai_project=azure_ai_project, credential=credential)
 
 global list_of_prompts;
