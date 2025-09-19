@@ -26,7 +26,6 @@ os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 azure_ai_project = {
     "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
     "resource_group_name": "rg-ayushija-2422",
-#    "workspace_name": "ayushija-dummy-resource",
     "project_name": "ayushija-dummy-resource"
 }
 
@@ -48,11 +47,6 @@ conversation_turns = []
 
 with pkg_resources.path(package, resource_name) as grounding_file, Path(grounding_file).open("r") as file:
     data = json.load(file)
-# print(data)
-
-# # Option 1: Using open
-# with open("grounding.json", "r", encoding="utf-8") as f:
-#     data = json.load(f)
 
 # data = json.load(resource_name);
 for item in data:
@@ -121,6 +115,7 @@ async def custom_simulator_callback(
 
 custom_simulator =  AdversarialSimulator(credential=DefaultAzureCredential(), azure_ai_project=azure_ai_project)
 
+global list_of_prompts = []
 import asyncio
 
 async def main():
@@ -134,6 +129,18 @@ async def main():
     print(outputs)
     with Path(output_file).open("w") as file:
         file.write(outputs.to_eval_qr_json_lines())
+    import json
+
+    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+    json_lines = outputs.to_eval_qr_json_lines().splitlines()
+
+    for line in json_lines:
+        obj = json.loads(line)
+        # adjust the key if it's "query" instead of "prompt"
+        list_of_prompts.append(obj.get("query"))
+    
+    print(list_of_prompts)
+
 
 asyncio.run(main())
 
@@ -147,142 +154,74 @@ updated_agents = Version(projects_version) > Version("1.0.0b10") or projects_ver
 
 credential=DefaultAzureCredential()
 
-if updated_agents:
-    from azure.ai.agents.models import FunctionTool, ToolSet
-    project_client = AIProjectClient(
-        endpoint="https://ayushija-2422-resource.services.ai.azure.com/api/projects/ayushija-2422",
-        credential=DefaultAzureCredential()
-    )
-else:
-    from azure.ai.projects.models import FunctionTool, ToolSet
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(),
-        conn_str=os.environ["PROJECT_CONNECTION_STRING"],
-    )
+from azure.ai.agents.models import FunctionTool, ToolSet
+project_client = AIProjectClient(
+    endpoint="https://ayushija-2422-resource.services.ai.azure.com/api/projects/ayushija-2422",
+    credential=DefaultAzureCredential()
+)
 
-AGENT_NAME = "Seattle Tourist Assistant PrP"
-
-# Adding Tools to be used by Agent 
-functions = FunctionTool(user_functions)
-
-toolset = ToolSet()
-toolset.add(functions)
-
-agent = project_client.agents.create_agent(
+agent = project_client.agents.get_agent(
     model=deployment,
     name="my-assistant",
     instructions="You are a helpful assistant",
     toolset=toolset
 )
 
-print(f"Created agent, ID: {agent.id}")
-
-if updated_agents:
-    thread = project_client.agents.threads.create()
-else:
-    thread = project_client.agents.create_thread()
+print(f"Fetched agent, ID: {agent.id}")
+thread = project_client.agents.threads.create()
 print(f"Created thread, ID: {thread.id}")
 
 # Create message to thread
 
 MESSAGE = "Can you send me an email with weather information for Seattle?"
 
-if updated_agents:
-    message = project_client.agents.messages.create(
-        thread_id=thread.id,
-        role="user",
-        content=MESSAGE,
-    )        
-else:
-    message = project_client.agents.create_message(
-        thread_id=thread.id,
-        role="user",
-        content=MESSAGE,
-    )
+message = project_client.agents.messages.create(
+    thread_id=thread.id,
+    role="user",
+    content=MESSAGE,
+)
     
 print(f"Created message, ID: {message.id}")
 
-if updated_agents:
-    from azure.ai.agents.models import (
-        FunctionTool,
-        ListSortOrder,
-        RequiredFunctionToolCall,
-        SubmitToolOutputsAction,
-        ToolOutput,
-    )
-    run = project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
-    
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        time.sleep(1)
-        run = project_client.agents.runs.get(thread_id=thread.id, run_id=run.id)
+from azure.ai.agents.models import (
+    FunctionTool,
+    ListSortOrder,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput,
+)
+run = project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
 
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            tool_calls = run.required_action.submit_tool_outputs.tool_calls
-            if not tool_calls:
-                print("No tool calls provided - cancelling run")
-                project_client.agents.runs.cancel(thread_id=thread.id, run_id=run.id)
-                break
+while run.status in ["queued", "in_progress", "requires_action"]:
+    time.sleep(1)
+    run = project_client.agents.runs.get(thread_id=thread.id, run_id=run.id)
 
-            tool_outputs = []
-            for tool_call in tool_calls:
-                if isinstance(tool_call, RequiredFunctionToolCall):
-                    try:
-                        print(f"Executing tool call: {tool_call}")
-                        output = functions.execute(tool_call)
-                        tool_outputs.append(
-                            ToolOutput(
-                                tool_call_id=tool_call.id,
-                                output=output,
-                            )
+    if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
+        tool_calls = run.required_action.submit_tool_outputs.tool_calls
+        if not tool_calls:
+            print("No tool calls provided - cancelling run")
+            project_client.agents.runs.cancel(thread_id=thread.id, run_id=run.id)
+            break
+
+        tool_outputs = []
+        for tool_call in tool_calls:
+            if isinstance(tool_call, RequiredFunctionToolCall):
+                try:
+                    print(f"Executing tool call: {tool_call}")
+                    output = functions.execute(tool_call)
+                    tool_outputs.append(
+                        ToolOutput(
+                            tool_call_id=tool_call.id,
+                            output=output,
                         )
-                    except Exception as e:
-                        print(f"Error executing tool_call {tool_call.id}: {e}")
+                    )
+                except Exception as e:
+                    print(f"Error executing tool_call {tool_call.id}: {e}")
 
-            print(f"Tool outputs: {tool_outputs}")
-            if tool_outputs:
-                project_client.agents.runs.submit_tool_outputs(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
-    print(f"Run status: {run.status}")
-
-else:
-    from azure.ai.projects.models import (
-        FunctionTool,
-        ListSortOrder,
-        RequiredFunctionToolCall,
-        SubmitToolOutputsAction,
-        ToolOutput,
-    )
-    run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        time.sleep(1)
-        run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
-
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            tool_calls = run.required_action.submit_tool_outputs.tool_calls
-            if not tool_calls:
-                print("No tool calls provided - cancelling run")
-                project_client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
-                break
-
-            tool_outputs = []
-            for tool_call in tool_calls:
-                if isinstance(tool_call, RequiredFunctionToolCall):
-                    try:
-                        print(f"Executing tool call: {tool_call}")
-                        output = functions.execute(tool_call)
-                        tool_outputs.append(
-                            ToolOutput(
-                                tool_call_id=tool_call.id,
-                                output=output,
-                            )
-                        )
-                    except Exception as e:
-                        print(f"Error executing tool_call {tool_call.id}: {e}")
-
-            print(f"Tool outputs: {tool_outputs}")
-            if tool_outputs:
-                project_client.agents.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
-    print(f"Run status: {run.status}")
-
+        print(f"Tool outputs: {tool_outputs}")
+        if tool_outputs:
+            project_client.agents.runs.submit_tool_outputs(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
+print(f"Run status: {run.status}")
 
 print(f"Run finished with status: {run.status}")
 
