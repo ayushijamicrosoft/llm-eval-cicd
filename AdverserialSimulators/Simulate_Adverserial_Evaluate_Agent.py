@@ -115,7 +115,7 @@ async def custom_simulator_callback(
 
 custom_simulator =  AdversarialSimulator(credential=DefaultAzureCredential(), azure_ai_project=azure_ai_project)
 
-global list_of_prompts; = []
+global list_of_prompts;
 list_of_prompts = []
 import asyncio
 
