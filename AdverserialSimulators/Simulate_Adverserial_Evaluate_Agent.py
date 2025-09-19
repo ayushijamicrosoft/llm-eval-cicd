@@ -47,22 +47,6 @@ model_config = {
     "azure_deployment": deployment,
 }
 
-# Load the grounding data from the JSON file
-resource_name = "grounding.json"
-package = "azure.ai.evaluation.simulator._data_sources"
-conversation_turns = []
-
-with pkg_resources.path(package, resource_name) as grounding_file, Path(grounding_file).open("r") as file:
-    data = json.load(file)
-
-# data = json.load(resource_name);
-for item in data:
-    conversation_turns.append([item])
-    if len(conversation_turns) == 2:
-        break
-print("---------------------------------------------------------------")
-print(conversation_turns)
-
 def example_application_response(query: str, context: str) -> str:
     deployment = os.environ.get("AZURE_DEPLOYMENT_NAME")
     endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
@@ -131,13 +115,6 @@ async def main():
         scenario=AdversarialScenario.ADVERSARIAL_QA, max_simulation_results=10,
         target=custom_simulator_callback
     )
-    
-    output_file = "ground_sim_output.jsonl"
-
-    print(outputs)
-    with Path(output_file).open("w") as file:
-        file.write(outputs.to_eval_qr_json_lines())
-    import json
 
     # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
     json_lines = outputs.to_eval_qr_json_lines().splitlines()
@@ -164,15 +141,12 @@ credential=DefaultAzureCredential()
 
 from azure.ai.agents.models import FunctionTool, ToolSet
 project_client = AIProjectClient(
-    endpoint="https://ayushija-2422-resource.services.ai.azure.com/api/projects/ayushija-2422",
+    endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
     credential=DefaultAzureCredential()
 )
 
 agent = project_client.agents.get_agent(
-    model=deployment,
-    name="my-assistant",
-    instructions="You are a helpful assistant",
-    toolset=toolset
+    agent_id = "asst_Un6Sw51vsuhlOFjVrW6ksO1D"
 )
 
 print(f"Fetched agent, ID: {agent.id}")
@@ -263,7 +237,7 @@ converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
 print(json.dumps(converted_data, indent=4))
 # Save the converted data to a JSONL file
 
-file_name = "evaluation_data.jsonl"
+file_name = "evaluationDataAdverserialData.jsonl"
 evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
 
 load_dotenv()
