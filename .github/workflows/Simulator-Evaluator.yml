@@ -1,4 +1,4 @@
-name: Run Tool Call eval python script (Automated yaml)
+name: Run Simulator-Evaluator (Automated yaml)
 
 on:
   push:
