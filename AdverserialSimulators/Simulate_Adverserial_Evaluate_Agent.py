@@ -180,7 +180,6 @@ async def main():
         await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL)
         await get_output_prompts_da()
         await get_output_prompts_ida()
-        await 
         
 
         
