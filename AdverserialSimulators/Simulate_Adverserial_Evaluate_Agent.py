@@ -125,16 +125,20 @@ async def get_output_prompts(scenario):
         list_of_prompts.append(obj.get("query"))
 
 async def main():
-    await get_output_prompts(AdversarialScenario.ADVERSARIAL_QA)
-    await get_output_prompts(AdversarialScenario.ADVERSARIAL_CONVERSATION)
-    await get_output_prompts(AdversarialScenario.ADVERSARIAL_SUMMARIZATION)
-    await get_output_prompts(AdversarialScenario.ADVERSARIAL_SEARCH)
-    await get_output_prompts(AdversarialScenario.ADVERSARIAL_REWRITE)
-    await get_output_prompts(AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED)
-    await get_output_prompts(AdversarialScenario.ADVERSARIAL_PROTECTED_MATERIAL)
-    
-    print(list_of_prompts)
-
+    try:
+        await get_output_prompts(AdversarialScenario.ADVERSARIAL_QA)
+        await get_output_prompts(AdversarialScenario.ADVERSARIAL_CONVERSATION)
+        await get_output_prompts(AdversarialScenario.ADVERSARIAL_SUMMARIZATION)
+        await get_output_prompts(AdversarialScenario.ADVERSARIAL_SEARCH)
+        await get_output_prompts(AdversarialScenario.ADVERSARIAL_REWRITE)
+        await get_output_prompts(AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED)
+        await get_output_prompts(AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL)
+        
+        print(list_of_prompts)
+    except Exception as exp:
+        print("An exception occured!")
+        print(exp)
+        print(list_of_prompts)
 
 asyncio.run(main())
 
