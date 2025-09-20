@@ -182,8 +182,9 @@ async def main():
         await get_output_prompts_ida()
         
 
-        
+        print("###########################################################################################################")
         print(list_of_prompts)
+        print("###########################################################################################################")
     except Exception as exp:
         print("An exception occured!")
         print(exp)
