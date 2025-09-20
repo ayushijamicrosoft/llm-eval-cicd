@@ -125,6 +125,9 @@ async def get_output_prompts_adv(scenario):
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
+    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    print(list_of_prompts)
+    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
 
 async def get_output_prompts_adv(scenario):
     outputs = await custom_simulator(
@@ -140,6 +143,10 @@ async def get_output_prompts_adv(scenario):
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
 
+    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    print(list_of_prompts)
+    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+
 async def get_output_prompts_da():
     outputs = await direct_attack_simulator(
         scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION, max_simulation_results=10,
@@ -153,6 +160,9 @@ async def get_output_prompts_da():
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
+    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    print(list_of_prompts)
+    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
 
 async def get_output_prompts_ida():
     outputs = await indirect_attack_simulator(
@@ -168,6 +178,10 @@ async def get_output_prompts_ida():
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
+
+    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    print(list_of_prompts)
+    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
 
 async def main():
     try:
