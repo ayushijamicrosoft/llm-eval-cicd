@@ -32,7 +32,7 @@ credential=DefaultAzureCredential()
 if updated_agents:
     from azure.ai.agents.models import FunctionTool, ToolSet
     project_client = AIProjectClient(
-        endpoint="https://ayushija-2422-resource.services.ai.azure.com/api/projects/ayushija-2422",
+        endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
         credential=DefaultAzureCredential()
     )
 else:
@@ -213,9 +213,9 @@ model_config = AzureOpenAIModelConfiguration(
 )
 # Needed to use content safety evaluators
 azure_ai_project={
-    "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
-    "project_name": "ayushija-dummy-resource",
-    "resource_group_name": "rg-ayushija-2422",
+     "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+      "project_name": "padmajat-agenticai-hackathon25",
+      "resource_group_name": "rg-padmajat-2824",
 }
 
 tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
@@ -269,9 +269,9 @@ response = evaluate(
         "protected_material": protected_material
     },
     azure_ai_project={
-        "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
-      "project_name": "ayushija-dummy-resource",
-      "resource_group_name": "rg-ayushija-2422",
+         "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+          "project_name": "padmajat-agenticai-hackathon25",
+          "resource_group_name": "rg-padmajat-2824",
     }
 )
 pprint(f'AI Foundary URL: {response.get("studio_url")}')
