@@ -42,3 +42,10 @@ jobs:
 
       - name: Run Python
         run: python AdverserialSimulators/Simulate_Adverserial_Evaluate_Agent.py > full_output.log 2>&1
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-job-output
+          path: full_output.log
+
