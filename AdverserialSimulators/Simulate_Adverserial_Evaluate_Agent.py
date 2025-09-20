@@ -146,6 +146,8 @@ async def get_output_prompts_adv(scenario):
         list_of_prompts.append(obj.get("query"))
 
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    print("Indirect Jail Break Attacks")
+    print(outputs.to_eval_qr_json_lines().splitlines());
     pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
@@ -165,6 +167,8 @@ async def get_output_prompts_da():
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    print("Direct Jail Break Attacks")
+    print(outputs.to_eval_qr_json_lines().splitlines());
     pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
