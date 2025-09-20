@@ -16,6 +16,7 @@ import time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
+import pprint
 
 # Initialize the environment variables for Azure OpenAI and the AI project details
 openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
@@ -126,6 +127,7 @@ async def get_output_prompts_adv(scenario):
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
 
