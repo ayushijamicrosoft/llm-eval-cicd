@@ -94,7 +94,7 @@ for thread in list_of_threads:
         tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
         intent_resolution = IntentResolutionEvaluator(model_config=model_config)
         task_adherence = TaskAdherenceEvaluator(model_config=model_config)
-        relevance = RelevanceEvaluator(model_config=model_config)
+       # relevance = RelevanceEvaluator(model_config=model_config)
         coherence = CoherenceEvaluator(model_config=model_config)
         fluency = FluencyEvaluator(model_config=model_config)
         violence = ViolenceEvaluator(credential=credential, azure_ai_project=azure_ai_project)
@@ -123,4 +123,3 @@ for thread in list_of_threads:
     except Exception as exp:
         print("Exception occurred")
         print(exp)
-        pprint(response)
