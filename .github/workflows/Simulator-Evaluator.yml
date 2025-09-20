@@ -41,4 +41,4 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Python
-        run: python AdverserialSimulators/Simulate_Adverserial_Evaluate_Agent.py
+        run: python AdverserialSimulators/Simulate_Adverserial_Evaluate_Agent.py > full_output.log 2>&1
