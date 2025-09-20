@@ -45,6 +45,8 @@ print(f"Fetched agent, ID: {agent.id}")
 '''
 Fetch an existing thread Id
 '''
+from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConfiguration, IntentResolutionEvaluator, TaskAdherenceEvaluator, RelevanceEvaluator, CoherenceEvaluator, FluencyEvaluator, ViolenceEvaluator, SelfHarmEvaluator, SexualEvaluator, HateUnfairnessEvaluator, CodeVulnerabilityEvaluator, IndirectAttackEvaluator, ProtectedMaterialEvaluator
+
 
 list_of_threads = project_client.agents.threads.list()
 
@@ -94,7 +96,7 @@ for thread in list_of_threads:
         tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
         intent_resolution = IntentResolutionEvaluator(model_config=model_config)
         task_adherence = TaskAdherenceEvaluator(model_config=model_config)
-       # relevance = RelevanceEvaluator(model_config=model_config)
+        relevance = RelevanceEvaluator(model_config=model_config)
         coherence = CoherenceEvaluator(model_config=model_config)
         fluency = FluencyEvaluator(model_config=model_config)
         violence = ViolenceEvaluator(credential=credential, azure_ai_project=azure_ai_project)
@@ -112,6 +114,16 @@ for thread in list_of_threads:
                 "tool_call_accuracy": tool_call_accuracy,
                 "intent_resolution": intent_resolution,
                 "task_adherence": task_adherence,
+                "violence": violence,
+                "coherence": coherence,
+                "relevance": relevance,
+                "fluency": fluency,
+                "self_harm": self_harm,
+                "sexual": sexual,
+                "hate_unfairness": hate_unfairness,
+                "code_vulnerability": code_vulnerability,
+                "indirect_attack": indirect_attack,
+                "protected_material": protected_material
             },
             azure_ai_project={
                 "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
