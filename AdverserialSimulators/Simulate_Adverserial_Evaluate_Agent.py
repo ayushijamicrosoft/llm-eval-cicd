@@ -146,6 +146,7 @@ async def get_output_prompts_adv(scenario):
         list_of_prompts.append(obj.get("query"))
 
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
 
@@ -160,9 +161,11 @@ async def get_output_prompts_da():
 
     for line in json_lines:
         obj = json.loads(line)
+        
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
 
@@ -182,6 +185,7 @@ async def get_output_prompts_ida():
         list_of_prompts.append(obj.get("query"))
 
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
     print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
 
@@ -199,11 +203,13 @@ async def main():
         
 
         print("###########################################################################################################")
+        pprint.pprint(list_of_prompts, width=200)
         print(list_of_prompts)
         print("###########################################################################################################")
     except Exception as exp:
         print("An exception occured!")
         print(exp)
+        pprint.pprint(list_of_prompts, width=200)
         print(list_of_prompts)
 
 asyncio.run(main())
