@@ -81,6 +81,10 @@ def example_application_response(query: str, context: str) -> str:
         message = message["content"]
     return message
 
+'''
+Calls the agent, formats an Open-AI style message and appends it back to the conversation,
+hence running the attacks end to end. 
+'''
 async def custom_simulator_callback(
     messages: List[Dict],
     stream: bool = False,
