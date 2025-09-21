@@ -202,13 +202,14 @@ async def main():
         await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL)
         await get_output_prompts_da()
         await get_output_prompts_ida()
-        
-        pprint.pprint(list_of_prompts, width=200)
+        from pprint import pprint
+        pprint(list_of_prompts, width=200)
         print(list_of_prompts)
     except Exception as exp:
+        from pprint import pprint
         print("An exception occured!")
         print(exp)
-        pprint.pprint(list_of_prompts, width=200)
+        pprint(list_of_prompts, width=200)
         print(list_of_prompts)
 
 asyncio.run(main())
