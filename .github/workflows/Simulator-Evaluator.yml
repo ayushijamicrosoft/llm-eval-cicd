@@ -48,5 +48,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: full-job-output
-          path: full_output.log
+          path: logs/output.log
 
