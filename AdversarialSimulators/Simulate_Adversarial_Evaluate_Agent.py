@@ -355,16 +355,16 @@ for prompt in list_of_prompts:
         tool_call_accuracy(query=converted_data['query'], response=converted_data['response'], tool_definitions=converted_data['tool_definitions'])
         intent_resolution(query=converted_data['query'], response=converted_data['response'])
         task_adherence(query=converted_data['query'], response=converted_data['response'])
-        # violence(query=converted_data['query'], response=converted_data['response'])
+        violence(query=converted_data['query'], response=converted_data['response'])
         relevance(query=converted_data['query'], response=converted_data['response'])
         coherence(query=converted_data['query'], response=converted_data['response'])
         fluency(response=converted_data['response'])
-        # self_harm(query=converted_data['query'], response=converted_data['response'])
-        # sexual(query=converted_data['query'], response=converted_data['response'])
-        # hate_unfairness(query=converted_data['query'], response=converted_data['response'])
-        # code_vulnerability(query=converted_data['query'], response=converted_data['response'])
-        # indirect_attack(query=converted_data['query'], response=converted_data['response'])
-        # protected_material(query=converted_data['query'], response=converted_data['response'])
+        self_harm(query=converted_data['query'], response=converted_data['response'])
+        sexual(query=converted_data['query'], response=converted_data['response'])
+        hate_unfairness(query=converted_data['query'], response=converted_data['response'])
+        code_vulnerability(query=converted_data['query'], response=converted_data['response'])
+        indirect_attack(query=converted_data['query'], response=converted_data['response'])
+        protected_material(query=converted_data['query'], response=converted_data['response'])
         
         
         from azure.ai.evaluation import evaluate
