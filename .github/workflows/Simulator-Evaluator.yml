@@ -41,9 +41,10 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Python
-        run: python AdverserialSimulators/Simulate_Adverserial_Evaluate_Agent.py 2>&1 | tee logs/output.log
+        run: python AdversarialSimulators/Simulate_Adversarial_Evaluate_Agent.py 2>&1 | tee logs/output.log
 
       - name: Upload logs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: full-job-output
