@@ -17,6 +17,10 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 import pprint
+from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConfiguration, IntentResolutionEvaluator, TaskAdherenceEvaluator, 
+RelevanceEvaluator, CoherenceEvaluator, FluencyEvaluator, ViolenceEvaluator, SelfHarmEvaluator, SexualEvaluator, HateUnfairnessEvaluator, 
+CodeVulnerabilityEvaluator, IndirectAttackEvaluator, ProtectedMaterialEvaluator
+from pprint import pprint
 
 # Initialize the environment variables for Azure OpenAI and the AI project details
 openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
@@ -33,9 +37,10 @@ os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 
 azure_ai_project = {
     "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
-              "project_name": "padmajat-agenticai-hackathon25",
-              "resource_group_name": "rg-padmajat-2824",
+    "project_name": "padmajat-agenticai-hackathon25",
+    "resource_group_name": "rg-padmajat-2824",
 }
+
 credential=DefaultAzureCredential()
 client = AzureOpenAI(
     api_version=api_version,
@@ -73,10 +78,6 @@ def example_application_response(query: str, context: str) -> str:
         messages=messages,
         max_completion_tokens=10000
     )
-    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    print(completion)
-
-    print("---------------------------------------------------------------")
     message = completion.to_dict()["choices"][0]["message"]
     if isinstance(message, dict):
         message = message["content"]
@@ -126,10 +127,8 @@ async def get_output_prompts_adv(scenario):
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
-    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
     pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
-    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
 
 async def get_output_prompts_adv(scenario):
     outputs = await custom_simulator(
@@ -145,13 +144,9 @@ async def get_output_prompts_adv(scenario):
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
 
-    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
     print("Indirect Jail Break Attacks")
-    print(outputs.to_eval_qr_json_lines().splitlines());
-    pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
-    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
-
+    
 async def get_output_prompts_da():
     outputs = await direct_attack_simulator(
         scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION, max_simulation_results=10,
@@ -166,13 +161,10 @@ async def get_output_prompts_da():
         
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
-    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
+    
     print("Direct Jail Break Attacks")
-    print(outputs.to_eval_qr_json_lines().splitlines());
-    pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
-    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
-
+    
 async def get_output_prompts_ida():
     outputs = await indirect_attack_simulator(
         max_simulation_results=10,
@@ -187,12 +179,8 @@ async def get_output_prompts_ida():
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
-
-    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
-    pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
-    print("###########################################################################################################OOOOOOOOOOOOOOOOOOOOOOOO")
-
+    
 async def main():
     try:
         await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_QA)
@@ -205,11 +193,8 @@ async def main():
         await get_output_prompts_da()
         await get_output_prompts_ida()
         
-
-        print("###########################################################################################################")
         pprint.pprint(list_of_prompts, width=200)
         print(list_of_prompts)
-        print("###########################################################################################################")
     except Exception as exp:
         print("An exception occured!")
         print(exp)
@@ -334,8 +319,7 @@ for prompt in list_of_prompts:
     evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
     
     load_dotenv()
-    from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConfiguration, IntentResolutionEvaluator, TaskAdherenceEvaluator, RelevanceEvaluator, CoherenceEvaluator, FluencyEvaluator, ViolenceEvaluator, SelfHarmEvaluator, SexualEvaluator, HateUnfairnessEvaluator, CodeVulnerabilityEvaluator, IndirectAttackEvaluator, ProtectedMaterialEvaluator
-    from pprint import pprint
+    
     
     model_config = AzureOpenAIModelConfiguration(
         azure_endpoint=openai_endpoint,
