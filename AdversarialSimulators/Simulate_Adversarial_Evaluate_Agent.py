@@ -313,9 +313,10 @@ for prompt in list_of_prompts:
 
     print("==============================================================CONVERTED DATA===========================================================================")
     converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
-    print(json.dumps(converted_data, indent=4))
+    print(converted_data)
     # Save the converted data to a JSONL file
-    
+
+    '''
     file_name = "evaluationDataAdverserialData" + str(count) + ".jsonl"
     evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
     
@@ -402,3 +403,4 @@ for prompt in list_of_prompts:
         json.dump(response, f, indent=2, default=str)
 
     break;
+'''
