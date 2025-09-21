@@ -125,7 +125,8 @@ async def get_output_prompts_adv(scenario):
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
-    pprint.pprint(list_of_prompts, width=200)
+    from pprint import pprint
+    pprint(list_of_prompts, width=200)
     print(list_of_prompts)
 
 async def get_output_prompts_adv(scenario):
@@ -141,8 +142,9 @@ async def get_output_prompts_adv(scenario):
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
-
     print("Indirect Jail Break Attacks")
+    from pprint import pprint
+    pprint(list_of_prompts, width=200)
     print(list_of_prompts)
     
 async def get_output_prompts_da():
@@ -184,6 +186,9 @@ async def get_output_prompts_ida():
         print("Indirect Jail Break Attacks")
     except Exception as e:
         print(e)
+    from pprint import pprint
+    pprint(list_of_prompts, width=200)
+    
     print(list_of_prompts)
     
 async def main():
@@ -395,6 +400,9 @@ for prompt in list_of_prompts:
               "resource_group_name": "rg-padmajat-2824",
         }
     )
+    from pprint import pprint
+
+    pprint(list_of_prompts, width=200)
     pprint(f'AI Foundary URL: {response.get("studio_url")}')
     pprint(response)
     
