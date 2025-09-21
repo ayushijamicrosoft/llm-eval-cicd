@@ -375,16 +375,16 @@ for prompt in list_of_prompts:
                 "tool_call_accuracy": tool_call_accuracy,
                 "intent_resolution": intent_resolution,
                 "task_adherence": task_adherence,
-               # "violence": violence,
+                "violence": violence,
                 "relevance": relevance,
                 "coherence": coherence,
                 "fluency": fluency,
-             #   "self_harm": self_harm,
-              #  "sexual": sexual,
-               # "hate_unfairness": hate_unfairness,
-               # "code_vulnerability": code_vulnerability,
-               # "indirect_attack": indirect_attack,
-               # "protected_material": protected_material
+                "self_harm": self_harm,
+                "sexual": sexual,
+                "hate_unfairness": hate_unfairness,
+                "code_vulnerability": code_vulnerability,
+                "indirect_attack": indirect_attack,
+               "protected_material": protected_material
             },
             azure_ai_project={
                 "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
