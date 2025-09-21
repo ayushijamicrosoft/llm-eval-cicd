@@ -159,8 +159,10 @@ async def get_output_prompts_da():
         
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
-    
-    print("Direct Jail Break Attacks")
+    try:
+        print("Direct Jail Break Attacks")
+    except Exception as e:
+        print(e)
     print(list_of_prompts)
     
 async def get_output_prompts_ida():
@@ -177,6 +179,11 @@ async def get_output_prompts_ida():
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
+    print(list_of_prompts)
+    try:
+        print("Indirect Jail Break Attacks")
+    except Exception as e:
+        print(e)
     print(list_of_prompts)
     
 async def main():
