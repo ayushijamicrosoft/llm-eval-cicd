@@ -129,9 +129,6 @@ async def get_output_prompts_adv(scenario):
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
-    from pprint import pprint
-    pprint(list_of_prompts, width=200)
-    print(list_of_prompts)
 
 async def get_output_prompts_adv(scenario):
     outputs = await custom_simulator(
@@ -146,10 +143,6 @@ async def get_output_prompts_adv(scenario):
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
-    print("Indirect Jail Break Attacks")
-    from pprint import pprint
-    pprint(list_of_prompts, width=200)
-    print(list_of_prompts)
     
 async def get_output_prompts_da():
     outputs = await direct_attack_simulator(
@@ -169,7 +162,6 @@ async def get_output_prompts_da():
         print("Direct Jail Break Attacks")
     except Exception as e:
         print(e)
-    print(list_of_prompts)
     
 async def get_output_prompts_ida():
     outputs = await indirect_attack_simulator(
@@ -185,13 +177,6 @@ async def get_output_prompts_ida():
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
-    print(list_of_prompts)
-    try:
-        print("Indirect Jail Break Attacks")
-    except Exception as e:
-        print(e)
-    from pprint import pprint
-    pprint(list_of_prompts, width=200)
     
     print(list_of_prompts)
     
@@ -208,13 +193,11 @@ async def main():
         await get_output_prompts_ida()
         from pprint import pprint
         pprint(list_of_prompts, width=200)
-        print(list_of_prompts)
     except Exception as exp:
         from pprint import pprint
-        print("An exception occured!")
+        print("An exception occured in creation of prompts!")
         print(exp)
         pprint(list_of_prompts, width=200)
-        print(list_of_prompts)
 
 asyncio.run(main())
 
@@ -304,8 +287,9 @@ for prompt in list_of_prompts:
         print(f"Run failed: {run.last_error}")
     
     print(f"Run ID: {run.id}")
-    
-    
+
+    '''
+    print("==============================================================LIST OF MESSAGES FOR THE CONVERSATION ===========================================================================")
     if updated_agents:
         for message in project_client.agents.messages.list(thread.id, order="asc"):
             print(f"Role: {message.role}")
@@ -316,6 +300,7 @@ for prompt in list_of_prompts:
             print(f"Role: {message.role}")
             print(f"Content: {message.content[0].text.value}")
             print("-" * 40)
+    '''
     
     import json
     from azure.ai.evaluation import AIAgentConverter
@@ -325,7 +310,8 @@ for prompt in list_of_prompts:
     
     thread_id = thread.id
     run_id = run.id
-    
+
+    print("==============================================================CONVERTED DATA===========================================================================")
     converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
     print(json.dumps(converted_data, indent=4))
     # Save the converted data to a JSONL file
@@ -348,8 +334,7 @@ for prompt in list_of_prompts:
               "project_name": "padmajat-agenticai-hackathon25",
               "resource_group_name": "rg-padmajat-2824",
     }
-    print("Converted data")
-    pprint(converted_data)
+    
     tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
     intent_resolution = IntentResolutionEvaluator(model_config=model_config)
     task_adherence = TaskAdherenceEvaluator(model_config=model_config)
@@ -389,16 +374,16 @@ for prompt in list_of_prompts:
             "tool_call_accuracy": tool_call_accuracy,
             "intent_resolution": intent_resolution,
             "task_adherence": task_adherence,
-            "violence": violence,
+           # "violence": violence,
             "relevance": relevance,
             "coherence": coherence,
             "fluency": fluency,
-            "self_harm": self_harm,
-            "sexual": sexual,
-            "hate_unfairness": hate_unfairness,
-            "code_vulnerability": code_vulnerability,
-            "indirect_attack": indirect_attack,
-            "protected_material": protected_material
+         #   "self_harm": self_harm,
+          #  "sexual": sexual,
+           # "hate_unfairness": hate_unfairness,
+           # "code_vulnerability": code_vulnerability,
+           # "indirect_attack": indirect_attack,
+           # "protected_material": protected_material
         },
         azure_ai_project={
             "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
