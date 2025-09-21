@@ -395,7 +395,7 @@ for prompt in list_of_prompts:
         from pprint import pprint
     
         pprint(list_of_prompts, width=200)
-        pprint(f'AI Foundary URL: {response.get("studio_url")}')
+        pprint(f'Azure ML Studio URL: {response.get("studio_url")}')
         pprint(response)
         
         # Save evaluation response to JSON file
