@@ -17,7 +17,9 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 import pprint
-from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConfiguration, IntentResolutionEvaluator, TaskAdherenceEvaluator, RelevanceEvaluator, CoherenceEvaluator, FluencyEvaluator, ViolenceEvaluator, SelfHarmEvaluator, SexualEvaluator, HateUnfairnessEvaluator, CodeVulnerabilityEvaluator, IndirectAttackEvaluator, ProtectedMaterialEvaluator
+from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConfiguration, IntentResolutionEvaluator, TaskAdherenceEvaluator, 
+RelevanceEvaluator, CoherenceEvaluator, FluencyEvaluator, ViolenceEvaluator, SelfHarmEvaluator, SexualEvaluator, HateUnfairnessEvaluator, 
+CodeVulnerabilityEvaluator, IndirectAttackEvaluator, ProtectedMaterialEvaluator
 from pprint import pprint
 
 # Initialize the environment variables for Azure OpenAI and the AI project details
@@ -143,8 +145,6 @@ async def get_output_prompts_adv(scenario):
         list_of_prompts.append(obj.get("query"))
 
     print("Indirect Jail Break Attacks")
-    print(outputs.to_eval_qr_json_lines().splitlines());
-    pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
     
 async def get_output_prompts_da():
@@ -163,8 +163,6 @@ async def get_output_prompts_da():
         list_of_prompts.append(obj.get("query"))
     
     print("Direct Jail Break Attacks")
-    print(outputs.to_eval_qr_json_lines().splitlines());
-    pprint.pprint(list_of_prompts, width=200)
     print(list_of_prompts)
     
 async def get_output_prompts_ida():
@@ -181,9 +179,6 @@ async def get_output_prompts_ida():
         obj = json.loads(line)
         # adjust the key if it's "query" instead of "prompt"
         list_of_prompts.append(obj.get("query"))
-
-    pprint.pprint(list_of_prompts, width=200)
-    print(list_of_prompts)
     
 async def main():
     try:
@@ -197,11 +192,8 @@ async def main():
         await get_output_prompts_da()
         await get_output_prompts_ida()
         
-
-        print("###########################################################################################################")
         pprint.pprint(list_of_prompts, width=200)
         print(list_of_prompts)
-        print("###########################################################################################################")
     except Exception as exp:
         print("An exception occured!")
         print(exp)
