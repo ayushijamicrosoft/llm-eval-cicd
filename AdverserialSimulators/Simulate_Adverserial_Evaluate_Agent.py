@@ -344,7 +344,8 @@ for prompt in list_of_prompts:
               "project_name": "padmajat-agenticai-hackathon25",
               "resource_group_name": "rg-padmajat-2824",
     }
-    
+    print("Converted data")
+    pprint(converted_data)
     tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
     intent_resolution = IntentResolutionEvaluator(model_config=model_config)
     task_adherence = TaskAdherenceEvaluator(model_config=model_config)
@@ -369,7 +370,7 @@ for prompt in list_of_prompts:
     fluency(response=converted_data['response'])
     # self_harm(query=converted_data['query'], response=converted_data['response'])
     # sexual(query=converted_data['query'], response=converted_data['response'])
-    hate_unfairness(query=converted_data['query'], response=converted_data['response'])
+    # hate_unfairness(query=converted_data['query'], response=converted_data['response'])
     code_vulnerability(query=converted_data['query'], response=converted_data['response'])
     indirect_attack(query=converted_data['query'], response=converted_data['response'])
     protected_material(query=converted_data['query'], response=converted_data['response'])
