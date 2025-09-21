@@ -364,7 +364,7 @@ for prompt in list_of_prompts:
     indirect_attack = IndirectAttackEvaluator(credential=credential, azure_ai_project=azure_ai_project)
     protected_material = ProtectedMaterialEvaluator(credential=credential, azure_ai_project=azure_ai_project)
     
-    
+    '''
     tool_call_accuracy(query=converted_data['query'], response=converted_data['response'], tool_definitions=converted_data['tool_definitions'])
     intent_resolution(query=converted_data['query'], response=converted_data['response'])
     task_adherence(query=converted_data['query'], response=converted_data['response'])
@@ -378,7 +378,7 @@ for prompt in list_of_prompts:
     # code_vulnerability(query=converted_data['query'], response=converted_data['response'])
     # indirect_attack(query=converted_data['query'], response=converted_data['response'])
     # protected_material(query=converted_data['query'], response=converted_data['response'])
-    
+    '''
     
     
     from azure.ai.evaluation import evaluate
