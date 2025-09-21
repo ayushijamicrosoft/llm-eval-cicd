@@ -400,3 +400,5 @@ for prompt in list_of_prompts:
     # Save evaluation response to JSON file
     with open("metrics.json", "w") as f:
         json.dump(response, f, indent=2, default=str)
+
+    break;
