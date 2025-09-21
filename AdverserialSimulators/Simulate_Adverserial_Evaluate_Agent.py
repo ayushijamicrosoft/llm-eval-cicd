@@ -371,7 +371,7 @@ for prompt in list_of_prompts:
     # self_harm(query=converted_data['query'], response=converted_data['response'])
     # sexual(query=converted_data['query'], response=converted_data['response'])
     # hate_unfairness(query=converted_data['query'], response=converted_data['response'])
-    code_vulnerability(query=converted_data['query'], response=converted_data['response'])
+    # code_vulnerability(query=converted_data['query'], response=converted_data['response'])
     indirect_attack(query=converted_data['query'], response=converted_data['response'])
     protected_material(query=converted_data['query'], response=converted_data['response'])
     
