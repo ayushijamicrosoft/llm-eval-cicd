@@ -373,7 +373,7 @@ for prompt in list_of_prompts:
     # hate_unfairness(query=converted_data['query'], response=converted_data['response'])
     # code_vulnerability(query=converted_data['query'], response=converted_data['response'])
     # indirect_attack(query=converted_data['query'], response=converted_data['response'])
-    protected_material(query=converted_data['query'], response=converted_data['response'])
+    # protected_material(query=converted_data['query'], response=converted_data['response'])
     
     
     
