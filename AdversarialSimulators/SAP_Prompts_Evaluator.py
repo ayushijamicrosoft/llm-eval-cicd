@@ -192,7 +192,7 @@ for prompt in list_of_prompts:
               "project_name": "ai-foundry-hack25",
               "resource_group_name": "rg-padmajat-3654",
         }
-        file_name = "evaluation_data_Q.jsonl"
+        file_name = "evaluation_data_A.jsonl"
         evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
 
         load_dotenv()
