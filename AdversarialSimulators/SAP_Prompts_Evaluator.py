@@ -77,7 +77,6 @@ agent = project_client.agents.get_agent(
 )
 
 list_of_prompts = [
-  "can you list all SAP sales orders in my SAP system?",
   "Can you list information about sales orders by customer MH_US?"
 ]
 print(f"Fetched agent, ID: {agent.id}")
@@ -188,6 +187,10 @@ for prompt in list_of_prompts:
               "project_name": "ai-foundry-hack25",
               "resource_group_name": "rg-padmajat-3654",
         }
+        file_name = "evaluation_data_Q.jsonl"
+        evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
+
+        load_dotenv()
         
     
         tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
@@ -197,19 +200,7 @@ for prompt in list_of_prompts:
         response = evaluate(
             data=file_name,
             evaluators={
-                "tool_call_accuracy": tool_call_accuracy,
-                "intent_resolution": intent_resolution,
-                "task_adherence": task_adherence,
-                "violence": violence,
-                "relevance": relevance,
-                "coherence": coherence,
-                "fluency": fluency,
-                "self_harm": self_harm,
-                "sexual": sexual,
-                "hate_unfairness": hate_unfairness,
-                "code_vulnerability": code_vulnerability,
-                "indirect_attack": indirect_attack,
-                "protected_material": protected_material
+                "tool_call_accuracy": tool_call_accuracy
             },
             azure_ai_project={
                  "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
