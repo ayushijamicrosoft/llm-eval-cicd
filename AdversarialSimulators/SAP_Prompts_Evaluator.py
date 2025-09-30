@@ -176,7 +176,55 @@ for prompt in list_of_prompts:
         converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
         print(converted_data)
         print("-------------------------------------------------------------------------------------------------------------------------------------------------------")
+        model_config = AzureOpenAIModelConfiguration(
+            azure_endpoint=openai_endpoint,
+            api_key=openai_key,
+            api_version=api_version,
+            azure_deployment=deployment,
+        )
+        # Needed to use content safety evaluators
+        azure_ai_project={
+             "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+              "project_name": "padmajat-agenticai-hackathon25",
+              "resource_group_name": "rg-padmajat-2824",
+        }
+        )
+    
+        tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
+        
+        tool_call_accuracy(query=converted_data['query'], response=converted_data['response'], tool_definitions=converted_data['tool_definitions'])
+    
+        response = evaluate(
+            data=file_name,
+            evaluators={
+                "tool_call_accuracy": tool_call_accuracy,
+                "intent_resolution": intent_resolution,
+                "task_adherence": task_adherence,
+                "violence": violence,
+                "relevance": relevance,
+                "coherence": coherence,
+                "fluency": fluency,
+                "self_harm": self_harm,
+                "sexual": sexual,
+                "hate_unfairness": hate_unfairness,
+                "code_vulnerability": code_vulnerability,
+                "indirect_attack": indirect_attack,
+                "protected_material": protected_material
+            },
+            azure_ai_project={
+                 "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+                  "project_name": "padmajat-agenticai-hackathon25",
+                  "resource_group_name": "rg-padmajat-2824",
+            }
+        )
+        pprint(f'AI Foundary URL: {response.get("studio_url")}')
+        pprint(response)
+        
+        # Save evaluation response to JSON file
+        with open("metrics.json", "w") as f:
+            json.dump(response, f, indent=2, default=str)
+    
     except Exception as exception:
-        print("exception occured!")
-        print(exception)
-        continue;
+            print("exception occured!")
+            print(exception)
+            continue;
