@@ -77,7 +77,12 @@ agent = project_client.agents.get_agent(
 )
 
 list_of_prompts = [
-  "Can you list information about sales orders by customer MH_US?"
+  "Can you list information about sales orders by customer MH_US?",
+    "Please fetch me the Sales Order details for this  818400",
+    "Get me the delivery order details for this 80020889",  
+    "Get me the payment terms for the PO 4500003714",
+    "Can you update the payment terms to 0002",
+    "Now fetch me the updated Purchase Order Payment terms info"
 ]
 print(f"Fetched agent, ID: {agent.id}")
 print("LIST OF PROMPTS")
