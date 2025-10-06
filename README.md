@@ -27,4 +27,12 @@ There are three main stages:
 5. In Azur AI Studio Evals - you can choose which evals you want to reflect.Additionally, Azure ML studio has those same details as well.
 
 ### List of Files to use. 
+1. To run the end to end flow: **EndtoEndAgentEvaluation.py**
+2. To convert the logs in Azure ML Studio to Azure AI Evals results: **format_output.py**
+3. To run the workflows: **.github/.workflows/**
+
+### PS:
+
+1. The python file runs only for the GitHub Actions, and would not run locally - this is because of a setup on Azure.
+2. Azure Foundry Evals is currently in Preview stage - so there could be more changes, but the idea of the project is to run an overall flow. 
 
