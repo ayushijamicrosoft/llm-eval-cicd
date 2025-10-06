@@ -31,6 +31,14 @@ There are three main stages:
 2. To convert the logs in Azure ML Studio to Azure AI Evals results: **format_output.py**
 3. To run the workflows: **.github/.workflows/**
 
+#### Experimental Files:
+Files present in the Experimental-Files/* folder
+
+1. Check only the format of thread to be passed into the evaluator: **tool-call-accuracy.py**
+2. Pick up all existing threads of agent and pass them into the evaluator (NO DATA SIMULATED): **tool-call-accuracy-automated.py**
+3. Sample tool call functions: **user_functions.py**
+
+
 ### PS:
 
 1. The python file runs only for the GitHub Actions, and would not run locally - this is because of a setup on Azure.
