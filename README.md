@@ -24,12 +24,13 @@ There are three main stages:
 2. Pick up the **instance_results.jsonl** file and copy paste the contents into a **instance_results.json** file. 
 3. Locally, convert this **instance_results.json** file into **converted_data.jsonl** file by running the python file **format_output.py** from this GitHub Repo.
 4. Now, upload this **converted_data.jsonl** file to the Azure AI Foundry > Evaluation > Create New Evaluation.
-5. In Azur AI Studio Evals - you can choose which evals you want to reflect.Additionally, Azure ML studio has those same details as well.
+5. In Azure AI Studio Evals - you can choose which evals you want to reflect.Additionally, Azure ML studio has those same details as well.
 
 ### List of Files to use. 
 1. To run the end to end flow: **EndtoEndAgentEvaluation.py**
 2. To convert the logs in Azure ML Studio to Azure AI Evals results: **format_output.py**
 3. To run the workflows: **.github/.workflows/**
+
 
 #### Experimental Files:
 Files present in the Experimental-Files/* folder
@@ -37,10 +38,12 @@ Files present in the Experimental-Files/* folder
 1. Check only the format of thread to be passed into the evaluator: **tool-call-accuracy.py**
 2. Pick up all existing threads of agent and pass them into the evaluator (NO DATA SIMULATED): **tool-call-accuracy-automated.py**
 3. Sample tool call functions: **user_functions.py**
+4. Generate synthetic data and evaluation with model (NO Agents evaluation involved): **groundedness-evals.py**
+5. Generate syntheetic data and evaluation with model (NO Agents evaluation involved):**content-safety.py**
 
 
 ### PS:
 
 1. The python file runs only for the GitHub Actions, and would not run locally - this is because of a setup on Azure.
-2. Azure Foundry Evals is currently in Preview stage - so there could be more changes, but the idea of the project is to run an overall flow. 
+2. Azure Foundry Evals is currently in Preview stage - so there could be more changes, but the idea of the project is to run an overall flow.
 
