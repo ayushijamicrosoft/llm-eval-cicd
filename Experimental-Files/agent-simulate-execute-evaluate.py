@@ -2,6 +2,11 @@
 Covers some evaluations. 
 For an agent - creates thread of conversation using simulator, and then evaluates. 
 '''
+
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 import os, json
 import pandas as pd
 import time
