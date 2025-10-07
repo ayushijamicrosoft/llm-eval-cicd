@@ -1,4 +1,4 @@
-name: Run All evals python script (Automated yaml)
+name: Run All evaluations For Existing Agent Conversations
 
 on:
   push:
@@ -41,5 +41,5 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Python
-        run: python agent-evaluation-all-evals.py
+        run: python Other-Attempts/agent-evaluation-all-evaluators.py
 
