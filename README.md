@@ -11,6 +11,12 @@ There are three main stages:
 
 ## How to run the repository?
 
+## Initial Setup
+1. Installation of python libraries: **requirements.txt**
+2. Open AI - Key, Subscription, Client ID etc: Repository Secrets - can be updated there.
+3. Workflows results in Github Actions tab
+4. Azure ML Studio resource required for resources.
+   
 ### Workflows
 1. GitHub Actions - are used to run the python files, everytime a change is pushed to the main branch. Refer to the .workflows/ folder for the yml file.
 2. The repository secrets are stored in Github settings > Secrets
@@ -31,16 +37,27 @@ There are three main stages:
 2. To convert the logs in Azure ML Studio to Azure AI Evals results: **format_output.py**
 3. To run the workflows: **.github/.workflows/**
 
-
 #### Experimental Files:
 Files present in the Experimental-Files/* folder
 
 1. Check only the format of thread to be passed into the evaluator: **tool-call-accuracy.py**
 2. Pick up all existing threads of agent and pass them into the evaluator (NO DATA SIMULATED): **tool-call-accuracy-automated.py**
 3. Sample tool call functions: **user_functions.py**
-4. Generate synthetic data and evaluation with model (NO Agents evaluation involved): **groundedness-evals.py**
-5. Generate syntheetic data and evaluation with model (NO Agents evaluation involved):**content-safety.py**
+4. Generate synthetic data and evaluation with model for groundedness (NO Agents evaluation involved): **groundedness-evals.py**
+5. Generate synthetic data and evaluation with model for content safety (NO Agents evaluation involved):**content-safety.py**
+6. 
 
+### Sample formats
+Files present in the Sample-Formats/* folder
+
+1. Format for uploading evaluation to Azure AI foundry: **evaluation_data.jsonl**, **llm-evals.jsonl**
+2. Format for uploading data for groundedness: **grounding.json**
+
+### Other Attempts
+Files present in the Other-Attempts/* folder
+
+1. Evaluate agents on existing conversations: **agent-eval-existing-conversations.py**
+2. Simulate the conversation with agent, and evaluate it (whole flow) - with all the evals: **agent-evaluation-all-evaluators.py**
 
 ### PS:
 
