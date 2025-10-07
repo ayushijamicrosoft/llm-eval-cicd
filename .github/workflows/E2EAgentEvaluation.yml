@@ -1,45 +1,36 @@
+name: Run E2E Agent Evaluation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  run-python:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write   # REQUIRED for OIDC
+      contents: read
+
+    env:
+      # your existing OpenAI envs (provided as repo secrets)
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT_NEW }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY_NEW }}
+      AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION_NEW }}
+      AZURE_OPENAI_CHAT_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_CHAT_DEPLOYMENT_NEW }}
+      # prevent interactive prompts on CI
+      AZURE_IDENTITY_ENABLE_INTERACTIVE: "0"
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Start log
-        run: |
-          echo "Job started at $(date -u)" > output.log
-          echo "Event: ${{ github.event_name }}" | tee -a output.log
-          echo "Ref:   ${{ github.ref }}" | tee -a output.log
-          echo "Repo:  ${{ github.repository }}" | tee -a output.log
-          echo "Is forked PR? ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}" | tee -a output.log
-
-      # TEMP: prove OIDC works even if there are no subscriptions
+      # OIDC login: NO client secret needed
       - name: Azure login (OIDC)
-        id: azlogin
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.OIDC_AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.OIDC_AZURE_TENANT_ID }}
+          client-id: ${{ secrets.OIDC_AZURE_CLIENT_ID }}     # App registration's Application (client) ID
+          tenant-id: ${{ secrets.OIDC_AZURE_TENANT_ID }}     # Directory (tenant) ID
           subscription-id: ${{ secrets.OIDC_AZURE_SUBSCRIPTION_ID }}
-          audience: api://AzureADTokenExchange
-          allow-no-subscriptions: true   # <-- FORCE success for diagnostics
-
-      # FORCE this to run even if login failed earlier
-      - name: Verify Azure context & set default subscription (forced)
-        if: always()
-        run: |
-          set +e
-          echo "---- az account list (table) ----" | tee -a output.log
-          az account list -o table 2>&1 | tee -a output.log
-          COUNT=$(az account list --query 'length(@)' 2>/dev/null)
-          if [ -z "$COUNT" ]; then COUNT=0; fi
-          echo "Visible subscription count: $COUNT" | tee -a output.log
-          if [ "$COUNT" -gt 0 ]; then
-            echo "Setting default subscription..." | tee -a output.log
-            az account set --subscription "${{ secrets.OIDC_AZURE_SUBSCRIPTION_ID }}" 2>&1 | tee -a output.log
-            echo "Active account:" | tee -a output.log
-            az account show -o table 2>&1 | tee -a output.log
-          else
-            echo "::warning::No subs visible to this principal. OIDC works, but RBAC on the subscription is missing. Add a role (e.g., Contributor) to the SP in the portal." | tee -a output.log
-          fi
-          set -e
 
       - uses: actions/setup-python@v5
         with:
@@ -47,13 +38,10 @@
 
       - name: Install dependencies
         run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt 2>&1 | tee -a output.log; else echo "No requirements.txt" | tee -a output.log; fi
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run Python (debug mode)
-        run: |
-          set -o pipefail
-          echo "Running EndToEndAgentEvaluation.py --mode debug" | tee -a output.log
-          python EndToEndAgentEvaluation.py --mode debug 2>&1 | tee -a output.log
+      - name: Run Python
+        run: python EndToEndAgentEvaluation.py 2>&1 | tee output.log
 
       - name: Upload logs
         if: always()
