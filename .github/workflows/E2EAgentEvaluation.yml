@@ -42,7 +42,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Python
-        run: python AdversarialSimulators/Simulate_Adversarial_Evaluate_Agent.py 2>&1 | tee output.log
+        run: python EndToEndAgentEvaluation.py 2>&1 | tee output.log
 
       - name: Upload logs
         if: always()
