@@ -1,3 +1,7 @@
+'''
+Take existing threads for an existing agent - and pass into the evaluator. 
+'''
+
 import os
 from azure.ai.evaluation import evaluate, ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration
 from azure.ai.projects import AIProjectClient
@@ -114,4 +118,3 @@ project_client.evaluation.create_agent_evaluation(
         app_insights_connection_string=app_insights_connection_string,
     )
 )
-

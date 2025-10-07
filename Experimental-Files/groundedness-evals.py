@@ -1,3 +1,6 @@
+'''
+Use specific Groundedness Evaluator after simulating a synthetic conversations.
+'''
 from azure.ai.evaluation import evaluate
 from azure.ai.evaluation import GroundednessEvaluator
 from azure.ai.evaluation.simulator import Simulator

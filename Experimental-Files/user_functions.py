@@ -1,3 +1,6 @@
+'''
+Functions used by tool-call-accuracy.py file. 
+'''
 # pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.

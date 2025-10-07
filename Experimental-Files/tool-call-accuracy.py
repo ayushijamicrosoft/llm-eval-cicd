@@ -1,3 +1,6 @@
+'''
+Check what is the format of data required for evaluation. 
+'''
 import os
 from azure.ai.evaluation import ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration
 from pprint import pprint

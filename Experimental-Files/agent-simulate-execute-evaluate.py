@@ -1,3 +1,7 @@
+'''
+Covers some evaluations. 
+For an agent - creates thread of conversation using simulator, and then evaluates. 
+'''
 import os, json
 import pandas as pd
 import time
@@ -168,4 +172,3 @@ response = evaluate(
 )
 pprint(f'AI Foundary URL: {response.get("studio_url")}')
 pprint(response)
-
