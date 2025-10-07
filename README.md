@@ -9,6 +9,10 @@ There are three main stages:
 2. Execution of multi-turn conversations with prompts to the agent - every conversation is called as "thread"
 3. Convertion of every conversation to the correct format (using AI Agent converter function) for evaluation with different evaluators.
 
+## Main files to run
+1. **EndtoEndAgentEvaluation.py** - for end to end flow
+2. Workflow to run the python file: **E2EAgentEvaluation.yml**
+   
 ## How to run the repository?
 
 ## Initial Setup
@@ -16,7 +20,13 @@ There are three main stages:
 2. Open AI - Key, Subscription, Client ID etc: Repository Secrets - can be updated there.
 3. Workflows results in Github Actions tab
 4. Azure ML Studio resource required for resources.
-   
+
+### Create an entra id app. 
+1. Navigate to the portal, and click on **New registration**.
+2. Navigate to certificate and secrets and in federated credentials -> add credential. Choose github, and main branch
+3. Grant RBAC permissions to this app to the ai foundry resource and mentioned OIDC Subscription.
+
+
 ### Workflows
 1. GitHub Actions - are used to run the python files, everytime a change is pushed to the main branch. Refer to the .workflows/ folder for the yml file.
 2. The repository secrets are stored in Github settings > Secrets
