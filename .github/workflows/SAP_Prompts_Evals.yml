@@ -1,8 +1,9 @@
-name: Run SAP-Simulator-Evaluator (Automated yaml)
+name: Run Simulation-Execution-Evaluation flow for SAP specific prompts
 
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   run-python:
