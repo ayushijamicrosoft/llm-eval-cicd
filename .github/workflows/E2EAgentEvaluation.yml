@@ -1,8 +1,9 @@
-name: Run E2E Agent Evaluation
+name: Run E2E Agent Evals
 
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   run-python:
@@ -41,7 +42,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Python
-        run: python EndToEndAgentEvaluation.py 2>&1 | tee output.log
+        run: python AdversarialSimulators/Simulate_Adversarial_Evaluate_Agent.py 2>&1 | tee output.log
 
       - name: Upload logs
         if: always()
