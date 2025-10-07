@@ -4,6 +4,9 @@ Check what is the format of data required for evaluation.
 import os
 from azure.ai.evaluation import ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration
 from pprint import pprint
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
 model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
