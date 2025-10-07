@@ -1,4 +1,4 @@
-name: Run Tool Call eval python script (Manual inputs)
+name: Basic Tool Call eval python script (Manual inputs)
 
 on:
   push:
