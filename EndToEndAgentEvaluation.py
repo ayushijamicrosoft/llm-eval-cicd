@@ -73,6 +73,9 @@ def example_application_response(query: str, context: str) -> str:
     # Call the model
     completion = client.chat.completions.create(
         model=deployment,
+            ToolOutput,
+        )
+        run = project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
         
         while run.status in ["queued", "in_progress", "requires_action"]:
             time.sleep(1)
