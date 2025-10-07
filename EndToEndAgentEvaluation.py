@@ -197,23 +197,24 @@ async def get_output_prompts_ida():
     print(list_of_prompts)
     
 async def main():
-    try:
-        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_QA)
-        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONVERSATION)
-        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_SUMMARIZATION)
-        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_SEARCH)
-        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_REWRITE)
-        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED)
-        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL)
-        await get_output_prompts_da()
-        await get_output_prompts_ida()
-        from pprint import pprint
-        pprint(list_of_prompts, width=200)
-    except Exception as exp:
-        from pprint import pprint
-        print("An exception occured in creation of prompts!")
-        print(exp)
-        pprint(list_of_prompts, width=200)
+    scenarios = [
+        AdversarialScenario.ADVERSARIAL_QA,
+        AdversarialScenario.ADVERSARIAL_CONVERSATION,
+        AdversarialScenario.ADVERSARIAL_SUMMARIZATION,
+        AdversarialScenario.ADVERSARIAL_SEARCH,
+        AdversarialScenario.ADVERSARIAL_REWRITE,
+        AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED,
+        AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL
+    ]
+
+    for scenario in scenarios:
+        await get_output_prompts_adv(scenario)  # each one isolated
+
+    await get_output_prompts_da()
+    await get_output_prompts_ida()
+
+    print("\n✅ All completed (some may have failed but others continued):")
+    pprint(list_of_prompts, width=200)
 
 asyncio.run(main())
 
