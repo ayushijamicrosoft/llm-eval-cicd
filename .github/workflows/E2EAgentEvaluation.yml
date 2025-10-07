@@ -1,36 +1,95 @@
 name: Run E2E Agent Evaluations
+
 on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to run from"
+        required: true
+        default: "main"
+        type: string
+      run_mode:
+        description: "Evaluation mode"
+        required: true
+        default: "default"
+        type: choice
+        options: [default, debug, fast]
+      allow_no_subs:
+        description: "TEMP: allow login without visible subscriptions (for OIDC testing)"
+        required: true
+        default: "false"
+        type: choice
+        options: ["false", "true"]
 
 jobs:
   run-python:
     runs-on: ubuntu-latest
 
+    # Required for OIDC + checkout
     permissions:
-      id-token: write   # REQUIRED for OIDC
+      id-token: write
       contents: read
 
     env:
-      # your existing OpenAI envs (provided as repo secrets)
       AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT_NEW }}
       AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY_NEW }}
       AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION_NEW }}
       AZURE_OPENAI_CHAT_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_CHAT_DEPLOYMENT_NEW }}
-      # prevent interactive prompts on CI
       AZURE_IDENTITY_ENABLE_INTERACTIVE: "0"
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
 
-      # OIDC login: NO client secret needed
+      # Create log upfront so artifact upload never fails
+      - name: Start log
+        run: |
+          echo "Job started at $(date -u)" > output.log
+          echo "Event: ${{ github.event_name }}" | tee -a output.log
+          echo "Ref:   ${{ github.ref }}" | tee -a output.log
+          echo "Repo:  ${{ github.repository }}" | tee -a output.log
+
+      # Safeguard: don't try Azure login for PRs from forks (no secrets / different trust)
+      - name: Skip login for forked PRs
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
+        run: |
+          echo "::warning::Skipping Azure login on forked PR. Run via workflow_dispatch or same-repo PR." | tee -a output.log
+
+      # OIDC login (SERVICE_PRINCIPAL, no secret). allow-no-subscriptions toggled via input for testing
       - name: Azure login (OIDC)
+        if: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) }}
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.OIDC_AZURE_CLIENT_ID }}     # App registration's Application (client) ID
-          tenant-id: ${{ secrets.OIDC_AZURE_TENANT_ID }}     # Directory (tenant) ID
+          client-id: ${{ secrets.OIDC_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.OIDC_AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.OIDC_AZURE_SUBSCRIPTION_ID }}
+          audience: api://AzureADTokenExchange
+          allow-no-subscriptions: ${{ github.event.inputs.allow_no_subs == 'true' }}
+
+      # Preflight: list subscriptions and set default (clear, early failure if RBAC missing)
+      - name: Verify Azure context & set default subscription
+        if: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) }}
+        run: |
+          echo "Listing subscriptions..." | tee -a output.log
+          az account list -o table | tee -a output.log
+          COUNT=$(az account list --query 'length(@)')
+          echo "Visible subscription count: $COUNT" | tee -a output.log
+
+          if [ "$COUNT" -eq 0 ] && [ "${{ github.event.inputs.allow_no_subs }}" != "true" ]; then
+            echo "::error::No subscriptions visible to this service principal. Add RBAC (e.g., Contributor) on the subscription or set allow_no_subs=true for OIDC-only testing."
+            exit 1
+          fi
+
+          if [ "$COUNT" -gt 0 ]; then
+            echo "Setting default subscription..." | tee -a output.log
+            az account set --subscription "${{ secrets.OIDC_AZURE_SUBSCRIPTION_ID }}"
+            echo "Active account:" | tee -a output.log
+            az account show -o table | tee -a output.log
+          fi
 
       - uses: actions/setup-python@v5
         with:
@@ -38,10 +97,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f requirements.txt ]; then pip install -r requirements.txt 2>&1 | tee -a output.log; else echo "No requirements.txt" | tee -a output.log; fi
 
       - name: Run Python
-        run: python EndToEndAgentEvaluation.py 2>&1 | tee output.log
+        run: |
+          set -o pipefail
+          echo "Running EndToEndAgentEvaluation.py --mode ${{ github.event.inputs.run_mode || 'default' }}" | tee -a output.log
+          python EndToEndAgentEvaluation.py --mode "${{ github.event.inputs.run_mode || 'default' }}" 2>&1 | tee -a output.log
 
       - name: Upload logs
         if: always()
