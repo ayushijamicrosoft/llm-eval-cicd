@@ -1,4 +1,4 @@
-name: Run  Agentic Evaluation using Agent converter
+name: Run  Agentic Evaluation using Agent converter - Existing Conversations
 
 on:
   push:
@@ -41,4 +41,4 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Python
-        run: python agent-evaluation-multi-turn.py
+        run: python Other-Attempts/agent-eval-existing-conversations.py
