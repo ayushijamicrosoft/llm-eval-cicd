@@ -148,7 +148,7 @@ async def get_output_prompts_adv(scenario):
             obj = json.loads(line)
             # adjust the key if it's "query" instead of "prompt"
             list_of_prompts.append(obj.get("query"))
-    except:
+    except Exception as expp:
         print("Exception occurred");
         print(expp)
     
