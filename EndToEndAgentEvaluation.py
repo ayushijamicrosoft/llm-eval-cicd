@@ -117,66 +117,82 @@ list_of_prompts = []
 import asyncio
 
 async def get_output_prompts_adv(scenario):
-    outputs = await custom_simulator(
-        scenario=scenario, max_simulation_results=10,
-        target=custom_simulator_callback
-    )
-
-    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
-    json_lines = outputs.to_eval_qr_json_lines().splitlines()
-
-    for line in json_lines:
-        obj = json.loads(line)
-        # adjust the key if it's "query" instead of "prompt"
-        list_of_prompts.append(obj.get("query"))
+    try:
+        outputs = await custom_simulator(
+            scenario=scenario, max_simulation_results=10,
+            target=custom_simulator_callback
+        )
+    
+        # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+        json_lines = outputs.to_eval_qr_json_lines().splitlines()
+    
+        for line in json_lines:
+            obj = json.loads(line)
+            # adjust the key if it's "query" instead of "prompt"
+            list_of_prompts.append(obj.get("query"))
+    except Exception as expp:
+        print("Exception occured")
+        print(expp)
 
 async def get_output_prompts_adv(scenario):
-    outputs = await custom_simulator(
-        scenario=scenario, max_simulation_results=10,
-        target=custom_simulator_callback
-    )
-
-    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
-    json_lines = outputs.to_eval_qr_json_lines().splitlines()
-
-    for line in json_lines:
-        obj = json.loads(line)
-        # adjust the key if it's "query" instead of "prompt"
-        list_of_prompts.append(obj.get("query"))
+    try:
+        outputs = await custom_simulator(
+            scenario=scenario, max_simulation_results=10,
+            target=custom_simulator_callback
+        )
+    
+        # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+        json_lines = outputs.to_eval_qr_json_lines().splitlines()
+    
+        for line in json_lines:
+            obj = json.loads(line)
+            # adjust the key if it's "query" instead of "prompt"
+            list_of_prompts.append(obj.get("query"))
+    except:
+        print("Exception occurred");
+        print(expp)
     
 async def get_output_prompts_da():
-    outputs = await direct_attack_simulator(
-        scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION, max_simulation_results=10,
-        target=custom_simulator_callback
-    )
-
-    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
-    json_lines = outputs.to_eval_qr_json_lines().splitlines()
-
-    for line in json_lines:
-        obj = json.loads(line)
-        
-        # adjust the key if it's "query" instead of "prompt"
-        list_of_prompts.append(obj.get("query"))
     try:
-        print("Direct Jail Break Attacks")
-    except Exception as e:
-        print(e)
+        outputs = await direct_attack_simulator(
+            scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION, max_simulation_results=10,
+            target=custom_simulator_callback
+        )
+    
+        # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+        json_lines = outputs.to_eval_qr_json_lines().splitlines()
+    
+        for line in json_lines:
+            obj = json.loads(line)
+            
+            # adjust the key if it's "query" instead of "prompt"
+            list_of_prompts.append(obj.get("query"))
+        try:
+            print("Direct Jail Break Attacks")
+        except Exception as e:
+            print(e)
+    except Exception as expp:
+        print("Exception in da prompt")
+        print(expp)
     
 async def get_output_prompts_ida():
-    outputs = await indirect_attack_simulator(
-        max_simulation_results=10,
-        target=custom_simulator_callback,
-        max_conversation_turns = 3
-    )
-
-    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
-    json_lines = outputs.to_eval_qr_json_lines().splitlines()
-
-    for line in json_lines:
-        obj = json.loads(line)
-        # adjust the key if it's "query" instead of "prompt"
-        list_of_prompts.append(obj.get("query"))
+    try:
+        outputs = await indirect_attack_simulator(
+            max_simulation_results=10,
+            target=custom_simulator_callback,
+            max_conversation_turns = 3
+        )
+    
+        # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+        json_lines = outputs.to_eval_qr_json_lines().splitlines()
+    
+        for line in json_lines:
+            obj = json.loads(line)
+            # adjust the key if it's "query" instead of "prompt"
+            list_of_prompts.append(obj.get("query"))
+    except Exception as expp:
+        print("Exception!")
+        print(expp)
     
     print(list_of_prompts)
     
