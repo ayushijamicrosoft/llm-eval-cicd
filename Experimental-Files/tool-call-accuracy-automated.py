@@ -1,7 +1,9 @@
 '''
 Take existing threads for an existing agent - and pass into the evaluator. 
 '''
-
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import os
 from azure.ai.evaluation import evaluate, ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration
 from azure.ai.projects import AIProjectClient
