@@ -72,8 +72,183 @@ def example_application_response(query: str, context: str) -> str:
     ]
     # Call the model
     completion = client.chat.completions.create(
+        model=deployment,
+        messages=messages,
+        max_completion_tokens=10000
+    )
+    message = completion.to_dict()["choices"][0]["message"]
+    if isinstance(message, dict):
+        message = message["content"]
+    return message
+
+'''
+Calls the agent, formats an Open-AI style message and appends it back to the conversation,
+hence running the attacks end to end. 
+'''
+async def custom_simulator_callback(
+    messages: List[Dict],
+    stream: bool = False,
+    session_state: Optional[str] = None,
+    context: Optional[Dict[str, Any]] = None,
+) -> dict:
+    messages_list = messages["messages"]
+    # get last message
+    latest_message = messages_list[-1]
+    application_input = latest_message["content"]
+    context = latest_message.get("context", None)
+    # call your endpoint or ai application here
+    response = example_application_response(query=application_input, context=context)
+    # we are formatting the response to follow the openAI chat protocol format
+    message = {
+        "content": response,
+        "role": "assistant",
+        "context": context,
+    }
+    messages["messages"].append(message)
+    return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
+  
+credential = DefaultAzureCredential()
+custom_simulator =  AdversarialSimulator(credential=DefaultAzureCredential(), azure_ai_project=azure_ai_project)
+direct_attack_simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
+indirect_attack_simulator=IndirectAttackSimulator(azure_ai_project=azure_ai_project, credential=credential)
+
+global list_of_prompts;
+list_of_prompts = []
+import asyncio
+
+async def get_output_prompts_adv(scenario):
+    outputs = await custom_simulator(
+        scenario=scenario, max_simulation_results=10,
+        target=custom_simulator_callback
+    )
+
+    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+    json_lines = outputs.to_eval_qr_json_lines().splitlines()
+
+    for line in json_lines:
+        obj = json.loads(line)
+        # adjust the key if it's "query" instead of "prompt"
+        list_of_prompts.append(obj.get("query"))
+
+async def get_output_prompts_adv(scenario):
+    outputs = await custom_simulator(
+        scenario=scenario, max_simulation_results=10,
+        target=custom_simulator_callback
+    )
+
+    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+    json_lines = outputs.to_eval_qr_json_lines().splitlines()
+
+    for line in json_lines:
+        obj = json.loads(line)
+        # adjust the key if it's "query" instead of "prompt"
+        list_of_prompts.append(obj.get("query"))
+    
+async def get_output_prompts_da():
+    outputs = await direct_attack_simulator(
+        scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION, max_simulation_results=10,
+        target=custom_simulator_callback
+    )
+
+    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+    json_lines = outputs.to_eval_qr_json_lines().splitlines()
+
+    for line in json_lines:
+        obj = json.loads(line)
+        
+        # adjust the key if it's "query" instead of "prompt"
+        list_of_prompts.append(obj.get("query"))
+    try:
+        print("Direct Jail Break Attacks")
+    except Exception as e:
+        print(e)
+    
+async def get_output_prompts_ida():
+    outputs = await indirect_attack_simulator(
+        max_simulation_results=10,
+        target=custom_simulator_callback,
+        max_conversation_turns = 3
+    )
+
+    # assuming outputs.to_eval_qr_json_lines() returns a str with multiple JSON objects separated by newlines
+    json_lines = outputs.to_eval_qr_json_lines().splitlines()
+
+    for line in json_lines:
+        obj = json.loads(line)
+        # adjust the key if it's "query" instead of "prompt"
+        list_of_prompts.append(obj.get("query"))
+    
+    print(list_of_prompts)
+    
+async def main():
+    try:
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_QA)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONVERSATION)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_SUMMARIZATION)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_SEARCH)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_REWRITE)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED)
+        await get_output_prompts_adv(AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL)
+        await get_output_prompts_da()
+        await get_output_prompts_ida()
+        from pprint import pprint
+        pprint(list_of_prompts, width=200)
+    except Exception as exp:
+        from pprint import pprint
+        print("An exception occured in creation of prompts!")
+        print(exp)
+        pprint(list_of_prompts, width=200)
+
+asyncio.run(main())
+
+
+load_dotenv()
+
+from azure.ai.projects import __version__ as projects_version
+from packaging.version import Version
+# some dependencies have been updated with breaking changes -- indicates whether to use updated models and APIs or not
+updated_agents = Version(projects_version) > Version("1.0.0b10") or projects_version.startswith("1.0.0a")
+
+credential=DefaultAzureCredential()
+
+from azure.ai.agents.models import FunctionTool, ToolSet
+project_client = AIProjectClient(
+    endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+    credential=DefaultAzureCredential()
+)
+
+agent = project_client.agents.get_agent(
+    agent_id = "asst_Un6Sw51vsuhlOFjVrW6ksO1D"
+)
+
+print(f"Fetched agent, ID: {agent.id}")
+print("LIST OF PROMPTS")
+print(list_of_prompts)
+count = 0 
+for prompt in list_of_prompts:
+    try:
+        count += 1; 
+        thread = project_client.agents.threads.create()
+        print(f"Created thread, ID: {thread.id}")
+        
+        # Create message to thread
+        
+        MESSAGE = prompt
+        
+        message = project_client.agents.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content=MESSAGE,
+        )
+            
+        print(f"Created message, ID: {message.id}")
+        
+        from azure.ai.agents.models import (
+            FunctionTool,
+            ListSortOrder,
+            RequiredFunctionToolCall,
+            SubmitToolOutputsAction,
             ToolOutput,
-         model=deployment,
         )
         run = project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
         
