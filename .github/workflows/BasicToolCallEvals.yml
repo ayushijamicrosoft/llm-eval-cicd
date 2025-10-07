@@ -41,4 +41,4 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Python
-        run: python tool-call-accuracy.py
+        run: python Experimental-Files/tool-call-accuracy.py
