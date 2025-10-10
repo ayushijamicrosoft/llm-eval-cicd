@@ -1,8 +1,7 @@
 name: Prompt Simulation
 
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   run-python:
