@@ -1,20 +1,44 @@
-# project details
-azure_openai_api_version = "<your-api-version>"
-azure_openai_endpoint = "<your-endpoint>"
-azure_openai_deployment = "gpt-4o-mini"  # replace with your deployment name, if different
-
-# Optionally set the azure_ai_project to upload the evaluation results to Azure AI Studio.
-azure_ai_project = {
-    "subscription_id": "<your-subscription-id>",
-    "resource_group": "<your-resource-group>",
-    "workspace_name": "<your-workspace-name>",
-}
-
+from azure.ai.evaluation import evaluate
+from azure.ai.evaluation import GroundednessEvaluator
+from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario, DirectAttackSimulator, IndirectAttackSimulator
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from azure.ai.evaluation.simulator import Simulator
+from typing import Any, Dict, List, Optional
+import json
+from pathlib import Path
 import os
+from openai import AzureOpenAI
+import importlib.resources as pkg_resources
+from dotenv import load_dotenv
+import os, json
+import pandas as pd
+import time
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+from dotenv import load_dotenv
+import pprint
+from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConfiguration, IntentResolutionEvaluator, TaskAdherenceEvaluator,RelevanceEvaluator, CoherenceEvaluator, FluencyEvaluator, ViolenceEvaluator, SelfHarmEvaluator, SexualEvaluator, HateUnfairnessEvaluator, CodeVulnerabilityEvaluator, IndirectAttackEvaluator, ProtectedMaterialEvaluator
+from pprint import pprint
 
-os.environ["AZURE_OPENAI_ENDPOINT"] = azure_openai_endpoint
-os.environ["AZURE_OPENAI_DEPLOYMENT"] = azure_openai_deployment
-os.environ["AZURE_OPENAI_API_VERSION"] = azure_openai_api_version
+
+# Initialize the environment variables for Azure OpenAI and the AI project details
+openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
+model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+
+openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
+api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
+
+os.environ["AZURE_OPENAI_ENDPOINT"] = openai_endpoint
+os.environ["AZURE_DEPLOYMENT_NAME"] = deployment
+os.environ["AZURE_API_VERSION"] = api_version
+os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
+
+azure_ai_project = {
+    "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+    "project_name": "padmajat-agenticai-hackathon25",
+    "resource_group_name": "rg-padmajat-2824",
+}
 
 import json
 from pathlib import Path
@@ -184,3 +208,5 @@ eval_output = evaluate(
     azure_ai_project=azure_ai_project,  # optional to store the evaluation results in Azure AI Studio
     output_path="./myevalresults.json",  # optional to store the evaluation results in a file
 )
+
+pprint(eval_output)
