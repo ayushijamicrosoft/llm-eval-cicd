@@ -68,7 +68,7 @@ credential=DefaultAzureCredential()
 
 from azure.ai.agents.models import FunctionTool, ToolSet
 project_client = AIProjectClient(
-    endpoint="https://ai-foundry-hack25.services.ai.azure.com/api/projects/AIFoundryHack25",
+    endpoint="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject",
     credential=DefaultAzureCredential()
 )
 
