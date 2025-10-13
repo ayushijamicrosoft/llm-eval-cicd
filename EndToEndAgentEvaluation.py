@@ -29,13 +29,14 @@ import yaml
 file_suffix = str(uuid.uuid4().hex)
 '''
 Code for incorporating key vault secrets.
+'''
 import os
 from typing import Optional
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 
 # e.g. "https://my-keyvault.vault.azure.net/"
-VAULT_URL = "https://<your-key-vault-name>.vault.azure.net/"
+VAULT_URL = "https://eval-agent-kv.vault.azure.net/"
 
 _credential = DefaultAzureCredential(exclude_interactive_browser_credential=True)
 _secret_client = SecretClient(vault_url=VAULT_URL, credential=_credential)
@@ -60,7 +61,7 @@ load_env_from_keyvault({
     # Optional: storage secrets if you use keys/conn-strings
     # "AZURE_STORAGE_CONNECTION_STRING": "storage-connstring",
 })
-'''
+
 def load_config(path: str) -> dict:
     if not path:
         return {}
