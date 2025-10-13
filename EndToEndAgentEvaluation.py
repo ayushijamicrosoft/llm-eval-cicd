@@ -91,7 +91,7 @@ os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 azure_ai_project = {
     "subscription_id": config["project"]["subscription_id"],
     "project_name": config["project"]["project_name"],
-    "resource_group_name": config["project"]["resource_group"],
+    "resource_group_name": config["project"]["resource_group_name"],
 }
 
 credential=DefaultAzureCredential()
