@@ -481,6 +481,11 @@ for prompt in list_of_prompts:
         response = evaluate(
             data=file_name,
             evaluators=active_evaluators,
+            azure_ai_project={
+                 "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+            "project_name": "shayakproject",
+            "resource_group_name": "shayak-test-rg",
+            }
         )
         
         pprint(list_of_prompts, width=200)
