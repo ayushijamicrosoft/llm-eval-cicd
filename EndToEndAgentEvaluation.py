@@ -169,6 +169,7 @@ indirect_attack_simulator=IndirectAttackSimulator(azure_ai_project=azure_ai_proj
 
 global list_of_prompts;
 list_of_prompts = []
+
 import asyncio
 
 async def get_output_prompts_adv(scenario):
@@ -299,6 +300,15 @@ agent = project_client.agents.get_agent(
 print(f"Fetched agent, ID: {agent.id}")
 print("LIST OF PROMPTS")
 print(list_of_prompts)
+custom_prompts = config.get("custom_prompts", [])
+print("List of custom prompts passed")
+print(custom_prompts)
+for prompt in custom_prompts:
+    list_of_prompts.append(prompt)
+
+print("FINAL LIST OF PROMPTS")
+print(list_of_prompts)
+
 count = 0 
 for prompt in list_of_prompts:
     try:
