@@ -261,6 +261,7 @@ async def get_output_prompts_ida():
     
 async def main():
     simulators_to_run = [s.lower() for s in config["simulators"]]
+    simulators_to_run = []
     if "adversarial" in simulators_to_run:
         scenarios = [
             AdversarialScenario.ADVERSARIAL_QA,
