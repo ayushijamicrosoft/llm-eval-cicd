@@ -311,7 +311,7 @@ project_client = AIProjectClient(
 )
 
 agent = project_client.agents.get_agent(
-    agent_id = "asst_Un6Sw51vsuhlOFjVrW6ksO1D"
+    agent_id = "asst_40jxCEVxQniq4Pr7lDxTxeYu"
 )
 
 print(f"Fetched agent, ID: {agent.id}")
