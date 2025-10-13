@@ -125,7 +125,7 @@ def example_application_response(query: str, context: str) -> str:
 
     # Get a client handle for the AOAI model
     client = AzureOpenAI(
-        azure_endpoint=endpoint,
+        azure_endpoint=openai_endpoint,
         api_version=api_version,
         api_key=openai_key
     )
@@ -524,6 +524,8 @@ for prompt in list_of_prompts:
         # Save evaluation response to JSON file
         with open("metrics.json", "w") as f:
             json.dump(response, f, indent=2, default=str)
+
+        upload_to_blob(container_name="eval-results-0", file_paths=["metrics.json"])
     
     except Exception as exception:
         print("exception occured!")
