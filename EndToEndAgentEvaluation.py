@@ -20,13 +20,68 @@ import pprint
 from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConfiguration, IntentResolutionEvaluator, TaskAdherenceEvaluator,RelevanceEvaluator, CoherenceEvaluator, FluencyEvaluator, ViolenceEvaluator, SelfHarmEvaluator, SexualEvaluator, HateUnfairnessEvaluator, CodeVulnerabilityEvaluator, IndirectAttackEvaluator, ProtectedMaterialEvaluator
 from pprint import pprint
 
-# Initialize the environment variables for Azure OpenAI and the AI project details
-openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
-model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
-deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
 
-openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
-api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
+import argparse
+import json
+import yaml
+
+def load_config(path: str) -> dict:
+    if not path:
+        return {}
+    if not os.path.exists(path):
+        print(f"⚠️ Config file '{path}' not found. Using defaults.")
+        return {}
+    with open(path, "r") as f:
+        if path.endswith(".yaml") or path.endswith(".yml"):
+            return yaml.safe_load(f) or {}
+        return json.load(f) or {}
+
+def merge_config(defaults: dict, overrides: dict) -> dict:
+    """Recursively merge user config over defaults."""
+    for k, v in overrides.items():
+        if isinstance(v, dict) and k in defaults:
+            defaults[k] = merge_config(defaults[k], v)
+        else:
+            defaults[k] = v
+    return defaults
+
+# CLI argument for config
+parser = argparse.ArgumentParser(description="Run E2E Agent Evaluation with optional config")
+parser.add_argument("--config", type=str, default=None, help="Path to config JSON/YAML file")
+args = parser.parse_args()
+
+# --- Load defaults from environment / hardcoded ---
+defaults = {
+    "project": {
+        "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+        "project_name": "padmajat-agenticai-hackathon25",
+        "resource_group": "rg-padmajat-2824"
+    },
+    "openai": {
+        "endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+        "deployment": os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT"),
+        "api_key": os.environ.get("AZURE_OPENAI_API_KEY"),
+        "api_version": os.environ.get("AZURE_OPENAI_API_VERSION")
+    },
+    "simulators": ["adversarial", "direct", "indirect"],
+    "evals": [
+        "tool_call_accuracy", "intent_resolution", "task_adherence",
+        "violence", "relevance", "coherence", "fluency", "self_harm",
+        "sexual", "hate_unfairness", "code_vulnerability", "indirect_attack", "protected_material"
+    ],
+    "custom_prompts": []
+}
+
+# --- Merge user config ---
+user_config = load_config(args.config)
+config = merge_config(defaults, user_config)
+
+
+openai_endpoint = config["openai"]["endpoint"]
+deployment = config["openai"]["deployment"]
+model_name = config["openai"]["deployment"]
+openai_key = config["openai"]["api_key"]
+api_version = config["openai"]["api_version"]
 
 os.environ["AZURE_OPENAI_ENDPOINT"] = openai_endpoint
 os.environ["AZURE_DEPLOYMENT_NAME"] = deployment
@@ -34,9 +89,9 @@ os.environ["AZURE_API_VERSION"] = api_version
 os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 
 azure_ai_project = {
-    "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
-    "project_name": "padmajat-agenticai-hackathon25",
-    "resource_group_name": "rg-padmajat-2824",
+    "subscription_id": config["project"]["subscription_id"],
+    "project_name": config["project"]["project_name"],
+    "resource_group_name": config["project"]["resource_group"],
 }
 
 credential=DefaultAzureCredential()
@@ -197,21 +252,24 @@ async def get_output_prompts_ida():
     print(list_of_prompts)
     
 async def main():
-    scenarios = [
-        AdversarialScenario.ADVERSARIAL_QA,
-        AdversarialScenario.ADVERSARIAL_CONVERSATION,
-        AdversarialScenario.ADVERSARIAL_SUMMARIZATION,
-        AdversarialScenario.ADVERSARIAL_SEARCH,
-        AdversarialScenario.ADVERSARIAL_REWRITE,
-        AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED,
-        AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL
-    ]
+    simulators_to_run = [s.lower() for s in config["simulators"]]
+    if "adversarial" in simulators_to_run:
+        scenarios = [
+            AdversarialScenario.ADVERSARIAL_QA,
+            AdversarialScenario.ADVERSARIAL_CONVERSATION,
+            AdversarialScenario.ADVERSARIAL_SUMMARIZATION,
+            AdversarialScenario.ADVERSARIAL_SEARCH,
+            AdversarialScenario.ADVERSARIAL_REWRITE,
+            AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED,
+            AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL
+        ]
 
-    for scenario in scenarios:
-        await get_output_prompts_adv(scenario)  # each one isolated
-
-    await get_output_prompts_da()
-    await get_output_prompts_ida()
+        for scenario in scenarios:
+            await get_output_prompts_adv(scenario)  # each one isolated
+    if "direct" in simulators_to_run:
+        await get_output_prompts_da()
+    if "indirect" in simulators_to_run:
+        await get_output_prompts_ida()
 
     print("\n✅ All completed (some may have failed but others continued):")
     pprint(list_of_prompts, width=200)
@@ -353,64 +411,35 @@ for prompt in list_of_prompts:
                   "project_name": "padmajat-agenticai-hackathon25",
                   "resource_group_name": "rg-padmajat-2824",
         }
-        
-        tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
-        intent_resolution = IntentResolutionEvaluator(model_config=model_config)
-        task_adherence = TaskAdherenceEvaluator(model_config=model_config)
-        relevance = RelevanceEvaluator(model_config=model_config)
-        coherence = CoherenceEvaluator(model_config=model_config)
-        fluency = FluencyEvaluator(model_config=model_config)
-        violence = ViolenceEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-        self_harm = SelfHarmEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-        sexual = SexualEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-        hate_unfairness= HateUnfairnessEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-        code_vulnerability = CodeVulnerabilityEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-        indirect_attack = IndirectAttackEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-        protected_material = ProtectedMaterialEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-        
-        
-        tool_call_accuracy(query=converted_data['query'], response=converted_data['response'], tool_definitions=converted_data['tool_definitions'])
-        intent_resolution(query=converted_data['query'], response=converted_data['response'])
-        task_adherence(query=converted_data['query'], response=converted_data['response'])
-        violence(query=converted_data['query'], response=converted_data['response'])
-        relevance(query=converted_data['query'], response=converted_data['response'])
-        coherence(query=converted_data['query'], response=converted_data['response'])
-        fluency(response=converted_data['response'])
-        self_harm(query=converted_data['query'], response=converted_data['response'])
-        sexual(query=converted_data['query'], response=converted_data['response'])
-        hate_unfairness(query=converted_data['query'], response=converted_data['response'])
-        code_vulnerability(query=converted_data['query'], response=converted_data['response'])
-        indirect_attack(query=converted_data['query'], response=converted_data['response'])
-        protected_material(query=converted_data['query'], response=converted_data['response'])
-        
-        
-        from azure.ai.evaluation import evaluate
-        
+
+        evaluator_map = {
+            "tool_call_accuracy": tool_call_accuracy,
+            "intent_resolution": intent_resolution,
+            "task_adherence": task_adherence,
+            "violence": violence,
+            "relevance": relevance,
+            "coherence": coherence,
+            "fluency": fluency,
+            "self_harm": self_harm,
+            "sexual": sexual,
+            "hate_unfairness": hate_unfairness,
+            "code_vulnerability": code_vulnerability,
+            "indirect_attack": indirect_attack,
+            "protected_material": protected_material,
+        }
+
+        for name, fn in evaluator_map.items():
+            if name in config["evals"]:
+                fn(query=converted_data['query'], response=converted_data['response'])
+
+        active_evaluators = {k: v for k, v in evaluator_map.items() if k in config["evals"]}
+
         response = evaluate(
             data=file_name,
-            evaluators={
-                "tool_call_accuracy": tool_call_accuracy,
-                "intent_resolution": intent_resolution,
-                "task_adherence": task_adherence,
-                "violence": violence,
-                "relevance": relevance,
-                "coherence": coherence,
-                "fluency": fluency,
-                "self_harm": self_harm,
-                "sexual": sexual,
-                "hate_unfairness": hate_unfairness,
-                "code_vulnerability": code_vulnerability,
-                "indirect_attack": indirect_attack,
-               "protected_material": protected_material
-            },
-            azure_ai_project={
-                "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
-                  "project_name": "padmajat-agenticai-hackathon25",
-                  "resource_group_name": "rg-padmajat-2824",
-            }
+            evaluators=active_evaluators,
+            azure_ai_project=azure_ai_project
         )
-        from pprint import pprint
-    
+        
         pprint(list_of_prompts, width=200)
         pprint(f'Azure ML Studio URL: {response.get("studio_url")}')
         pprint(response)
