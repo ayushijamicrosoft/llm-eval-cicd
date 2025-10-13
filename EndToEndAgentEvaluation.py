@@ -111,7 +111,7 @@ defaults = {
         "violence", "relevance", "coherence", "fluency", "self_harm",
         "sexual", "hate_unfairness", "code_vulnerability", "indirect_attack", "protected_material"
     ],
-    "key_vault_uri": ""
+    "key_vault_uri": "",
     "custom_prompts": []
 }
 
