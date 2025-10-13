@@ -50,7 +50,14 @@ def load_env_from_keyvault(mapping: dict[str, str]) -> None:
     for env_var, secret_name in mapping.items():
         value = get_secret(secret_name)
         os.environ[env_var] = value
-
+load_env_from_keyvault({
+    "AZURE_OPENAI_ENDPOINT":        "az-openai-endpoint",
+    "AZURE_OPENAI_API_KEY":         "az-openai-api-key",
+    "AZURE_OPENAI_API_VERSION":     "az-openai-api-version",
+    "AZURE_OPENAI_CHAT_DEPLOYMENT": "az-openai-deploy",
+    # Optional: storage secrets if you use keys/conn-strings
+    # "AZURE_STORAGE_CONNECTION_STRING": "storage-connstring",
+})
 '''
 def load_config(path: str) -> dict:
     if not path:
@@ -90,6 +97,7 @@ print(model_name)
 print(deployment)
 print(api_version)
 print(openai_key)
+
 # --- Load defaults from environment / hardcoded ---
 defaults = {
     "project": {
@@ -103,6 +111,7 @@ defaults = {
         "violence", "relevance", "coherence", "fluency", "self_harm",
         "sexual", "hate_unfairness", "code_vulnerability", "indirect_attack", "protected_material"
     ],
+    "key_vault_uri": ""
     "custom_prompts": []
 }
 
