@@ -52,11 +52,11 @@ args = parser.parse_args()
 
 # --- Load defaults from environment / hardcoded ---
 defaults = {
-    "project": {
-        "subscription_id": "40449e6d-a5d2-40f1-a151-0b76f21a48c0",
-        "project_name": "ai-foundry-hack25",
-        "resource_group_name": "rg-padmajat-3654",
-    },
+    project = {
+    "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+    "project_name": "shayakproject",
+    "resource_group_name": "shayak-test-rg",
+},
     "openai": {
         "endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
         "deployment": os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT"),
@@ -169,7 +169,7 @@ async def custom_simulator_callback(
 credential = DefaultAzureCredential()
 token = credential.get_token("https://management.azure.com/.default")
 print("Token tenant:", token.token.split(".")[1])  # base64 decode if needed
-print("Client ID:", os.getenv("AZURE_CLIENT_ID"))
+
 custom_simulator =  AdversarialSimulator(credential=DefaultAzureCredential(), azure_ai_project=azure_ai_project)
 direct_attack_simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
 indirect_attack_simulator=IndirectAttackSimulator(azure_ai_project=azure_ai_project, credential=credential)
@@ -296,7 +296,7 @@ credential=DefaultAzureCredential()
 
 from azure.ai.agents.models import FunctionTool, ToolSet
 project_client = AIProjectClient(
-    endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+    endpoint="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject",
     credential=DefaultAzureCredential()
 )
 
@@ -438,11 +438,11 @@ for prompt in list_of_prompts:
             azure_deployment=deployment,
         )
         # Needed to use content safety evaluators
-        azure_ai_project={
-            "subscription_id": "40449e6d-a5d2-40f1-a151-0b76f21a48c0",
-            "project_name": "ai-foundry-hack25",
-            "resource_group_name": "rg-padmajat-3654",
-        }
+        azure_ai_project = {
+            "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+            "project_name": "shayakproject",
+            "resource_group_name": "shayak-test-rg",
+        },
 
         evaluator_map = {
             "tool_call_accuracy": tool_call_accuracy,
