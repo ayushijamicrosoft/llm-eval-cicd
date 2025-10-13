@@ -52,7 +52,7 @@ args = parser.parse_args()
 
 # --- Load defaults from environment / hardcoded ---
 defaults = {
-    project = {
+    project: {
     "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
     "project_name": "shayakproject",
     "resource_group_name": "shayak-test-rg",
