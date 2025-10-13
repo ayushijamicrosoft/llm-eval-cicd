@@ -54,12 +54,13 @@ openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
 model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
 deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
 
+openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
+api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
+
+
 print(openai_endpoint)
 print(model_name)
 print(deployment)
-
-openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
-api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
 
 # --- Load defaults from environment / hardcoded ---
 defaults = {
@@ -68,12 +69,6 @@ defaults = {
     "project_name": "shayakproject",
     "resource_group_name": "shayak-test-rg",
 },
-    "openai": {
-        "endpoint": openai_endpoint,
-        "deployment": model_name,
-        "api_key": openai_key,
-        "api_version": api_version
-    },
     "simulators": ["adversarial", "direct", "indirect"],
     "evals": [
         "tool_call_accuracy", "intent_resolution", "task_adherence",
@@ -86,13 +81,6 @@ defaults = {
 # --- Merge user config ---
 user_config = load_config(args.config)
 config = merge_config(defaults, user_config)
-
-
-openai_endpoint = config["openai"]["endpoint"]
-deployment = config["openai"]["deployment"]
-model_name = config["openai"]["deployment"]
-openai_key = config["openai"]["api_key"]
-api_version = config["openai"]["api_version"]
 
 os.environ["AZURE_OPENAI_ENDPOINT"] = openai_endpoint
 os.environ["AZURE_DEPLOYMENT_NAME"] = deployment
