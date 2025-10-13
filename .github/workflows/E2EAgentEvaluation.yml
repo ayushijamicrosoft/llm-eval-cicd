@@ -1,8 +1,6 @@
 name: Run E2E Agent Evals
 
 on:
-  push:
-  pull_request:
   workflow_dispatch:
     inputs:
         config_file:
@@ -55,7 +53,7 @@ jobs:
       - name: Run Python
         run: |
           echo "🧠 Using config file: ${{ github.event.inputs.config_file }}"
-           python EndToEndAgentEvaluation.py \
+          python EndToEndAgentEvaluation.py \
           --config "configs/${{ github.event.inputs.config_file }}" \
           2>&1 | tee output.log
 
