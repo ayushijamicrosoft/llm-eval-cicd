@@ -94,6 +94,10 @@ azure_ai_project = {
     "resource_group_name": config["project"]["resource_group_name"],
 }
 
+print("subscription_id", config["project"]["subscription_id"])
+print("project_name", config["project"]["project_name"])
+print("resource_group_name": config["project"]["resource_group_name"])
+
 credential=DefaultAzureCredential()
 client = AzureOpenAI(
     api_version=api_version,
