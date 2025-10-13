@@ -9,11 +9,18 @@ There are three main stages:
 2. Execution of multi-turn conversations with prompts to the agent - every conversation is called as "thread"
 3. Convertion of every conversation to the correct format (using AI Agent converter function) for evaluation with different evaluators.
 
+
 ## Main files to run
 1. **EndtoEndAgentEvaluation.py** - for end to end flow
 2. Workflow to run the python file: **E2EAgentEvaluation.yml**
    
 ## How to run the repository?
+
+## Prerequisites (Highly Important ‼️‼️‼️)
+
+1. Creation of Azure ML Studio with same name as your AI Foundry project in same RG is essential!
+2. The client id which is being used (in repo secrets) should have "Contributor" permissions to your Azure ML Studio workspace and AI foundry project.Additionally, at least Azure Storage Blob Contributor permissions to the storage account. .
+3. Check the region of the project - some simulators and evaluators may or may not be supported in that region. 
 
 ## Initial Setup
 1. Installation of python libraries: **requirements.txt**
