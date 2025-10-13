@@ -25,6 +25,33 @@ import argparse
 import json
 import yaml
 
+'''
+Code for incorporating key vault secrets.
+import os
+from typing import Optional
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
+
+# e.g. "https://my-keyvault.vault.azure.net/"
+VAULT_URL = "https://<your-key-vault-name>.vault.azure.net/"
+
+_credential = DefaultAzureCredential(exclude_interactive_browser_credential=True)
+_secret_client = SecretClient(vault_url=VAULT_URL, credential=_credential)
+
+def get_secret(name: str, *, version: Optional[str] = None) -> str:
+    """Return a secret value from Azure Key Vault."""
+    return _secret_client.get_secret(name, version=version).value
+
+def load_env_from_keyvault(mapping: dict[str, str]) -> None:
+    """
+    Given a mapping of ENV_VAR -> KEYVAULT_SECRET_NAME,
+    fetch each secret and set os.environ[ENV_VAR].
+    """
+    for env_var, secret_name in mapping.items():
+        value = get_secret(secret_name)
+        os.environ[env_var] = value
+
+'''
 def load_config(path: str) -> dict:
     if not path:
         return {}
