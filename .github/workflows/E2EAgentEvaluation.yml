@@ -4,6 +4,17 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+        config_file:
+          description: "Select the config file to use for evaluation"
+          required: false
+          default: "default.json"
+          type: choice
+          options:
+            - default.json
+            - prod.json
+            - debug.json
+            - test.yaml
 
 jobs:
   run-python:
@@ -42,7 +53,11 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Python
-        run: python EndToEndAgentEvaluation.py 2>&1 | tee output.log
+        run: |
+          echo "🧠 Using config file: ${{ github.event.inputs.config_file }}"
+           python EndToEndAgentEvaluation.py \
+          --config "configs/${{ github.event.inputs.config_file }}" \
+          2>&1 | tee output.log
 
       - name: Upload logs
         if: always()
