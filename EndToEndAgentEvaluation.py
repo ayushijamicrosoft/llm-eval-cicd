@@ -93,10 +93,11 @@ project_name = config["project"]["project_name"]
 resource_group_name = config["project"]["resource_group_name"]
 
 azure_ai_project = {
-    "subscription_id": subscription_id,
-    "project_name": "shayak-foundry",
-    "resource_group_name": resource_group_name,
-}
+            "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+            "project_name": "padmajat-agenticai-hackathon25",
+            "resource_group_name": "rg-padmajat-2824",
+        }
+
 
 print("subscription_id", config["project"]["subscription_id"])
 print("project_name", config["project"]["project_name"])
@@ -449,9 +450,9 @@ for prompt in list_of_prompts:
         )
         # Needed to use content safety evaluators
         azure_ai_project = {
-            "subscription_id": subscription_id,
-            "project_name": "shayak-foundry",
-            "resource_group_name": resource_group_name,
+            "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+            "project_name": "padmajat-agenticai-hackathon25",
+            "resource_group_name": "rg-padmajat-2824",
         }
 
         evaluator_map = {
