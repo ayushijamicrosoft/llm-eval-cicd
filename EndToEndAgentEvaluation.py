@@ -20,11 +20,13 @@ import pprint
 from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConfiguration, IntentResolutionEvaluator, TaskAdherenceEvaluator,RelevanceEvaluator, CoherenceEvaluator, FluencyEvaluator, ViolenceEvaluator, SelfHarmEvaluator, SexualEvaluator, HateUnfairnessEvaluator, CodeVulnerabilityEvaluator, IndirectAttackEvaluator, ProtectedMaterialEvaluator
 from pprint import pprint
 from azure.storage.blob import BlobServiceClient
+import uuid, json
 
 import argparse
 import json
 import yaml
 
+file_suffix = str(uuid.uuid4().hex)
 '''
 Code for incorporating key vault secrets.
 import os
@@ -400,11 +402,11 @@ indirect_attack = IndirectAttackEvaluator(credential=credential, azure_ai_projec
 protected_material = ProtectedMaterialEvaluator(credential=credential, azure_ai_project=azure_ai_project)
 '''
 
-with open("list_of_prompts.txt", "w") as f:
+with open(f"list_of_prompts_{file_suffix}.txt", "w") as f:
     f.write(json.dumps(list_of_prompts))
 try:
     print("Uploading list of prompts information to azure storage")
-    upload_to_blob(container_name="list-of-prompts-0", file_paths=["list_of_prompts.txt"])
+    upload_to_blob(container_name="list-of-prompts-0", file_paths=[f"list_of_prompts_{file_suffix}.txt"])
 except Exception as expp:
     print("Exception in uploading list of prompts")
     print(expp)
@@ -501,18 +503,18 @@ for prompt in list_of_prompts:
         print("==============================================================CONVERTED DATA===========================================================================")
         converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
         print(converted_data)
-        with open("query_response_pairs.jsonl", "w") as f:
+        with open(f"query_response_pairs_{file_suffix}.jsonl", "w") as f:
             json.dump(converted_data, f, default=str)
         try:
             print("Uploading the query-response pairs to the storage account")
-            upload_to_blob(container_name="query-response-pairs-0", file_paths=["query_response_pairs.jsonl"])
+            upload_to_blob(container_name="query-response-pairs-0", file_paths=[f"query_response_pairs_{file_suffix}.jsonl"])
             print("Uploaded query json pairs results!")
         except Exception as expp: 
             print(expp)
             
         # Save the converted data to a JSONL file
     
-        file_name = "evaluationDataAdverserialData" + str(count) + ".jsonl"z
+        file_name = "evaluationDataAdverserialData" + str(count) + ".jsonl"
         evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
         
         load_dotenv()
