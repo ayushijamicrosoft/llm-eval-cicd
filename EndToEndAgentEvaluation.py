@@ -169,7 +169,14 @@ async def custom_simulator_callback(
     }
     messages["messages"].append(message)
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
-  
+
+global list_of_prompts;
+list_of_prompts = []
+
+
+
+
+'''
 credential = DefaultAzureCredential()
 token = credential.get_token("https://management.azure.com/.default")
 print("Token tenant:", token.token.split(".")[1])  # base64 decode if needed
@@ -177,9 +184,6 @@ print("Token tenant:", token.token.split(".")[1])  # base64 decode if needed
 custom_simulator =  AdversarialSimulator(credential=DefaultAzureCredential(), azure_ai_project=azure_ai_project)
 direct_attack_simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
 indirect_attack_simulator=IndirectAttackSimulator(azure_ai_project=azure_ai_project, credential=credential)
-
-global list_of_prompts;
-list_of_prompts = []
 
 import asyncio
 
@@ -291,6 +295,7 @@ asyncio.run(main())
 
 
 load_dotenv()
+'''
 
 from azure.ai.projects import __version__ as projects_version
 from packaging.version import Version
