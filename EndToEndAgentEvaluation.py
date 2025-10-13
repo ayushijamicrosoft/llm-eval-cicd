@@ -21,13 +21,9 @@ from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConf
 from pprint import pprint
 from azure.storage.blob import BlobServiceClient
 
-
 import argparse
 import json
 import yaml
-
-
-
 
 def load_config(path: str) -> dict:
     if not path:
@@ -203,10 +199,6 @@ def upload_to_blob(container_name: str, file_paths: list[str]) -> None:
 global list_of_prompts;
 list_of_prompts = []
 
-
-
-
-
 credential = DefaultAzureCredential()
 token = credential.get_token("https://management.azure.com/.default")
 print("Token tenant:", token.token.split(".")[1])  # base64 decode if needed
@@ -372,6 +364,15 @@ indirect_attack = IndirectAttackEvaluator(credential=credential, azure_ai_projec
 protected_material = ProtectedMaterialEvaluator(credential=credential, azure_ai_project=azure_ai_project)
 '''
 
+with open("list_of_prompts.txt", "w") as f:
+    f.write(json.dumps(list_of_prompts))
+try:
+    print("Uploading list of prompts information to azure storage")
+    upload_to_blob(container_name="list-of-prompts-0", file_paths=["list_of_prompts.txt"])
+except Exception as expp:
+    print("Exception in uploading list of prompts")
+    print(expp)
+    
 count = 0 
 for prompt in list_of_prompts:
     try:
@@ -464,6 +465,15 @@ for prompt in list_of_prompts:
         print("==============================================================CONVERTED DATA===========================================================================")
         converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
         print(converted_data)
+        with open("query_response_pairs.jsonl", "w") as f:
+            json.dump(response, f, default=str)
+        try:
+            print("Uploading the query-response pairs to the storage account")
+            upload_to_blob(container_name="query-response-pairs-0", file_paths=["query_response_pairs.jsonl"])
+            print("Uploaded query json pairs results!")
+        except Exception as expp: 
+            print(expp)
+            
         # Save the converted data to a JSONL file
     
         file_name = "evaluationDataAdverserialData" + str(count) + ".jsonl"
@@ -524,9 +534,13 @@ for prompt in list_of_prompts:
         # Save evaluation response to JSON file
         with open("metrics.json", "w") as f:
             json.dump(response, f, indent=2, default=str)
+        try:
+            print("Uploading the evaluation results to the storage account")
+            upload_to_blob(container_name="eval-results-0", file_paths=["metrics.json"])
+            print("Uploaded evals results!")
+        except Exception as expp: 
+            print(expp)
 
-        upload_to_blob(container_name="eval-results-0", file_paths=["metrics.json"])
-    
     except Exception as exception:
         print("exception occured!")
         print(exception)
