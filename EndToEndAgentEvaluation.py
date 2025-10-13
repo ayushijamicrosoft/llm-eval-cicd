@@ -50,6 +50,17 @@ parser = argparse.ArgumentParser(description="Run E2E Agent Evaluation with opti
 parser.add_argument("--config", type=str, default=None, help="Path to config JSON/YAML file")
 args = parser.parse_args()
 
+openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
+model_name = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+
+print(openai_endpoint)
+print(model_name)
+print(deployment)
+
+openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
+api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
+
 # --- Load defaults from environment / hardcoded ---
 defaults = {
     project: {
@@ -58,10 +69,10 @@ defaults = {
     "resource_group_name": "shayak-test-rg",
 },
     "openai": {
-        "endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
-        "deployment": os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT"),
-        "api_key": os.environ.get("AZURE_OPENAI_API_KEY"),
-        "api_version": os.environ.get("AZURE_OPENAI_API_VERSION")
+        "endpoint": openai_endpoint,
+        "deployment": model_name,
+        "api_key": openai_key,
+        "api_version": api_version
     },
     "simulators": ["adversarial", "direct", "indirect"],
     "evals": [
