@@ -1,8 +1,7 @@
 name: Basic Tool Call eval python script (Manual inputs)
 
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   run-python:
