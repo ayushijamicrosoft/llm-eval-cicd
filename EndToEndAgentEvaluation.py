@@ -177,7 +177,7 @@ list_of_prompts = []
 
 
 
-'''
+
 credential = DefaultAzureCredential()
 token = credential.get_token("https://management.azure.com/.default")
 print("Token tenant:", token.token.split(".")[1])  # base64 decode if needed
@@ -296,7 +296,7 @@ asyncio.run(main())
 
 
 load_dotenv()
-'''
+
 
 from azure.ai.projects import __version__ as projects_version
 from packaging.version import Version
