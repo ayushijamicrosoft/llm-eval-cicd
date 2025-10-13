@@ -19,11 +19,15 @@ from dotenv import load_dotenv
 import pprint
 from azure.ai.evaluation import ToolCallAccuracyEvaluator , AzureOpenAIModelConfiguration, IntentResolutionEvaluator, TaskAdherenceEvaluator,RelevanceEvaluator, CoherenceEvaluator, FluencyEvaluator, ViolenceEvaluator, SelfHarmEvaluator, SexualEvaluator, HateUnfairnessEvaluator, CodeVulnerabilityEvaluator, IndirectAttackEvaluator, ProtectedMaterialEvaluator
 from pprint import pprint
+from azure.storage.blob import BlobServiceClient
 
 
 import argparse
 import json
 import yaml
+
+
+
 
 def load_config(path: str) -> dict:
     if not path:
@@ -171,6 +175,31 @@ async def custom_simulator_callback(
     messages["messages"].append(message)
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
 
+def upload_to_blob(container_name: str, file_paths: list[str]) -> None:
+    """
+    Uploads the given files to an Azure Blob container.
+    Storage account name is hardcoded.
+    """
+    # --- Hardcoded storage account name ---
+    STORAGE_ACCOUNT_NAME = "evalsofagents"  # change this
+    account_url = f"https://evalsofagents.blob.core.windows.net"
+
+    credential = DefaultAzureCredential(exclude_interactive_browser_credential=True)
+    blob_service_client = BlobServiceClient(account_url=account_url, credential=credential)
+    container_client = blob_service_client.get_container_client(container_name)
+
+    # Create container if it doesn't exist
+    try:
+        container_client.create_container()
+    except Exception:
+        pass
+
+    for file_path in file_paths:
+        blob_name = os.path.basename(file_path)
+        with open(file_path, "rb") as data:
+            container_client.upload_blob(name=blob_name, data=data, overwrite=True)
+        print(f"✅ Uploaded: {blob_name}")
+        
 global list_of_prompts;
 list_of_prompts = []
 
@@ -270,7 +299,6 @@ async def get_output_prompts_ida():
     
 async def main():
     simulators_to_run = [s.lower() for s in config["simulators"]]
-    simulators_to_run = []
     if "adversarial" in simulators_to_run:
         scenarios = [
             AdversarialScenario.ADVERSARIAL_QA,
