@@ -61,7 +61,8 @@ api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
 print(openai_endpoint)
 print(model_name)
 print(deployment)
-
+print(api_version)
+print(openai_key)
 # --- Load defaults from environment / hardcoded ---
 defaults = {
     "project": {
@@ -87,15 +88,21 @@ os.environ["AZURE_DEPLOYMENT_NAME"] = deployment
 os.environ["AZURE_API_VERSION"] = api_version
 os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
 
+subscription_id = config["project"]["subscription_id"]
+project_name = config["project"]["project_name"]
+resource_group_name = config["project"]["resource_group_name"]
+
 azure_ai_project = {
-    "subscription_id": config["project"]["subscription_id"],
-    "project_name": config["project"]["project_name"],
-    "resource_group_name": config["project"]["resource_group_name"],
+    "subscription_id": subscription_id,
+    "project_name": project_name,
+    "resource_group_name": resource_group_name,
 }
 
 print("subscription_id", config["project"]["subscription_id"])
 print("project_name", config["project"]["project_name"])
 print("resource_group_name", config["project"]["resource_group_name"])
+
+print(azure_ai_project)
 
 credential=DefaultAzureCredential()
 client = AzureOpenAI(
@@ -110,13 +117,11 @@ model_config = {
 }
 
 def example_application_response(query: str, context: str) -> str:
-    deployment = os.environ.get("AZURE_DEPLOYMENT_NAME")
-    endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
 
     # Get a client handle for the AOAI model
     client = AzureOpenAI(
         azure_endpoint=endpoint,
-        api_version=os.environ.get("AZURE_API_VERSION"),
+        api_version=api_version,
         api_key=openai_key
     )
 
