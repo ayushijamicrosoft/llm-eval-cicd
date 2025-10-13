@@ -167,6 +167,9 @@ async def custom_simulator_callback(
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
   
 credential = DefaultAzureCredential()
+token = cred.get_token("https://management.azure.com/.default")
+print("Token tenant:", token.token.split(".")[1])  # base64 decode if needed
+print("Client ID:", os.getenv("AZURE_CLIENT_ID"))
 custom_simulator =  AdversarialSimulator(credential=DefaultAzureCredential(), azure_ai_project=azure_ai_project)
 direct_attack_simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
 indirect_attack_simulator=IndirectAttackSimulator(azure_ai_project=azure_ai_project, credential=credential)
