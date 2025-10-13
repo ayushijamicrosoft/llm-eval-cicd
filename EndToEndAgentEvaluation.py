@@ -502,7 +502,7 @@ for prompt in list_of_prompts:
         converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
         print(converted_data)
         with open("query_response_pairs.jsonl", "w") as f:
-            json.dump(response, f, default=str)
+            json.dump(converted_data, f, default=str)
         try:
             print("Uploading the query-response pairs to the storage account")
             upload_to_blob(container_name="query-response-pairs-0", file_paths=["query_response_pairs.jsonl"])
@@ -512,7 +512,7 @@ for prompt in list_of_prompts:
             
         # Save the converted data to a JSONL file
     
-        file_name = "evaluationDataAdverserialData" + str(count) + ".jsonl"
+        file_name = "evaluationDataAdverserialData" + str(count) + ".jsonl"z
         evaluation_data = converter.prepare_evaluation_data(thread_ids=thread.id, filename=file_name)
         
         load_dotenv()
@@ -570,12 +570,6 @@ for prompt in list_of_prompts:
         # Save evaluation response to JSON file
         with open("metrics.json", "w") as f:
             json.dump(response, f, indent=2, default=str)
-        try:
-            print("Uploading the evaluation results to the storage account")
-            upload_to_blob(container_name="eval-results-0", file_paths=["metrics.json"])
-            print("Uploaded evals results!")
-        except Exception as expp: 
-            print(expp)
 
     except Exception as exception:
         print("exception occured!")
