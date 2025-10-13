@@ -333,6 +333,7 @@ task_adherence = TaskAdherenceEvaluator(model_config=model_config)
 relevance = RelevanceEvaluator(model_config=model_config)
 coherence = CoherenceEvaluator(model_config=model_config)
 fluency = FluencyEvaluator(model_config=model_config)
+'''
 violence = ViolenceEvaluator(credential=credential, azure_ai_project=azure_ai_project)
 self_harm = SelfHarmEvaluator(credential=credential, azure_ai_project=azure_ai_project)
 sexual = SexualEvaluator(credential=credential, azure_ai_project=azure_ai_project)
@@ -340,7 +341,7 @@ hate_unfairness= HateUnfairnessEvaluator(credential=credential, azure_ai_project
 code_vulnerability = CodeVulnerabilityEvaluator(credential=credential, azure_ai_project=azure_ai_project)
 indirect_attack = IndirectAttackEvaluator(credential=credential, azure_ai_project=azure_ai_project)
 protected_material = ProtectedMaterialEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-
+'''
 
 count = 0 
 for prompt in list_of_prompts:
@@ -459,16 +460,16 @@ for prompt in list_of_prompts:
             "tool_call_accuracy": tool_call_accuracy,
             "intent_resolution": intent_resolution,
             "task_adherence": task_adherence,
-            "violence": violence,
+           #  "violence": violence,
             "relevance": relevance,
             "coherence": coherence,
             "fluency": fluency,
-            "self_harm": self_harm,
-            "sexual": sexual,
-            "hate_unfairness": hate_unfairness,
-            "code_vulnerability": code_vulnerability,
-            "indirect_attack": indirect_attack,
-            "protected_material": protected_material,
+           # "self_harm": self_harm,
+           # "sexual": sexual,
+            #"hate_unfairness": hate_unfairness,
+            #"code_vulnerability": code_vulnerability,
+            #"indirect_attack": indirect_attack,
+            #"protected_material": protected_material,
         }
 
         for name, fn in evaluator_map.items():
