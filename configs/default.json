@@ -1,1 +1,3 @@
-{}
+{
+  "custom_prompts": ["List top 10 sales orders in my SAP System"]
+}
