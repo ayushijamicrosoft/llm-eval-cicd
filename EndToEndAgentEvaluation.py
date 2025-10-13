@@ -309,6 +309,21 @@ for prompt in custom_prompts:
 print("FINAL LIST OF PROMPTS")
 print(list_of_prompts)
 
+tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
+intent_resolution = IntentResolutionEvaluator(model_config=model_config)
+task_adherence = TaskAdherenceEvaluator(model_config=model_config)
+relevance = RelevanceEvaluator(model_config=model_config)
+coherence = CoherenceEvaluator(model_config=model_config)
+fluency = FluencyEvaluator(model_config=model_config)
+violence = ViolenceEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+self_harm = SelfHarmEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+sexual = SexualEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+hate_unfairness= HateUnfairnessEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+code_vulnerability = CodeVulnerabilityEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+indirect_attack = IndirectAttackEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+protected_material = ProtectedMaterialEvaluator(credential=credential, azure_ai_project=azure_ai_project)
+
+
 count = 0 
 for prompt in list_of_prompts:
     try:
