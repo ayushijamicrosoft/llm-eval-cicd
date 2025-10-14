@@ -508,7 +508,7 @@ for prompt in list_of_prompts:
         print("==============================================================CONVERTED DATA===========================================================================")
         converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
         print(converted_data)
-        jsonl_handle = open(all_pairs_path, "w", encoding="utf-8")
+        jsonl_handle = open(all_pairs_path, "a", encoding="utf-8")
 
         try:
             # If the converter returns a list of records, write each as its own line.
@@ -578,7 +578,7 @@ for prompt in list_of_prompts:
         pprint(f'Azure ML Studio URL: {response.get("studio_url")}')
         pprint(response)
 
-        evals_handle = open(all_evals, "w", encoding="utf-8")
+        evals_handle = open(all_evals, "a", encoding="utf-8")
 
         try:
             evals_handle.write(str(response) + "\n")
