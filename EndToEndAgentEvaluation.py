@@ -411,7 +411,7 @@ with open(f"list_of_prompts_{file_suffix}.txt", "w") as f:
     f.write(json.dumps(list_of_prompts))
 try:
     print("Uploading list of prompts information to azure storage")
-    upload_to_blob(container_name="list-of-prompts-0", file_paths=[f"list_of_prompts_{file_suffix}.txt"])
+    upload_to_blob(container_name="list-of-prompts-1", file_paths=[f"list_of_prompts_{file_suffix}.txt"])
 except Exception as expp:
     print("Exception in uploading list of prompts")
     print(expp)
@@ -521,13 +521,6 @@ for prompt in list_of_prompts:
         except Exception as write_err:
             print("Failed to append converted_data to JSONL:", write_err)
 
-        try:
-            print("Uploading the query-response pairs to the storage account")
-            upload_to_blob(container_name="query-response-pairs-0", file_paths=[f"query_response_pairs_{file_suffix}.jsonl"])
-            print("Uploaded query json pairs results!")
-        except Exception as expp: 
-            print(expp)
-            
         # Save the converted data to a JSONL file
     
         file_name = "evaluationDataAdverserialData" + str(count) + ".jsonl"
@@ -599,8 +592,15 @@ for prompt in list_of_prompts:
 
 
 try:
+    print("Uploading the query-response pairs to the storage account")
+    upload_to_blob(container_name="query-response-pairs-1", file_paths=[f"query_response_pairs_{file_suffix}.jsonl"])
+    print("Uploaded query json pairs results!")
+except Exception as expp: 
+    print(expp)
+    
+try:
     print("Uploading all evals for this run to azure storage")
-    upload_to_blob(container_name="list-of-evals-0", file_paths=[all_evals])
+    upload_to_blob(container_name="list-of-evals-1", file_paths=[all_evals])
 except Exception as expp:
     print("Exception in uploading all evals")
     print(expp)
