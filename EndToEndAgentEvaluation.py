@@ -27,6 +27,10 @@ import json
 import yaml
 
 file_suffix = str(uuid.uuid4().hex)
+print("Run GUID: ")
+print(file_suffix)
+all_pairs_path = f"query_response_pairs_{file_suffix}.jsonl"
+all_evals = f"eval_results_{file_suffix}.txt"
 '''
 Code for incorporating key vault secrets.
 '''
@@ -504,8 +508,19 @@ for prompt in list_of_prompts:
         print("==============================================================CONVERTED DATA===========================================================================")
         converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
         print(converted_data)
-        with open(f"query_response_pairs_{file_suffix}.jsonl", "w") as f:
-            json.dump(converted_data, f, default=str)
+        jsonl_handle = open(all_pairs_path, "w", encoding="utf-8")
+
+        try:
+            # If the converter returns a list of records, write each as its own line.
+            if isinstance(converted_data, list):
+                for rec in converted_data:
+                    jsonl_handle.write(json.dumps(rec, default=str) + "\n")
+            else:
+                # Otherwise assume it's a single dict-like record.
+                jsonl_handle.write(json.dumps(converted_data, default=str) + "\n")
+        except Exception as write_err:
+            print("Failed to append converted_data to JSONL:", write_err)
+
         try:
             print("Uploading the query-response pairs to the storage account")
             upload_to_blob(container_name="query-response-pairs-0", file_paths=[f"query_response_pairs_{file_suffix}.jsonl"])
@@ -569,12 +584,23 @@ for prompt in list_of_prompts:
         pprint(list_of_prompts, width=200)
         pprint(f'Azure ML Studio URL: {response.get("studio_url")}')
         pprint(response)
-        
-        # Save evaluation response to JSON file
-        with open("metrics.json", "w") as f:
-            json.dump(response, f, indent=2, default=str)
+
+        evals_handle = open(all_evals, "w", encoding="utf-8")
+
+        try:
+            evals_handle.write(response + "\n")
+        except Exception as write_err:
+            print("Failed to append evals to txt file:", write_err)
 
     except Exception as exception:
         print("exception occured!")
         print(exception)
         continue;
+
+
+try:
+    print("Uploading all evals for this run to azure storage")
+    upload_to_blob(container_name="list-of-evals-0", file_paths=[all_evals])
+except Exception as expp:
+    print("Exception in uploading all evals")
+    print(expp)
