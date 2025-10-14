@@ -20,11 +20,11 @@ There are three main stages:
 
 1. Creation of Azure ML Studio with same name as your AI Foundry project in same RG is essential!
 2. The client id which is being used (in repo secrets) should have "Contributor" permissions to your Azure ML Studio workspace and AI foundry project.Additionally, at least Azure Storage Blob Contributor permissions to the storage account. .
-3. Check the region of the project - some simulators and evaluators may or may not be supported in that region. 
+3. Check the region of the project - some simulators and evaluators may or may not be supported in that region.
+4. Open AI - Key, Subscription, Client ID etc: Repository Secrets - can be updated there.
 
 ## Initial Setup
 1. Installation of python libraries: **requirements.txt**
-2. Open AI - Key, Subscription, Client ID etc: Repository Secrets - can be updated there.
 3. Workflows results in Github Actions tab
 4. Azure ML Studio resource required for resources.
 
