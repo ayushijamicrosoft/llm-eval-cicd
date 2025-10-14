@@ -581,7 +581,7 @@ for prompt in list_of_prompts:
         evals_handle = open(all_evals, "w", encoding="utf-8")
 
         try:
-            evals_handle.write(response + "\n")
+            evals_handle.write(str(response) + "\n")
         except Exception as write_err:
             print("Failed to append evals to txt file:", write_err)
 
