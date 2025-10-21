@@ -332,6 +332,7 @@ async def get_output_prompts_ida():
     
     print(list_of_prompts)
     
+'''
 async def main():
     simulators_to_run = [s.lower() for s in config["simulators"]]
     if "adversarial" in simulators_to_run:
@@ -359,7 +360,7 @@ asyncio.run(main())
 
 
 load_dotenv()
-
+'''
 
 from azure.ai.projects import __version__ as projects_version
 from packaging.version import Version
