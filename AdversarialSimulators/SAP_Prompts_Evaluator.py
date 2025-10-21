@@ -228,11 +228,7 @@ for prompt in list_of_prompts:
             evaluators={
                 "tool_call_accuracy": tool_call_accuracy
             },
-            azure_ai_project={
-                 "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
-                  "project_name": "padmajat-agenticai-hackathon25",
-                  "resource_group_name": "rg-padmajat-2824",
-            }
+            azure_ai_project="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject"
         )
         pprint(f'AI Foundary URL: {response.get("studio_url")}')
         pprint(response)
@@ -240,6 +236,7 @@ for prompt in list_of_prompts:
         # Save evaluation response to JSON file
         with open("metrics.json", "w") as f:
             json.dump(response, f, indent=2, default=str)
+        break;
     
     except Exception as exception:
             print("exception occured!")
