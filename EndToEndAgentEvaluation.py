@@ -564,31 +564,28 @@ for prompt in list_of_prompts:
             if name in config["evals"]:
                 fn(query=converted_data['query'], response=converted_data['response'])
 
-        active_evaluators = {k: v for k, v in evaluator_map.items() if k in config["evals"]}
-
-        response = evaluate(
-            data=file_name,
-            evaluators=active_evaluators,
-            azure_ai_project="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject"
-        )
-        
-        pprint(list_of_prompts, width=200)
-        pprint(f'Azure ML Studio URL: {response.get("studio_url")}')
-        pprint(response)
-
-        evals_handle = open(all_evals, "a", encoding="utf-8")
-
-        try:
-            evals_handle.write(str(response) + "\n")
-        except Exception as write_err:
-            print("Failed to append evals to txt file:", write_err)
-
     except Exception as exception:
         print("exception occured!")
         print(exception)
         continue;
 
+active_evaluators = {k: v for k, v in evaluator_map.items() if k in config["evals"]}
+response = evaluate(
+    data=file_name,
+    evaluators=active_evaluators,
+    azure_ai_project="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject"
+)
 
+pprint(list_of_prompts, width=200)
+pprint(f'Azure ML Studio URL: {response.get("studio_url")}')
+pprint(response)
+
+evals_handle = open(all_evals, "a", encoding="utf-8")
+
+try:
+    evals_handle.write(str(response) + "\n")
+except Exception as write_err:
+    print("Failed to append evals to txt file:", write_err)
 try:
     print("Uploading the query-response pairs to the storage account")
     upload_to_blob(container_name="query-response-pairs-1", file_paths=[f"query_response_pairs_{file_suffix}.jsonl"])
