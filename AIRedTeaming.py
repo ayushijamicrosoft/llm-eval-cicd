@@ -232,6 +232,12 @@ async def main():
             return fn(*args, **kwargs)
 
     # Example: run another scan using the helper (handles sync or async scan implementations)
+    model_red_team = RedTeam(
+        azure_ai_project=azure_ai_project,
+        credential=credential,
+        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
+        num_objectives=5,
+    )
     advanced_result = await maybe_await(
         model_red_team.scan,
         target=azure_openai_callback,
