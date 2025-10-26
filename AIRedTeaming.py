@@ -201,109 +201,111 @@ async def main():
     )
     print("Advanced scan done:", advanced_result)
 
-if __name__ == "__main__":
-    asyncio.run(main())
 
-# Define a model configuration to test
-azure_oai_model_config = {
-    "azure_endpoint": azure_openai_endpoint,
-    "azure_deployment": azure_openai_deployment,
-    "api_key": azure_openai_api_key,
-}
+asyncio.run(main())
 
-# Run the red team scan called "Intermediary-Model-Target-Scan"
-result = await red_team.scan(
-    target=azure_oai_model_config,
-    scan_name="Intermediary-Model-Target-Scan",
-    attack_strategies=[AttackStrategy.Flip],
-)
-
-# Define a callback that uses Azure OpenAI API to generate responses
-async def azure_openai_callback(
-    messages: list,
-    stream: Optional[bool] = False,  # noqa: ARG001
-    session_state: Optional[str] = None,  # noqa: ARG001
-    context: Optional[Dict[str, Any]] = None,  # noqa: ARG001
-) -> dict[str, list[dict[str, str]]]:
-    # Get token provider for Azure AD authentication
-    token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
-
-    # Initialize Azure OpenAI client
-    client = AzureOpenAI(
-        azure_endpoint=azure_openai_endpoint,
-        api_version=azure_openai_api_version,
-        azure_ad_token_provider=token_provider,
+async def main2():
+    # Define a model configuration to test
+    azure_oai_model_config = {
+        "azure_endpoint": azure_openai_endpoint,
+        "azure_deployment": azure_openai_deployment,
+        "api_key": azure_openai_api_key,
+    }
+    
+    # Run the red team scan called "Intermediary-Model-Target-Scan"
+    result = await red_team.scan(
+        target=azure_oai_model_config,
+        scan_name="Intermediary-Model-Target-Scan",
+        attack_strategies=[AttackStrategy.Flip],
+    )
+    
+    # Define a callback that uses Azure OpenAI API to generate responses
+    async def azure_openai_callback(
+        messages: list,
+        stream: Optional[bool] = False,  # noqa: ARG001
+        session_state: Optional[str] = None,  # noqa: ARG001
+        context: Optional[Dict[str, Any]] = None,  # noqa: ARG001
+    ) -> dict[str, list[dict[str, str]]]:
+        # Get token provider for Azure AD authentication
+        token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
+    
+        # Initialize Azure OpenAI client
+        client = AzureOpenAI(
+            azure_endpoint=azure_openai_endpoint,
+            api_version=azure_openai_api_version,
+            azure_ad_token_provider=token_provider,
+        )
+    
+        ## Extract the latest message from the conversation history
+        messages_list = [{"role": message.role, "content": message.content} for message in messages]
+        latest_message = messages_list[-1]["content"]
+    
+        try:
+            # Call the model
+            response = client.chat.completions.create(
+                model=azure_openai_deployment,
+                messages=[
+                    {"role": "user", "content": latest_message},
+                ],
+                # max_tokens=500, # If using an o1 base model, comment this line out
+                max_completion_tokens=500,  # If using an o1 base model, uncomment this line
+                # temperature=0.7, # If using an o1 base model, comment this line out (temperature param not supported for o1 base models)
+            )
+    
+            # Format the response to follow the expected chat protocol format
+            formatted_response = {"content": response.choices[0].message.content, "role": "assistant"}
+        except Exception as e:
+            print(f"Error calling Azure OpenAI: {e!s}")
+            formatted_response = "I encountered an error and couldn't process your request."
+        return {"messages": [formatted_response]}
+    
+    # Create the RedTeam instance with all of the risk categories with 5 attack objectives generated for each category
+    model_red_team = RedTeam(
+        azure_ai_project=azure_ai_project,
+        credential=credential,
+        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
+        num_objectives=5,
+    )
+    
+    # Run the red team scan with multiple attack strategies
+    advanced_result = await model_red_team.scan(
+        target=azure_openai_callback,
+        scan_name="Advanced-Callback-Scan",
+        attack_strategies=[
+            AttackStrategy.EASY,  # Group of easy complexity attacks
+            AttackStrategy.MODERATE,  # Group of moderate complexity attacks
+            AttackStrategy.CharacterSpace,  # Add character spaces
+            AttackStrategy.ROT13,  # Use ROT13 encoding
+            AttackStrategy.UnicodeConfusable,  # Use confusable Unicode characters
+            AttackStrategy.CharSwap,  # Swap characters in prompts
+            AttackStrategy.Morse,  # Encode prompts in Morse code
+            AttackStrategy.Leetspeak,  # Use Leetspeak
+            AttackStrategy.Url,  # Use URLs in prompts
+            AttackStrategy.Binary,  # Encode prompts in binary
+            AttackStrategy.Compose([AttackStrategy.Base64, AttackStrategy.ROT13]),  # Use two strategies in one attack
+        ],
+        output_path="Advanced-Callback-Scan.json",
+    )
+    
+    path_to_prompts = ".\data\prompts.json"
+    
+    # Create the RedTeam specifying the custom attack seed prompts to use as objectives
+    custom_red_team = RedTeam(
+        azure_ai_project=azure_ai_project,
+        credential=credential,
+        custom_attack_seed_prompts=path_to_prompts,  # Path to a file containing custom attack seed prompts
+    )
+    
+    custom_red_team_result = await custom_red_team.scan(
+        target=azure_openai_callback,
+        scan_name="Custom-Prompt-Scan",
+        attack_strategies=[
+            AttackStrategy.EASY,  # Group of easy complexity attacks
+            AttackStrategy.MODERATE,  # Group of moderate complexity attacks
+            AttackStrategy.DIFFICULT,  # Group of difficult complexity attacks
+        ],
+        output_path="Custom-Prompt-Scan.json",
     )
 
-    ## Extract the latest message from the conversation history
-    messages_list = [{"role": message.role, "content": message.content} for message in messages]
-    latest_message = messages_list[-1]["content"]
-
-    try:
-        # Call the model
-        response = client.chat.completions.create(
-            model=azure_openai_deployment,
-            messages=[
-                {"role": "user", "content": latest_message},
-            ],
-            # max_tokens=500, # If using an o1 base model, comment this line out
-            max_completion_tokens=500,  # If using an o1 base model, uncomment this line
-            # temperature=0.7, # If using an o1 base model, comment this line out (temperature param not supported for o1 base models)
-        )
-
-        # Format the response to follow the expected chat protocol format
-        formatted_response = {"content": response.choices[0].message.content, "role": "assistant"}
-    except Exception as e:
-        print(f"Error calling Azure OpenAI: {e!s}")
-        formatted_response = "I encountered an error and couldn't process your request."
-    return {"messages": [formatted_response]}
-
-# Create the RedTeam instance with all of the risk categories with 5 attack objectives generated for each category
-model_red_team = RedTeam(
-    azure_ai_project=azure_ai_project,
-    credential=credential,
-    risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
-    num_objectives=5,
-)
-
-# Run the red team scan with multiple attack strategies
-advanced_result = await model_red_team.scan(
-    target=azure_openai_callback,
-    scan_name="Advanced-Callback-Scan",
-    attack_strategies=[
-        AttackStrategy.EASY,  # Group of easy complexity attacks
-        AttackStrategy.MODERATE,  # Group of moderate complexity attacks
-        AttackStrategy.CharacterSpace,  # Add character spaces
-        AttackStrategy.ROT13,  # Use ROT13 encoding
-        AttackStrategy.UnicodeConfusable,  # Use confusable Unicode characters
-        AttackStrategy.CharSwap,  # Swap characters in prompts
-        AttackStrategy.Morse,  # Encode prompts in Morse code
-        AttackStrategy.Leetspeak,  # Use Leetspeak
-        AttackStrategy.Url,  # Use URLs in prompts
-        AttackStrategy.Binary,  # Encode prompts in binary
-        AttackStrategy.Compose([AttackStrategy.Base64, AttackStrategy.ROT13]),  # Use two strategies in one attack
-    ],
-    output_path="Advanced-Callback-Scan.json",
-)
-
-path_to_prompts = ".\data\prompts.json"
-
-# Create the RedTeam specifying the custom attack seed prompts to use as objectives
-custom_red_team = RedTeam(
-    azure_ai_project=azure_ai_project,
-    credential=credential,
-    custom_attack_seed_prompts=path_to_prompts,  # Path to a file containing custom attack seed prompts
-)
-
-custom_red_team_result = await custom_red_team.scan(
-    target=azure_openai_callback,
-    scan_name="Custom-Prompt-Scan",
-    attack_strategies=[
-        AttackStrategy.EASY,  # Group of easy complexity attacks
-        AttackStrategy.MODERATE,  # Group of moderate complexity attacks
-        AttackStrategy.DIFFICULT,  # Group of difficult complexity attacks
-    ],
-    output_path="Custom-Prompt-Scan.json",
-)
-
+asyncio.run(main2())
 
