@@ -157,14 +157,52 @@ red_team = RedTeam(
     num_objectives=1,
 )
 
-# Run the red team scan called "Basic-Callback-Scan" with limited scope for this basic example
-# This will test 1 objective prompt for each of Violence and HateUnfairness categories with the Flip strategy
-result = await red_team.scan(
-    target=financial_advisor_callback,
-    scan_name="Basic-Callback-Scan",
-    attack_strategies=[AttackStrategy.Flip],
-    output_path="red_team_output.json",
-)
+import asyncio
+import inspect
+from pathlib import Path
+# ... keep all your other imports and helpers above ...
+
+async def main():
+    # initialize credential, clients, callbacks etc. here (same as your top-level code)
+    credential = AzureCliCredential()
+    azure_ai_project = "https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject"
+    red_team = RedTeam(
+        azure_ai_project=azure_ai_project,
+        credential=credential,
+        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
+        num_objectives=1,
+    )
+
+    # Example target (callback) run
+    result = await red_team.scan(
+        target=financial_advisor_callback,
+        scan_name="Basic-Callback-Scan",
+        attack_strategies=[AttackStrategy.Flip],
+        output_path="red_team_output.json",
+    )
+    print("Basic scan done:", result)
+
+    # If you want to call a scan that might be synchronous on some versions of the SDK,
+    # you can defensively handle both coroutine and normal function:
+    # (optional helper)
+    async def maybe_await(fn, *args, **kwargs):
+        if inspect.iscoroutinefunction(fn):
+            return await fn(*args, **kwargs)
+        else:
+            return fn(*args, **kwargs)
+
+    # Example: run another scan using the helper (handles sync or async scan implementations)
+    advanced_result = await maybe_await(
+        model_red_team.scan,
+        target=azure_openai_callback,
+        scan_name="Advanced-Callback-Scan",
+        attack_strategies=[AttackStrategy.EASY],  # keep minimal for demo
+        output_path="Advanced-Callback-Scan.json",
+    )
+    print("Advanced scan done:", advanced_result)
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
 # Define a model configuration to test
 azure_oai_model_config = {
