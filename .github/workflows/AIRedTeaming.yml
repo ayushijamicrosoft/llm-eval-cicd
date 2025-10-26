@@ -1,4 +1,4 @@
-name: Run E2E Agent Evals
+name: Run AI Red Teaming
 
 on:
   workflow_dispatch:
