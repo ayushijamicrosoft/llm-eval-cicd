@@ -162,6 +162,46 @@ import inspect
 from pathlib import Path
 # ... keep all your other imports and helpers above ...
 
+# Define a callback that uses Azure OpenAI API to generate responses
+    async def azure_openai_callback(
+        messages: list,
+        stream: Optional[bool] = False,  # noqa: ARG001
+        session_state: Optional[str] = None,  # noqa: ARG001
+        context: Optional[Dict[str, Any]] = None,  # noqa: ARG001
+    ) -> dict[str, list[dict[str, str]]]:
+        # Get token provider for Azure AD authentication
+        token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
+    
+        # Initialize Azure OpenAI client
+        client = AzureOpenAI(
+            azure_endpoint=azure_openai_endpoint,
+            api_version=azure_openai_api_version,
+            azure_ad_token_provider=token_provider,
+        )
+    
+        ## Extract the latest message from the conversation history
+        messages_list = [{"role": message.role, "content": message.content} for message in messages]
+        latest_message = messages_list[-1]["content"]
+    
+        try:
+            # Call the model
+            response = client.chat.completions.create(
+                model=azure_openai_deployment,
+                messages=[
+                    {"role": "user", "content": latest_message},
+                ],
+                # max_tokens=500, # If using an o1 base model, comment this line out
+                max_completion_tokens=500,  # If using an o1 base model, uncomment this line
+                # temperature=0.7, # If using an o1 base model, comment this line out (temperature param not supported for o1 base models)
+            )
+    
+            # Format the response to follow the expected chat protocol format
+            formatted_response = {"content": response.choices[0].message.content, "role": "assistant"}
+        except Exception as e:
+            print(f"Error calling Azure OpenAI: {e!s}")
+            formatted_response = "I encountered an error and couldn't process your request."
+        return {"messages": [formatted_response]}
+
 async def main():
     # initialize credential, clients, callbacks etc. here (same as your top-level code)
     credential = AzureCliCredential()
@@ -218,46 +258,6 @@ async def main2():
         scan_name="Intermediary-Model-Target-Scan",
         attack_strategies=[AttackStrategy.Flip],
     )
-    
-    # Define a callback that uses Azure OpenAI API to generate responses
-    async def azure_openai_callback(
-        messages: list,
-        stream: Optional[bool] = False,  # noqa: ARG001
-        session_state: Optional[str] = None,  # noqa: ARG001
-        context: Optional[Dict[str, Any]] = None,  # noqa: ARG001
-    ) -> dict[str, list[dict[str, str]]]:
-        # Get token provider for Azure AD authentication
-        token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
-    
-        # Initialize Azure OpenAI client
-        client = AzureOpenAI(
-            azure_endpoint=azure_openai_endpoint,
-            api_version=azure_openai_api_version,
-            azure_ad_token_provider=token_provider,
-        )
-    
-        ## Extract the latest message from the conversation history
-        messages_list = [{"role": message.role, "content": message.content} for message in messages]
-        latest_message = messages_list[-1]["content"]
-    
-        try:
-            # Call the model
-            response = client.chat.completions.create(
-                model=azure_openai_deployment,
-                messages=[
-                    {"role": "user", "content": latest_message},
-                ],
-                # max_tokens=500, # If using an o1 base model, comment this line out
-                max_completion_tokens=500,  # If using an o1 base model, uncomment this line
-                # temperature=0.7, # If using an o1 base model, comment this line out (temperature param not supported for o1 base models)
-            )
-    
-            # Format the response to follow the expected chat protocol format
-            formatted_response = {"content": response.choices[0].message.content, "role": "assistant"}
-        except Exception as e:
-            print(f"Error calling Azure OpenAI: {e!s}")
-            formatted_response = "I encountered an error and couldn't process your request."
-        return {"messages": [formatted_response]}
     
     # Create the RedTeam instance with all of the risk categories with 5 attack objectives generated for each category
     model_red_team = RedTeam(
