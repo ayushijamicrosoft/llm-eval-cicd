@@ -32,6 +32,7 @@ from azure.ai.evaluation import (
     IndirectAttackEvaluator,
     ProtectedMaterialEvaluator,
     AIAgentConverter,
+    UngroundedAttributesEvaluator,
 )
 from azure.ai.evaluation.simulator import (
     AdversarialSimulator,
@@ -171,9 +172,14 @@ def default_config() -> Dict[str, Any]:
             "code_vulnerability",
             "indirect_attack",
             "protected_material",
+            "ungrounded_attributes",
         ],
         "key_vault_uri": VAULT_URL,
-        "custom_prompts": [],
+        "custom_prompts": [
+            "Say hello and describe what you are."
+        ],
+        # quick_mode on by default for this requested script
+        "quick_mode": True,
     }
 
 
@@ -356,25 +362,33 @@ async def run_simulators(config: Dict[str, Any], credential: DefaultAzureCredent
 
     simulators_to_run = [s.lower() for s in config.get("simulators", [])]
 
+    quick_mode = config.get("quick_mode", False)
+    max_results = 1 if quick_mode else 10
+    max_turns = 1 if quick_mode else 3
+
     custom_simulator = AdversarialSimulator(credential=credential, azure_ai_project=AZURE_AI_PROJECT)
     direct_attack_simulator = DirectAttackSimulator(azure_ai_project=AZURE_AI_PROJECT, credential=credential)
     indirect_attack_simulator = IndirectAttackSimulator(azure_ai_project=AZURE_AI_PROJECT, credential=credential)
 
     if "adversarial" in simulators_to_run:
-        scenarios = [
-            AdversarialScenario.ADVERSARIAL_QA,
-            AdversarialScenario.ADVERSARIAL_CONVERSATION,
-            AdversarialScenario.ADVERSARIAL_SUMMARIZATION,
-            AdversarialScenario.ADVERSARIAL_SEARCH,
-            AdversarialScenario.ADVERSARIAL_REWRITE,
-            AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED,
-            AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL,
-        ]
+        if quick_mode:
+            scenarios = [AdversarialScenario.ADVERSARIAL_QA]
+        else:
+            scenarios = [
+                AdversarialScenario.ADVERSARIAL_QA,
+                AdversarialScenario.ADVERSARIAL_CONVERSATION,
+                AdversarialScenario.ADVERSARIAL_SUMMARIZATION,
+                AdversarialScenario.ADVERSARIAL_SEARCH,
+                AdversarialScenario.ADVERSARIAL_REWRITE,
+                AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED,
+                AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL,
+            ]
+
         for scenario in scenarios:
             try:
                 outputs = await custom_simulator(
                     scenario=scenario,
-                    max_simulation_results=10,
+                    max_simulation_results=max_results,
                     target=custom_simulator_callback,
                 )
                 extract_queries_from_outputs(
@@ -390,7 +404,7 @@ async def run_simulators(config: Dict[str, Any], credential: DefaultAzureCredent
         try:
             outputs = await direct_attack_simulator(
                 scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION,
-                max_simulation_results=10,
+                max_simulation_results=max_results,
                 target=custom_simulator_callback,
             )
             extract_queries_from_outputs(
@@ -406,9 +420,9 @@ async def run_simulators(config: Dict[str, Any], credential: DefaultAzureCredent
     if "indirect" in simulators_to_run:
         try:
             outputs = await indirect_attack_simulator(
-                max_simulation_results=10,
+                max_simulation_results=max_results,
                 target=custom_simulator_callback,
-                max_conversation_turns=3,
+                max_conversation_turns=max_turns,
             )
             extract_queries_from_outputs(
                 outputs,
@@ -466,9 +480,8 @@ def build_evaluators(
         "code_vulnerability": code_vulnerability,
         "indirect_attack": indirect_attack,
         "protected_material": protected_material,
-        "ungrounded_attributes": ungrounded_attributes,  # <-- add here
+        "ungrounded_attributes": ungrounded_attributes,
     }
-    
     return evaluator_map
 
 
