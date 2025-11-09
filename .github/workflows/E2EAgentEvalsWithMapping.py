@@ -1,4 +1,4 @@
-name: Run E2E Agent Evals With Simulator-Evaluator mapping
+name: Run E2E Agent Evals With Simulator Evaluator mapping
 
 on:
   workflow_dispatch:
