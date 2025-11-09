@@ -504,7 +504,7 @@ def run_selected_evaluators(
                 # We try to pass all three if possible.
                 res = fn(
                     query=converted_data.get("query", ""),
-                    context="Workload_Register_prompts.txt",
+                    context=open("Workload_Register_prompts.txt").read(),
                     response=converted_data.get("response", ""),
                 )
             else:
