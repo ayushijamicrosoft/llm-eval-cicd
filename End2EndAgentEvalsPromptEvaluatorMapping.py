@@ -497,14 +497,27 @@ def run_selected_evaluators(
         fn = evaluator_map.get(name)
         if not fn:
             continue
+
         try:
-            res = fn(query=converted_data["query"], response=converted_data["response"])
+            if name == "ungrounded_attributes":
+                # This evaluator expects either `conversation` OR individual inputs.
+                # We try to pass all three if possible.
+                res = fn(
+                    query=converted_data.get("query", ""),
+                    context="Workload_Register_prompts.txt",
+                    response=converted_data.get("response", ""),
+                )
+            else:
+                res = fn(
+                    query=converted_data.get("query", ""),
+                    response=converted_data.get("response", ""),
+                )
+
             results[name] = res
         except Exception as exc:
             print(f"Evaluator {name} failed for query: {exc}")
             results[name] = {"error": str(exc)}
     return results
-
 
 # ---------------------------------------------------------------------------
 # Agent run and conversion
