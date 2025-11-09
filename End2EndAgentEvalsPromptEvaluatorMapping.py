@@ -623,13 +623,19 @@ def process_prompts_with_agent(
             converter.prepare_evaluation_data(thread_ids=thread_id, filename=evaluation_data_file)
 
             if isinstance(converted_data, dict):
-                desired_eval_names = SIMULATOR_EVALUATOR_MAP.get(record.simulator, enabled_evals)
+
+                desired_eval_names = SIMULATOR_EVALUATOR_MAP.get(
+                    record.simulator,
+                    list(evaluator_map.keys()),
+                )
+            
+                # Only require that the evaluator actually exists
                 selected_eval_names = [
                     name
                     for name in desired_eval_names
-                    if name in evaluator_map and name in enabled_evals
+                    if name in evaluator_map
                 ]
-
+    
                 # run all evaluators once and capture results
                 eval_results = run_selected_evaluators(evaluator_map, selected_eval_names, converted_data)
 
