@@ -177,7 +177,7 @@ def default_config() -> Dict[str, Any]:
             "Say hello and describe what you are."
         ],
         # quick_mode on by default
-        "quick_mode": True,
+        "quick_mode": False,
     }
 
 
