@@ -549,8 +549,10 @@ def process_prompts_with_agent(
     enabled_evals: List[str],
     all_pairs_path: str,
     evaluation_data_file: str,
+    run_guid: str,
 ) -> None:
     converter = AIAgentConverter(project_client)
+    pair_files: set[str] = set()
 
     for record in prompt_records:
         try:
@@ -575,12 +577,39 @@ def process_prompts_with_agent(
                     for name in desired_eval_names
                     if name in evaluator_map and name in enabled_evals
                 ]
+
+                # per simulator-evaluator pair file with shared run_guid
+                for evaluator_name in selected_eval_names:
+                    pair_file = f"sim_eval_pair_{record.simulator}_{evaluator_name}_{run_guid}.jsonl"
+                    log_entry = {
+                        "run_guid": run_guid,
+                        "simulator": record.simulator,
+                        "scenario": record.scenario,
+                        "evaluator": evaluator_name,
+                        "prompt": record.prompt,
+                        "thread_id": thread_id,
+                        "run_id": run_id,
+                        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()),
+                    }
+                    with open(pair_file, "a", encoding="utf-8") as pf:
+                        pf.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
+                    pair_files.add(pair_file)
+
                 run_selected_evaluators(evaluator_map, selected_eval_names, converted_data)
 
         except Exception as exc:
             print("Exception while processing prompt:")
             print(exc)
             continue
+
+    # upload all simulator-evaluator pair files for this run
+    if pair_files:
+        try:
+            print("Uploading sim-eval pair logs to azure storage")
+            upload_to_blob(container_name="sim-eval-pairs-1", file_paths=list(pair_files))
+        except Exception as exc:
+            print("Exception uploading sim-eval pairing logs")
+            print(exc)
 
 
 # ---------------------------------------------------------------------------
@@ -652,6 +681,7 @@ def main() -> None:
         enabled_evals=enabled_evals,
         all_pairs_path=all_pairs_path,
         evaluation_data_file=evaluation_data_file,
+        run_guid=file_suffix,
     )
 
     active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
