@@ -205,7 +205,7 @@ async def azure_openai_callback(
 async def main():
     # initialize credential, clients, callbacks etc. here (same as your top-level code)
     credential = AzureCliCredential()
-    azure_ai_project = "https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject"
+    azure_ai_project = "https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25"
     red_team = RedTeam(
         azure_ai_project=azure_ai_project,
         credential=credential,
