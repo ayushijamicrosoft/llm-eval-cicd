@@ -264,54 +264,55 @@ async def main2():
         scan_name="Intermediary-Model-Target-Scan",
         attack_strategies=[AttackStrategy.Flip],
     )
-    
-    # Create the RedTeam instance with all of the risk categories with 5 attack objectives generated for each category
-    model_red_team = RedTeam(
-        azure_ai_project=azure_ai_project,
-        credential=credential,
-        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
-        num_objectives=5,
-    )
-    
-    # Run the red team scan with multiple attack strategies
-    advanced_result = await model_red_team.scan(
-        target=azure_openai_callback,
-        scan_name="Advanced-Callback-Scan",
-        attack_strategies=[
-            AttackStrategy.EASY,  # Group of easy complexity attacks
-            AttackStrategy.MODERATE,  # Group of moderate complexity attacks
-            AttackStrategy.CharacterSpace,  # Add character spaces
-            AttackStrategy.ROT13,  # Use ROT13 encoding
-            AttackStrategy.UnicodeConfusable,  # Use confusable Unicode characters
-            AttackStrategy.CharSwap,  # Swap characters in prompts
-            AttackStrategy.Morse,  # Encode prompts in Morse code
-            AttackStrategy.Leetspeak,  # Use Leetspeak
-            AttackStrategy.Url,  # Use URLs in prompts
-            AttackStrategy.Binary,  # Encode prompts in binary
-            AttackStrategy.Compose([AttackStrategy.Base64, AttackStrategy.ROT13]),  # Use two strategies in one attack
-        ],
-        output_path="Advanced-Callback-Scan.json",
-    )
-    
-    path_to_prompts = ".\data\prompts.json"
-    
-    # Create the RedTeam specifying the custom attack seed prompts to use as objectives
-    custom_red_team = RedTeam(
-        azure_ai_project=azure_ai_project,
-        credential=credential,
-        custom_attack_seed_prompts=path_to_prompts,  # Path to a file containing custom attack seed prompts
-    )
-    
-    custom_red_team_result = await custom_red_team.scan(
-        target=azure_openai_callback,
-        scan_name="Custom-Prompt-Scan",
-        attack_strategies=[
-            AttackStrategy.EASY,  # Group of easy complexity attacks
-            AttackStrategy.MODERATE,  # Group of moderate complexity attacks
-            AttackStrategy.DIFFICULT,  # Group of difficult complexity attacks
-        ],
-        output_path="Custom-Prompt-Scan.json",
-    )
+    risk_category = [RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm]
+    for r_cat in risk_category:
+        # Create the RedTeam instance with all of the risk categories with 5 attack objectives generated for each category
+        model_red_team = RedTeam(
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+            risk_categories=[r_cat],
+            num_objectives=20,
+        )
+        
+        # Run the red team scan with multiple attack strategies
+        advanced_result = await model_red_team.scan(
+            target=azure_openai_callback,
+            scan_name="Advanced-Callback-Scan",
+            attack_strategies=[
+                AttackStrategy.EASY,  # Group of easy complexity attacks
+                AttackStrategy.MODERATE,  # Group of moderate complexity attacks
+                AttackStrategy.CharacterSpace,  # Add character spaces
+                AttackStrategy.ROT13,  # Use ROT13 encoding
+                AttackStrategy.UnicodeConfusable,  # Use confusable Unicode characters
+                AttackStrategy.CharSwap,  # Swap characters in prompts
+                AttackStrategy.Morse,  # Encode prompts in Morse code
+                AttackStrategy.Leetspeak,  # Use Leetspeak
+                AttackStrategy.Url,  # Use URLs in prompts
+                AttackStrategy.Binary,  # Encode prompts in binary
+                AttackStrategy.Compose([AttackStrategy.Base64, AttackStrategy.ROT13]),  # Use two strategies in one attack
+            ],
+            output_path="Advanced-Callback-Scan.json",
+        )
+        
+        path_to_prompts = ".\data\prompts.json"
+        
+        # Create the RedTeam specifying the custom attack seed prompts to use as objectives
+        custom_red_team = RedTeam(
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+            custom_attack_seed_prompts=path_to_prompts,  # Path to a file containing custom attack seed prompts
+        )
+        
+        custom_red_team_result = await custom_red_team.scan(
+            target=azure_openai_callback,
+            scan_name="Custom-Prompt-Scan",
+            attack_strategies=[
+                AttackStrategy.EASY,  # Group of easy complexity attacks
+                AttackStrategy.MODERATE,  # Group of moderate complexity attacks
+                AttackStrategy.DIFFICULT,  # Group of difficult complexity attacks
+            ],
+            output_path=f"Custom-Prompt-Scan_{r_cat}.json",
+        )
 
 asyncio.run(main2())
 
