@@ -313,6 +313,7 @@ async def main2():
             ],
             output_path=f"Custom-Prompt-Scan_{r_cat}.json",
         )
+        print(custom_red_team_results)
 
 asyncio.run(main2())
 
