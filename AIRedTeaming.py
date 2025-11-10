@@ -291,7 +291,7 @@ async def main2():
                 AttackStrategy.Binary,  # Encode prompts in binary
                 AttackStrategy.Compose([AttackStrategy.Base64, AttackStrategy.ROT13]),  # Use two strategies in one attack
             ],
-            output_path="Advanced-Callback-Scan.json",
+            output_path=f"Advanced-Callback-Scan_{r_cat}.json",
         )
         
         path_to_prompts = ".\data\prompts.json"
