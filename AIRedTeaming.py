@@ -443,6 +443,17 @@ def run_agent_for_prompt(
 
     return thread.id, run.id
 
+def append_converted_data_to_jsonl(all_pairs_path: str, converted_data: Any) -> None:
+    with open(all_pairs_path, "a", encoding="utf-8") as jsonl_handle:
+        try:
+            if isinstance(converted_data, list):
+                for rec in converted_data:
+                    jsonl_handle.write(json.dumps(rec, default=str) + "\n")
+            else:
+                jsonl_handle.write(json.dumps(converted_data, default=str) + "\n")
+        except Exception as write_err:
+            print("Failed to append converted_data to JSONL:", write_err)
+            
 def process_prompts_with_agent(
     prompt_records: List[PromptRecord],
     project_client: AIProjectClient,
