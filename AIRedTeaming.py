@@ -752,7 +752,7 @@ if __name__ == "__main__":
     evaluator_map: Dict[str, Any] = build_evaluators(
         model_config=eval_model_config,
         credential=credential,
-        azure_ai_project = "https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25")
+        AZURE_AI_PROJECT = "https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25")
     
     project_client = AIProjectClient(
         endpoint="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject",
