@@ -31,6 +31,14 @@ from azure.keyvault.secrets import SecretClient
 file_suffix = uuid.uuid4().hex
 print("Run GUID:", file_suffix)
 
+@dataclass
+class PromptRecord:
+    prompt: str
+    simulator: str
+    scenario: Optional[str] = None
+
+list_of_prompts = []
+
 # e.g. "https://my-keyvault.vault.azure.net/"
 VAULT_URL = "https://eval-agent-kv.vault.azure.net/"
 
@@ -139,7 +147,7 @@ def example_application_response(query: str, context: str) -> str:
     )
     message = completion.to_dict()["choices"][0]["message"]
     if isinstance(message, dict):
-        message = message.get("content", "")
+        message = message.content
     return message
 
 
@@ -346,7 +354,11 @@ async def main():
     )
     print("BASIC RESULT -------------------------------------------------------------------------------")
     print(result.attack_details)
+    attack_details_list = result.attack_details;
+    for attack_detail in attack_details_list:
+        list_of_prompts.append(PromptRecord(prompt=attack_detail.conversation[0].content, scenario=attack_detail.attack_category, simulator: attack_detail.risk_category))
     print("Basic scan done:", result)
+    print(list_of_prompts)
 
     # If you want to call a scan that might be synchronous on some versions of the SDK,
     # you can defensively handle both coroutine and normal function:
