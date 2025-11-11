@@ -141,7 +141,7 @@ def example_application_response(query: str, context: str) -> str:
         {"role": "user", "content": query},
     ]
     completion = client.chat.completions.create(
-        model=OPENAI_DEPLOYMENT,
+        model=deployment,
         messages=messages,
         max_completion_tokens=10000,
     )
