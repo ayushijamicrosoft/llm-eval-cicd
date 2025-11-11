@@ -11,6 +11,7 @@ from openai import AzureOpenAI
 import importlib.resources as pkg_resources
 from dotenv import load_dotenv
 import os, json
+from dataclasses import dataclass
 import pandas as pd
 import time
 from azure.ai.projects import AIProjectClient
