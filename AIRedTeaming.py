@@ -94,14 +94,15 @@ def upload_to_blob(container_name: str, file_paths: List[str]) -> None:
 
     try:
         container_client.create_container()
-    except Exception:
-        pass
-
-    for file_path in file_paths:
+        for file_path in file_paths:
         blob_name = os.path.basename(file_path)
         with open(file_path, "rb") as data:
             container_client.upload_blob(name=blob_name, data=data, overwrite=True)
         print(f"Uploaded: {blob_name}")
+    except Exception:
+        pass
+
+    
 # CLI argument for config
 parser = argparse.ArgumentParser(description="Run AI Red Teaming with optional config")
 parser.add_argument("--config", type=str, default=None, help="Path to config JSON/YAML file")
