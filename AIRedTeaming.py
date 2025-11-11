@@ -505,7 +505,6 @@ def process_prompts_with_agent(
                 dict_active_evaluators = {k: v for k, v in evaluator_map.items() if k in selected_eval_names}
                 
                 for evaluator_name in selected_eval_names:
-                    dict_active_evals = 
                     pair_file = f"sim_eval_pair_{record.simulator}_{evaluator_name}_{run_guid}.jsonl"
                     log_entry = {
                         "run_guid": run_guid,
