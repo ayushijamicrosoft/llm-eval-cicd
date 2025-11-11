@@ -163,8 +163,7 @@ async def custom_simulator_callback(
     latest_message = messages[-1]
 
     application_input = latest_message.content
-    context_from_message = latest_message.get("context", None)
-
+    context_from_message = latest_message.context
     response = example_application_response(query=application_input, context=context_from_message)
 
     message = {
