@@ -162,7 +162,7 @@ async def custom_simulator_callback(
     
     latest_message = messages[-1]
 
-    application_input = latest_message["content"]
+    application_input = latest_message.content
     context_from_message = latest_message.get("context", None)
 
     response = example_application_response(query=application_input, context=context_from_message)
@@ -358,7 +358,7 @@ async def main():
     attack_details_list = result.attack_details;
     for attack_detail in attack_details_list:
         print(attack_detail)
-        list_of_prompts.append(PromptRecord(prompt=attack_detail.conversation[0].content, scenario=attack_detail.attack_category, simulator= attack_detail.risk_category))
+        list_of_prompts.append(PromptRecord(prompt=attack_detail["conversation"][0].content, scenario=attack_detail["attack_category"], simulator= attack_detail["risk_category"]))
         break;
     print("Basic scan done:", result)
     print(list_of_prompts)
