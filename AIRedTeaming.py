@@ -732,6 +732,7 @@ if __name__ == "__main__":
         endpoint="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject",
         credential=DefaultAzureCredential()
     )
+
     
     agent = project_client.agents.get_agent(
         agent_id = "asst_40jxCEVxQniq4Pr7lDxTxeYu"
@@ -743,7 +744,15 @@ if __name__ == "__main__":
         api_version=api_version,
         azure_deployment=deployment,
     )
-    evaluator_map: Dict[str, Any] = build_evaluators(model_config=eval_model_config, credential=credential)
+
+    eval_project_client = AIProjectClient(
+        endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+        credential=DefaultAzureCredential()
+    )
+    evaluator_map: Dict[str, Any] = build_evaluators(
+        model_config=eval_model_config,
+        credential=credential,
+        azure_ai_project = "https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25")
     
     project_client = AIProjectClient(
         endpoint="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject",
