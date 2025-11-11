@@ -371,7 +371,8 @@ async def main():
     )
 
     upload_to_blob("advanced-red-teaming-results", f"Advanced-Callback-Scan_{file_suffix}.json")
-    
+    print("ADVANCED RESULT -------------------------------------------------------------------------------")
+    print(advanced_result.attack_details)
     print("Advanced scan done:", advanced_result)
 
 
