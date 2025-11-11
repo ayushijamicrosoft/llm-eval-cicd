@@ -356,7 +356,7 @@ async def main():
     print(result.attack_details)
     attack_details_list = result.attack_details;
     for attack_detail in attack_details_list:
-        list_of_prompts.append(PromptRecord(prompt=attack_detail.conversation[0].content, scenario=attack_detail.attack_category, simulator: attack_detail.risk_category))
+        list_of_prompts.append(PromptRecord(prompt=attack_detail.conversation[0].content, scenario=attack_detail.attack_category, simulator= attack_detail.risk_category))
     print("Basic scan done:", result)
     print(list_of_prompts)
 
