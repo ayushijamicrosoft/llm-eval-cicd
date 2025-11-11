@@ -453,12 +453,15 @@ async def main_async(config_path: Optional[str] = None):
         print(result.attack_details)
         attack_details_list = result.attack_details
         for attack_detail in attack_details_list:
-            list_of_prompts.append(
-                PromptRecord(
-                    prompt=attack_detail["conversation"][0]["content"],
-                    scenario=attack_detail.get("attack_technique"),
-                    simulator=attack_detail.get("risk_category"),
-                )
+            try:
+                list_of_prompts.append(
+                    PromptRecord(
+                        prompt=attack_detail["conversation"][0]["content"],
+                        scenario=attack_detail.get("attack_technique"),
+                        simulator=attack_detail.get("risk_category"),
+                    )
+            except: 
+                print("continue")
             )
     except Exception:
         print("No attack_details available or unexpected result format")
@@ -484,7 +487,7 @@ async def main_async(config_path: Optional[str] = None):
     except Exception as e:
         print(f"Advanced scan failed: {e!s}")
         advanced_result = None
-
+    
     # attempt upload similar to original
     try:
         upload_to_blob("advanced-red-teaming-results", [f"Advanced-Callback-Scan_{file_suffix}.json"])
@@ -492,9 +495,24 @@ async def main_async(config_path: Optional[str] = None):
         print(f"Upload attempt failed: {e!s}")
 
     print("ADVANCED RESULT -------------------------------------------------------------------------------")
+    
     if advanced_result is not None:
         try:
             print(advanced_result.attack_details)
+            attack_details_list = advanced_result.attack_details
+            for attack_detail in attack_details_list:
+                try:
+                    list_of_prompts.append(
+                        PromptRecord(
+                            prompt=attack_detail["conversation"][0]["content"],
+                            scenario=attack_detail.get("attack_technique"),
+                            simulator=attack_detail.get("risk_category"),
+                        )
+                    except: 
+                        print("continue")
+                    )
+        except Exception:
+            print("No attack_details available or unexpected result format")
             print("Advanced scan done:", advanced_result)
         except Exception:
             pprint.pprint(advanced_result)
@@ -507,6 +525,8 @@ async def main_async(config_path: Optional[str] = None):
     print(deployment)
     print(api_version)
     print(openai_key)
+    print("FINAL LIST OF PROMPTS")
+    print(list_of_prompts)
 
 
 def main():
