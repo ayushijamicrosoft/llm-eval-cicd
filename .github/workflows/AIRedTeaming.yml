@@ -60,10 +60,7 @@ jobs:
         with:
           name: full-job-output
           path: output.log
-      
-      - name: Print evaluation results [Advanced]
-        run: cat llm-eval-cicd/Advanced-Callback-Scan_violence.json/evaluation_results.json
-
+    
       - name: Print evaluation results [Basic]
         run: cat Basic-Callback-Scan_violence.json/evaluation_results.json
 
