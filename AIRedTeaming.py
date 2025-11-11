@@ -72,7 +72,24 @@ def merge_config(defaults: dict, overrides: dict) -> dict:
         else:
             defaults[k] = v
     return defaults
+def upload_to_blob(container_name: str, file_paths: List[str]) -> None:
+    STORAGE_ACCOUNT_NAME = "evalsofagents"
+    account_url = f"https://{STORAGE_ACCOUNT_NAME}.blob.core.windows.net"
 
+    credential = DefaultAzureCredential(exclude_interactive_browser_credential=True)
+    blob_service_client = BlobServiceClient(account_url=account_url, credential=credential)
+    container_client = blob_service_client.get_container_client(container_name)
+
+    try:
+        container_client.create_container()
+    except Exception:
+        pass
+
+    for file_path in file_paths:
+        blob_name = os.path.basename(file_path)
+        with open(file_path, "rb") as data:
+            container_client.upload_blob(name=blob_name, data=data, overwrite=True)
+        print(f"Uploaded: {blob_name}")
 # CLI argument for config
 parser = argparse.ArgumentParser(description="Run AI Red Teaming with optional config")
 parser.add_argument("--config", type=str, default=None, help="Path to config JSON/YAML file")
@@ -127,15 +144,6 @@ def build_evaluators(
         "ungrounded_attributes": ungrounded_attributes,
     }
     return evaluator_map
-
-
-# ---------------------------------------------------------------------------
-# Agent run and conversion
-# ---------------------------------------------------------------------------
-
-
-
-
 
 print(openai_endpoint)
 print(model_name)
@@ -260,7 +268,7 @@ async def main():
     red_team = RedTeam(
         azure_ai_project=azure_ai_project,
         credential=credential,
-        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
+        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
         num_objectives=1,
     )
 
@@ -294,13 +302,17 @@ async def main():
         target=azure_openai_callback,
         scan_name="Advanced-Callback-Scan",
         attack_strategies=[AttackStrategy.EASY],  # keep minimal for demo
-        output_path="Advanced-Callback-Scan.json",
+        output_path=f"Advanced-Callback-Scan_{file_suffix}.json",
     )
+
+    upload_to_blob("advanced-red-teaming-results", f"Advanced-Callback-Scan_{file_suffix}.json")
+    
     print("Advanced scan done:", advanced_result)
 
 
 asyncio.run(main())
 
+'''
 async def main2():
     # Define a model configuration to test
     azure_oai_model_config = {
@@ -362,9 +374,10 @@ async def main2():
                 AttackStrategy.MODERATE,  # Group of moderate complexity attacks
                 AttackStrategy.DIFFICULT,  # Group of difficult complexity attacks
             ],
-            output_path=f"Custom-Prompt-Scan_{r_cat}.json",
+            output_path=f"Custom-Prompt-Scan_{r_cat}_{file_suffix}.json",
         )
         print(custom_red_team_results)
+        upload_to_blob("custom-red-teaming-results", f"Custom_Prompt-Scan_{r_cat}_{file_suffix}.json")
 
 asyncio.run(main2())
-
+'''
