@@ -502,7 +502,10 @@ def process_prompts_with_agent(
 
                 # per simulator-evaluator pair file with shared run_guid,
                 # now including evaluation_result
+                dict_active_evaluators = {k: v for k, v in evaluator_map.items() if k in selected_eval_names}
+                
                 for evaluator_name in selected_eval_names:
+                    dict_active_evals = 
                     pair_file = f"sim_eval_pair_{record.simulator}_{evaluator_name}_{run_guid}.jsonl"
                     log_entry = {
                         "run_guid": run_guid,
@@ -521,7 +524,7 @@ def process_prompts_with_agent(
                 try:
                     response = evaluate(
                         data=evaluation_data_file,
-                        evaluators=selected_eval_names,
+                        evaluators=dict_active_evaluators,
                         azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
                     )
                 except Exception as e:
