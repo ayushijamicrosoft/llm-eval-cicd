@@ -66,7 +66,15 @@ jobs:
 
       - name: Print evaluation results [Basic]
         run: cat Basic-Callback-Scan_violence.json/evaluation_results.json
-      
+
+      - name: Upload all generated files
+        if: always()  # ensures upload runs even if script fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-run-files-${{ github.run_id }}
+          path: '**'        # <- means EVERYTHING recursively
+          retention-days: 7 # optional, defaults to 90 days
+          
       - name: Commit generated files back to main
         if: always()
         env:
