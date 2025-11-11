@@ -344,6 +344,8 @@ async def main():
         attack_strategies=[AttackStrategy.Flip],
         output_path="red_team_output.json",
     )
+    print("BASIC RESULT -------------------------------------------------------------------------------")
+    print(result.attack_details)
     print("Basic scan done:", result)
 
     # If you want to call a scan that might be synchronous on some versions of the SDK,
