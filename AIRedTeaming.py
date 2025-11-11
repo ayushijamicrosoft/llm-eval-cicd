@@ -116,8 +116,6 @@ openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
 api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
 
 def create_openai_client() -> AzureOpenAI:
-    if not all([OPENAI_ENDPOINT, OPENAI_API_KEY, OPENAI_API_VERSION]):
-        raise RuntimeError("OpenAI settings are not fully initialized.")
     return AzureOpenAI(
         api_version=api_version,
         azure_endpoint=openai_endpoint,
