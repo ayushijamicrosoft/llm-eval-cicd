@@ -507,8 +507,8 @@ async def main_async(config_path: Optional[str] = None):
                             scenario=attack_detail.get("attack_technique"),
                             simulator=attack_detail.get("risk_category"),
                         ))
-                    except: 
-                        print("continue")
+                except: 
+                    print("continue")
         except Exception:
             print("No attack_details available or unexpected result format")
             print("Advanced scan done:", advanced_result)
