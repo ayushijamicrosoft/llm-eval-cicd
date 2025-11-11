@@ -51,7 +51,9 @@ jobs:
           python AIRedTeaming.py \
           --config "configs/${{ github.event.inputs.config_file }}" \
           2>&1 | tee output.log
-
+      - name: Show current directory
+        run: pwd
+        
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
