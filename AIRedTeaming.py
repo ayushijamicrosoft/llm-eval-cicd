@@ -728,7 +728,7 @@ def main():
 if __name__ == "__main__":
     main()
     project_client = AIProjectClient(
-        endpoint="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject",
+        endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
         credential=DefaultAzureCredential()
     )
     
@@ -753,11 +753,13 @@ if __name__ == "__main__":
         "ungrounded_attributes": ungrounded_attributes,
     }
     
-    project_client = AIProjectClient(endpoint=, credential=DefaultAzureCredential())
+    project_client = AIProjectClient(
+        endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+        credential=DefaultAzureCredential())
     all_pairs_path = f"query_response_pairs_{file_suffix}.jsonl"
     evaluation_data_file = "evaluationDataRedTeaming.jsonl"
-    for record in list_of_prompts:
-        process_prompts_with_agent(
+    
+    process_prompts_with_agent(
         prompt_records=list_of_prompts,
         project_client=project_client,
         agent_id=agent.id,
@@ -766,6 +768,4 @@ if __name__ == "__main__":
         all_pairs_path=all_pairs_path,
         evaluation_data_file=evaluation_data_file,
         run_guid=file_suffix,
-    )
-
-        run_selected_evaluators()
+        )
