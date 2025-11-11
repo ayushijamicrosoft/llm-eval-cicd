@@ -28,6 +28,9 @@ import yaml
 
 from azure.keyvault.secrets import SecretClient
 
+file_suffix = uuid.uuid4().hex
+print("Run GUID:", file_suffix)
+
 # e.g. "https://my-keyvault.vault.azure.net/"
 VAULT_URL = "https://eval-agent-kv.vault.azure.net/"
 
