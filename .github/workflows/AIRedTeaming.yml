@@ -60,10 +60,6 @@ jobs:
         with:
           name: full-job-output
           path: output.log
-    
-      - name: Print evaluation results [Basic]
-        run: cat Basic-Callback-Scan_violence.json/evaluation_results.json
-
       - name: Upload all generated files
         if: always()  # ensures upload runs even if script fails
         uses: actions/upload-artifact@v4
