@@ -412,12 +412,13 @@ def run_agent_for_prompt(
 def process_prompts_with_agent(
     prompt_records: List[PromptRecord],
     project_client: AIProjectClient,
+    project_client_evals: AIProjectClient
     agent_id: str,
     evaluator_map: Dict[str, Any],
     enabled_evals: List[str],
     all_pairs_path: str,
     evaluation_data_file: str,
-    run_guid: str,
+    run_guid: str
 ) -> None:
     converter = AIAgentConverter(project_client)
     pair_files: set[str] = set()
@@ -735,23 +736,14 @@ if __name__ == "__main__":
     agent = project_client.agents.get_agent(
         agent_id = "asst_40jxCEVxQniq4Pr7lDxTxeYu"
     )
-
-    evaluator_map: Dict[str, Any] = {
-        "tool_call_accuracy": tool_call_accuracy,
-        "intent_resolution": intent_resolution,
-        "task_adherence": task_adherence,
-        "violence": violence,
-        "relevance": relevance,
-        "coherence": coherence,
-        "fluency": fluency,
-        "self_harm": self_harm,
-        "sexual": sexual,
-        "hate_unfairness": hate_unfairness,
-        "code_vulnerability": code_vulnerability,
-        "indirect_attack": indirect_attack,
-        "protected_material": protected_material,
-        "ungrounded_attributes": ungrounded_attributes,
-    }
+    credential = DefaultAzureCredential()
+    eval_model_config = AzureOpenAIModelConfiguration(
+        azure_endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+        api_key="EAX2Sbse7EkMn12uz8FQEMJO2TrSICmivBlgWkQWZc6utw2HWneXJQQJ99BIACHYHv6XJ3w3AAAAACOG7l1l",
+        api_version=api_version,
+        azure_deployment=deployment,
+    )
+    evaluator_map: Dict[str, Any] = build_evaluators(eval_model_config=model_config, credential=credential)
     
     project_client = AIProjectClient(
         endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
