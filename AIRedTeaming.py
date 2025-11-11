@@ -727,3 +727,14 @@ def main():
 
 if __name__ == "__main__":
     main()
+    project_client = AIProjectClient(
+        endpoint="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject",
+        credential=DefaultAzureCredential()
+    )
+    
+    agent = project_client.agents.get_agent(
+        agent_id = "asst_40jxCEVxQniq4Pr7lDxTxeYu"
+    )
+    
+    for record in list_of_prompts:
+        run_agent_for_prompt(project_client, agent.id, record.prompt)
