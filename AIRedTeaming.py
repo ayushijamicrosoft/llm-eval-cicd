@@ -743,7 +743,7 @@ if __name__ == "__main__":
         api_version=api_version,
         azure_deployment=deployment,
     )
-    evaluator_map: Dict[str, Any] = build_evaluators(eval_model_config=eval_model_config, credential=credential)
+    evaluator_map: Dict[str, Any] = build_evaluators(model_config=eval_model_config, credential=credential)
     
     project_client = AIProjectClient(
         endpoint="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject",
