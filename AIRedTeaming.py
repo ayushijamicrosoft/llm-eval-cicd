@@ -412,7 +412,6 @@ def run_agent_for_prompt(
 def process_prompts_with_agent(
     prompt_records: List[PromptRecord],
     project_client: AIProjectClient,
-    project_client_evals: AIProjectClient,
     agent_id: str,
     evaluator_map: Dict[str, Any],
     enabled_evals: List[str],
