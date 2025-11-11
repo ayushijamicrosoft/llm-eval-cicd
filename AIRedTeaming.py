@@ -102,6 +102,71 @@ deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
 openai_key = os.environ.get("AZURE_OPENAI_API_KEY")
 api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
 
+def create_openai_client() -> AzureOpenAI:
+    if not all([OPENAI_ENDPOINT, OPENAI_API_KEY, OPENAI_API_VERSION]):
+        raise RuntimeError("OpenAI settings are not fully initialized.")
+    return AzureOpenAI(
+        api_version=OPENAI_API_VERSION,
+        azure_endpoint=OPENAI_ENDPOINT,
+        api_key=OPENAI_API_KEY,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Application logic for answering user queries
+# ---------------------------------------------------------------------------
+
+def example_application_response(query: str, context: str) -> str:
+    client = create_openai_client()
+
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are a user assistant who helps answer questions based on some context.\n\n"
+                f"Context: '{context}'"
+            ),
+        },
+        {"role": "user", "content": query},
+    ]
+    completion = client.chat.completions.create(
+        model=OPENAI_DEPLOYMENT,
+        messages=messages,
+        max_completion_tokens=10000,
+    )
+    message = completion.to_dict()["choices"][0]["message"]
+    if isinstance(message, dict):
+        message = message.get("content", "")
+    return message
+
+
+async def custom_simulator_callback(
+    messages: Dict[str, Any],
+    stream: bool = False,
+    session_state: Optional[str] = None,
+    context: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    messages_list = messages["messages"]
+    latest_message = messages_list[-1]
+
+    application_input = latest_message["content"]
+    context_from_message = latest_message.get("context", None)
+
+    response = example_application_response(query=application_input, context=context_from_message)
+
+    message = {
+        "content": response,
+        "role": "assistant",
+        "context": context_from_message,
+    }
+    messages["messages"].append(message)
+    return {
+        "messages": messages["messages"],
+        "stream": stream,
+        "session_state": session_state,
+        "context": context_from_message,
+    }
+    
 def build_evaluators(
     model_config: AzureOpenAIModelConfiguration,
     credential: DefaultAzureCredential,
@@ -204,10 +269,6 @@ azure_openai_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
 azure_openai_api_key = os.environ.get("AZURE_OPENAI_API_KEY")  # e.g., "your-api-key"
 azure_openai_api_version = os.environ.get("AZURE_OPENAI_API_VERSION")  # Use the latest API version
 
-# Define a simple callback function that always returns a fixed response
-def financial_advisor_callback(query: str) -> str:  # noqa: ARG001
-    return "I'm a financial advisor assistant. I can help with investment advice and financial planning within legal and ethical guidelines."
-
 # Create the `RedTeam` instance with minimal configurations
 red_team = RedTeam(
     azure_ai_project=azure_ai_project,
@@ -274,7 +335,7 @@ async def main():
 
     # Example target (callback) run
     result = await red_team.scan(
-        target=financial_advisor_callback,
+        target=custom_simulator_callback,
         scan_name="Basic-Callback-Scan",
         attack_strategies=[AttackStrategy.Flip],
         output_path="red_team_output.json",
