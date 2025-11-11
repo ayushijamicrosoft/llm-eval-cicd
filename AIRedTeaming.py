@@ -735,6 +735,37 @@ if __name__ == "__main__":
     agent = project_client.agents.get_agent(
         agent_id = "asst_40jxCEVxQniq4Pr7lDxTxeYu"
     )
+
+    evaluator_map: Dict[str, Any] = {
+        "tool_call_accuracy": tool_call_accuracy,
+        "intent_resolution": intent_resolution,
+        "task_adherence": task_adherence,
+        "violence": violence,
+        "relevance": relevance,
+        "coherence": coherence,
+        "fluency": fluency,
+        "self_harm": self_harm,
+        "sexual": sexual,
+        "hate_unfairness": hate_unfairness,
+        "code_vulnerability": code_vulnerability,
+        "indirect_attack": indirect_attack,
+        "protected_material": protected_material,
+        "ungrounded_attributes": ungrounded_attributes,
+    }
     
+    project_client = AIProjectClient(endpoint=, credential=DefaultAzureCredential())
+    all_pairs_path = f"query_response_pairs_{file_suffix}.jsonl"
+    evaluation_data_file = "evaluationDataRedTeaming.jsonl"
     for record in list_of_prompts:
-        run_agent_for_prompt(project_client, agent.id, record.prompt)
+        process_prompts_with_agent(
+        prompt_records=list_of_prompts,
+        project_client=project_client,
+        agent_id=agent.id,
+        evaluator_map=evaluator_map,
+        enabled_evals=[],
+        all_pairs_path=all_pairs_path,
+        evaluation_data_file=evaluation_data_file,
+        run_guid=file_suffix,
+    )
+
+        run_selected_evaluators()
