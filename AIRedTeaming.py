@@ -151,7 +151,7 @@ async def custom_simulator_callback(
 ) -> Dict[str, Any]:
     print("Messages", messages)
     
-    latest_message = messages_list[-1]
+    latest_message = messages[-1]
 
     application_input = latest_message["content"]
     context_from_message = latest_message.get("context", None)
