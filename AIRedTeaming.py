@@ -150,8 +150,7 @@ async def custom_simulator_callback(
     context: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     print("Messages", messages)
-    print("----------------------------------------------------------------------")
-    messages_list = messages["messages"]
+    
     latest_message = messages_list[-1]
 
     application_input = latest_message["content"]
