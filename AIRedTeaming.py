@@ -305,7 +305,7 @@ async def azure_openai_callback(
 
     ## Extract the latest message from the conversation history
     messages_list = [{"role": message.role, "content": message.content} for message in messages]
-    latest_message = messages_list[-1]["content"]
+    latest_message = messages_list[-1].content
 
     try:
         # Call the model
