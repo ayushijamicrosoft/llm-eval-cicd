@@ -66,6 +66,40 @@ from dotenv import load_dotenv
 import importlib.resources as pkg_resources
 import uuid as _uuid
 
+from azure.ai.evaluation import (
+    evaluate,
+    ToolCallAccuracyEvaluator,
+    AzureOpenAIModelConfiguration,
+    IntentResolutionEvaluator,
+    TaskAdherenceEvaluator,
+    RelevanceEvaluator,
+    CoherenceEvaluator,
+    FluencyEvaluator,
+    ViolenceEvaluator,
+    SelfHarmEvaluator,
+    SexualEvaluator,
+    HateUnfairnessEvaluator,
+    CodeVulnerabilityEvaluator,
+    IndirectAttackEvaluator,
+    ProtectedMaterialEvaluator,
+    AIAgentConverter,
+    UngroundedAttributesEvaluator,
+)
+from azure.ai.evaluation.simulator import (
+    AdversarialSimulator,
+    AdversarialScenario,
+    DirectAttackSimulator,
+    IndirectAttackSimulator,
+)
+from azure.ai.projects import AIProjectClient
+from azure.ai.agents.models import (
+    FunctionTool,
+    ListSortOrder,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput,
+)
+
 # -------------------------
 # Globals kept from original
 # -------------------------
