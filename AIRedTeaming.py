@@ -746,7 +746,7 @@ if __name__ == "__main__":
     evaluator_map: Dict[str, Any] = build_evaluators(eval_model_config=model_config, credential=credential)
     
     project_client = AIProjectClient(
-        endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+        endpoint="https://shayak-foundry.services.ai.azure.com/api/projects/shayakproject",
         credential=DefaultAzureCredential())
     all_pairs_path = f"query_response_pairs_{file_suffix}.jsonl"
     evaluation_data_file = "evaluationDataRedTeaming.jsonl"
