@@ -1,0 +1,84 @@
+name: Run AI Red Teaming Improved
+
+on:
+  workflow_dispatch:
+    inputs:
+        config_file:
+          description: "Select the config file to use for evaluation"
+          required: false
+          default: "default.json"
+          type: choice
+          options:
+            - default.json
+            - prod.json
+            - debug.json
+            - test.yaml
+
+jobs:
+  run-python:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write   # REQUIRED for OIDC
+      contents: read
+
+    env:
+      # prevent interactive prompts on CI
+      AZURE_IDENTITY_ENABLE_INTERACTIVE: "0"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # OIDC login: NO client secret needed
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.OIDC_AZURE_CLIENT_ID }}     # App registration's Application (client) ID
+          tenant-id: ${{ secrets.OIDC_AZURE_TENANT_ID }}     # Directory (tenant) ID
+          subscription-id: ${{ secrets.OIDC_AZURE_SUBSCRIPTION_ID }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run Python
+        run: |
+          echo "🧠 Using config file: ${{ github.event.inputs.config_file }}"
+          python AIRedTeamingImproved.py \
+          --config "configs/${{ github.event.inputs.config_file }}" \
+          2>&1 | tee output.log
+      - name: Show current directory
+        run: pwd
+        
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-job-output
+          path: output.log
+      - name: Upload all generated files
+        if: always()  # ensures upload runs even if script fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-run-files-${{ github.run_id }}
+          path: '**'        # <- means EVERYTHING recursively
+          retention-days: 7 # optional, defaults to 90 days
+          
+      - name: Commit generated files back to main
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add prompt_outputs/ || true
+          if git diff --staged --quiet; then
+            echo "No generated changes to commit"
+          else
+            git commit -m "chore: add generated files (prompts and logs) [ci run $GITHUB_RUN_ID]"
+            git push origin HEAD:main
+          fi
