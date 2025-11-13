@@ -526,16 +526,16 @@ def process_prompts_with_agent(
             print(exc)
             continue
         
-        try:
-            response = evaluate(
-                data=evaluation_data_file,
-                evaluators=dict_active_evaluators,
-                azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
-            )
-        except Exception as e:
-            print("Exception in sending eval results to AI foundry")
-            print(e)
-            continue;
+    try:
+        response = evaluate(
+            data=evaluation_data_file,
+            evaluators=dict_active_evaluators,
+            azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+        )
+    except Exception as e:
+        print("Exception in sending eval results to AI foundry")
+        print(e)
+        continue;
 
     # upload all simulator-evaluator pair files for this run
     if pair_files:
@@ -673,7 +673,7 @@ async def main_async(config_path: Optional[str] = None):
     red_team = RedTeam(
         azure_ai_project=AZURE_AI_PROJECT,
         credential=credential,
-        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
+        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
         num_objectives=30,
     )
 
