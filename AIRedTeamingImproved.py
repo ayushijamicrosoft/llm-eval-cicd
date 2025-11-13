@@ -535,7 +535,7 @@ def process_prompts_with_agent(
     except Exception as e:
         print("Exception in sending eval results to AI foundry")
         print(e)
-        continue;
+        continue
 
     # upload all simulator-evaluator pair files for this run
     if pair_files:
