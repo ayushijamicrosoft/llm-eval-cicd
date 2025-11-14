@@ -504,29 +504,12 @@ def process_prompts_with_agent(
                     for name in desired_eval_names
                     if name in evaluator_map
                 ]
-    
+
+                eval_results = run_selected_evaluators(evaluator_map, selected_eval_names, converted_data)
+                
                 # per simulator-evaluator pair file with shared run_guid,
                 # now including evaluation_result
                 dict_active_evaluators = {k: v for k, v in evaluator_map.items() if k in selected_eval_names}
-
-                eval_results = {}
-                try:
-                    response = evaluate(
-                        data=evaluation_data_file,
-                        evaluators=dict_active_evaluators,
-                        azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
-                    )
-                    # Extract results from response for each evaluator
-                    if isinstance(response, dict):
-                        for evaluator_name in selected_eval_names:
-                            eval_results[evaluator_name] = response.get(evaluator_name)
-                except Exception as e:
-                    print("Exception in sending eval results to AI foundry")
-                    print(e)
-                    continue;
-                    
-                    # Fall back to local evaluation if remote fails
-                    eval_results = run_selected_evaluators(evaluator_map, selected_eval_names, converted_data)
 
                 for evaluator_name in selected_eval_names:
                     pair_file = f"sim_eval_pair_{record.simulator}_{evaluator_name}_{run_guid}.jsonl"
@@ -544,6 +527,17 @@ def process_prompts_with_agent(
                     with open(pair_file, "a", encoding="utf-8") as pf:
                         pf.write(json.dumps(log_entry, ensure_ascii=False, default=str) + "\n")
                     pair_files.add(pair_file)
+
+        try:
+            response = evaluate(
+                data=evaluation_data_file,
+                evaluators=dict_active_evaluators,
+                azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+            )
+        except Exception as e:
+            print("Exception in sending eval results to AI foundry")
+            print(e)
+            continue;
                   
         except Exception as exc:
             print("Exception while processing prompt:")
