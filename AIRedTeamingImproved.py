@@ -528,16 +528,16 @@ def process_prompts_with_agent(
                         pf.write(json.dumps(log_entry, ensure_ascii=False, default=str) + "\n")
                     pair_files.add(pair_file)
 
-        try:
-            response = evaluate(
-                data=evaluation_data_file,
-                evaluators=dict_active_evaluators,
-                azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
-            )
-        except Exception as e:
-            print("Exception in sending eval results to AI foundry")
-            print(e)
-            continue;
+            try:
+                response = evaluate(
+                    data=evaluation_data_file,
+                    evaluators=dict_active_evaluators,
+                    azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+                )
+            except Exception as e:
+                print("Exception in sending eval results to AI foundry")
+                print(e)
+                continue;
                   
         except Exception as exc:
             print("Exception while processing prompt:")
