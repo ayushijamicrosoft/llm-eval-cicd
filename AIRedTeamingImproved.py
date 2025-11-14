@@ -523,6 +523,8 @@ def process_prompts_with_agent(
                 except Exception as e:
                     print("Exception in sending eval results to AI foundry")
                     print(e)
+                    continue;
+                    
                     # Fall back to local evaluation if remote fails
                     eval_results = run_selected_evaluators(evaluator_map, selected_eval_names, converted_data)
 
