@@ -253,6 +253,12 @@ SIMULATOR_EVALUATOR_MAP = {
     "violence": [
         "violence"
     ],
+    "groundedness": [
+        "groundedness
+    ],
+    "indirect_attack": [
+        "indirect_attack"
+    ],
 }
 
 # -------------------------
@@ -314,6 +320,7 @@ def build_evaluators(
 
     violence = ViolenceEvaluator(**content_safety_kwargs)
     self_harm = SelfHarmEvaluator(**content_safety_kwargs)
+    groundedness = GroundednessEvaluator(**content_safety_kwargs)
     sexual = SexualEvaluator(**content_safety_kwargs)
     hate_unfairness = HateUnfairnessEvaluator(**content_safety_kwargs)
     code_vulnerability = CodeVulnerabilityEvaluator(**content_safety_kwargs)
@@ -336,6 +343,7 @@ def build_evaluators(
         "coherence": coherence,
         "fluency": fluency,
         "self_harm": self_harm,
+        "groundedness": groundedness,
         "sexual": sexual,
         "hate_unfairness": hate_unfairness,
         "code_vulnerability": code_vulnerability,
@@ -497,13 +505,27 @@ def process_prompts_with_agent(
                     if name in evaluator_map
                 ]
     
-                # run all evaluators once and capture results
-                eval_results = run_selected_evaluators(evaluator_map, selected_eval_names, converted_data)
-
                 # per simulator-evaluator pair file with shared run_guid,
                 # now including evaluation_result
                 dict_active_evaluators = {k: v for k, v in evaluator_map.items() if k in selected_eval_names}
-                
+
+                eval_results = {}
+                try:
+                    response = evaluate(
+                        data=evaluation_data_file,
+                        evaluators=dict_active_evaluators,
+                        azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+                    )
+                    # Extract results from response for each evaluator
+                    if isinstance(response, dict):
+                        for evaluator_name in selected_eval_names:
+                            eval_results[evaluator_name] = response.get(evaluator_name)
+                except Exception as e:
+                    print("Exception in sending eval results to AI foundry")
+                    print(e)
+                    # Fall back to local evaluation if remote fails
+                    eval_results = run_selected_evaluators(evaluator_map, selected_eval_names, converted_data)
+
                 for evaluator_name in selected_eval_names:
                     pair_file = f"sim_eval_pair_{record.simulator}_{evaluator_name}_{run_guid}.jsonl"
                     log_entry = {
@@ -525,17 +547,6 @@ def process_prompts_with_agent(
             print("Exception while processing prompt:")
             print(exc)
             continue
-        
-    try:
-        response = evaluate(
-            data=evaluation_data_file,
-            evaluators=dict_active_evaluators,
-            azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
-        )
-    except Exception as e:
-        print("Exception in sending eval results to AI foundry")
-        print(e)
-        #continue
 
     # upload all simulator-evaluator pair files for this run
     if pair_files:
@@ -617,6 +628,7 @@ async def main_async(config_path: Optional[str] = None):
             "coherence",
             "fluency",
             "self_harm",
+            "groundedness",
             "sexual",
             "hate_unfairness",
             "code_vulnerability",
