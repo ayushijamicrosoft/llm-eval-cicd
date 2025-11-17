@@ -747,7 +747,7 @@ def main() -> None:
         response = evaluate(
             data=evaluation_data_file,
             evaluators=active_evaluators,
-            azure_ai_project=f"{config['project']['endpoint'].rstrip('/')}/api/projects/{config['project']['project_name']}",
+            azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
         )
     except Exception as exc:
         print("Batch evaluate failed:")
