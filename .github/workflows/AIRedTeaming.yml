@@ -44,12 +44,6 @@ jobs:
       - name: Install dependencies
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Install black
-        run: pip install black
-
-      - name: Run black
-        run: black .
         
       - name: Run Python
         run: |
