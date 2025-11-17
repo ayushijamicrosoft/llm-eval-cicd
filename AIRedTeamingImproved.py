@@ -238,7 +238,7 @@ def example_application_response(query: str, context: str, deployment_name: Opti
     )
     message = completion.to_dict()["choices"][0]["message"]
     if isinstance(message, dict):
-        message = message.content
+        message = message["content"]
     return message
 
 SIMULATOR_EVALUATOR_MAP = {
