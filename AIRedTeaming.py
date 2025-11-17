@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+ #!/usr/bin/env python3
 """
 Single-file, refactored version of your red-team script.
 Same behavior as before; reorganized into functions for clarity.
@@ -466,8 +466,9 @@ def process_prompts_with_agent(
 ) -> None:
     converter = AIAgentConverter(project_client)
     pair_files: set[str] = set()
-
+    random_number  = random.randint(1, 50)
     for record in prompt_records:
+        dict_active_evaluators
         try:
             print("=" * 80)
             print(f"Simulator: {record.simulator}, scenario: {record.scenario}")
@@ -481,69 +482,32 @@ def process_prompts_with_agent(
 
             append_converted_data_to_jsonl(all_pairs_path, converted_data)
 
-            converter.prepare_evaluation_data(thread_ids=thread_id, filename=evaluation_data_file)
-
-            if isinstance(converted_data, dict):
-
-                desired_eval_names = SIMULATOR_EVALUATOR_MAP.get(
+            desired_eval_names = SIMULATOR_EVALUATOR_MAP.get(
                     record.simulator,
                     list(evaluator_map.keys()),
                 )
             
-                # Only require that the evaluator actually exists
-                selected_eval_names = [
-                    name
-                    for name in desired_eval_names
-                    if name in evaluator_map
-                ]
-    
-                # run all evaluators once and capture results
-                eval_results = run_selected_evaluators(evaluator_map, selected_eval_names, converted_data)
-
-                # per simulator-evaluator pair file with shared run_guid,
-                # now including evaluation_result
-                dict_active_evaluators = {k: v for k, v in evaluator_map.items() if k in selected_eval_names}
-                
-                for evaluator_name in selected_eval_names:
-                    pair_file = f"sim_eval_pair_{record.simulator}_{evaluator_name}_{run_guid}.jsonl"
-                    log_entry = {
-                        "run_guid": run_guid,
-                        "simulator": record.simulator,
-                        "scenario": record.scenario,
-                        "evaluator": evaluator_name,
-                        "prompt": record.prompt,
-                        "thread_id": thread_id,
-                        "run_id": run_id,
-                        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()),
-                        "evaluation_result": eval_results.get(evaluator_name),
-                    }
-                    with open(pair_file, "a", encoding="utf-8") as pf:
-                        pf.write(json.dumps(log_entry, ensure_ascii=False, default=str) + "\n")
-                    pair_files.add(pair_file)
-                try:
-                    response = evaluate(
-                        data=evaluation_data_file,
-                        evaluators=dict_active_evaluators,
-                        azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
-                    )
-                except Exception as e:
-                    print("Exception in sending eval results to AI foundry")
-                    print(e)
-                    continue;
-
-        except Exception as exc:
-            print("Exception while processing prompt:")
-            print(exc)
-            continue
-
-    # upload all simulator-evaluator pair files for this run
-    if pair_files:
+            # Only require that the evaluator actually exists
+            selected_eval_names = [
+                name
+                for name in desired_eval_names
+                if name in evaluator_map
+            ]
+            dict_active_evaluators = {k: v for k, v in evaluator_map.items() if k in selected_eval_names}
+            converter.prepare_evaluation_data(thread_ids=thread_id, filename=f"evaluation_results_{random_number}.jsonl")
+        except Exception as exp: 
+            print("Exception in evaluation")
+            print(exp)
         try:
-            print("Uploading sim-eval pair logs to azure storage")
-            upload_to_blob(container_name="sim-eval-pairs-1", file_paths=list(pair_files))
-        except Exception as exc:
-            print("Exception uploading sim-eval pairing logs")
-            print(exc)
+            response = evaluate(
+                data=f"evaluation_results_{random_number}.jsonl",
+                evaluators=dict_active_evaluators,
+                azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+            )
+        except Exception as e:
+            print("Exception in sending eval results to AI foundry")
+            print(e)
+            continue;
 
 # -------------------------
 # Azure OpenAI callback wrapper (kept behavior)
@@ -673,7 +637,7 @@ async def main_async(config_path: Optional[str] = None):
         azure_ai_project=AZURE_AI_PROJECT,
         credential=credential,
         risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
-        num_objectives=30,
+        num_objectives=1,
     )
 
     # Run example callback scan (keeps naming and behavior)
@@ -718,7 +682,7 @@ async def main_async(config_path: Optional[str] = None):
         azure_ai_project=AZURE_AI_PROJECT,
         credential=credential,
         risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
-        num_objectives=30,
+        num_objectives=1,
     )
 
     try:
@@ -815,14 +779,23 @@ if __name__ == "__main__":
         credential=DefaultAzureCredential())
     all_pairs_path = f"query_response_pairs_{file_suffix}.jsonl"
     evaluation_data_file = "evaluationDataRedTeaming.jsonl"
-    
-    process_prompts_with_agent(
-        prompt_records=list_of_prompts,
-        project_client=project_client,
-        agent_id=agent.id,
-        evaluator_map=evaluator_map,
-        enabled_evals=[],
-        all_pairs_path=all_pairs_path,
-        evaluation_data_file=evaluation_data_file,
-        run_guid=file_suffix,
-        )
+
+    records_sorted = sorted(list_of_prompts, key=lambda r: r.simulator)
+
+    groups = defaultdict(list_of_prompts)
+    for r in records:
+        groups[r.simulator].append(r)
+
+    print(list_of_prompts)
+    print(groups)
+    for sim in groups:
+        process_prompts_with_agent(
+            prompt_records=groups[sim],
+            project_client=project_client,
+            agent_id=agent.id,
+            evaluator_map=evaluator_map,
+            enabled_evals=[],
+            all_pairs_path=all_pairs_path,
+            evaluation_data_file=evaluation_data_file,
+            run_guid=file_suffix,
+            )
