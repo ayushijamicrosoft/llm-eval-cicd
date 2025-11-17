@@ -783,7 +783,7 @@ if __name__ == "__main__":
 
     records_sorted = sorted(list_of_prompts, key=lambda r: r.simulator)
 
-    groups = defaultdict(list_of_prompts)
+    groups = defaultdict(list)
     for r in records:
         groups[r.simulator].append(r)
 
