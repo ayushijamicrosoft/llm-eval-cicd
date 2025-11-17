@@ -564,7 +564,7 @@ async def azure_openai_callback(
     )
 
     # Normalize messages to simpler dicts
-    messages_list = [{"role": getattr(message, "role", message.get("role")), "content": getattr(message, "content", message.get("content"))} for message in messages]
+    messages_list = [{"role": message.role, "content": message.content} for message in messages]
     latest_message = messages_list[-1]["content"]
 
     try:
