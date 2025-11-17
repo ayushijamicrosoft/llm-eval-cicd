@@ -469,12 +469,12 @@ def process_prompts_with_agent(
     pair_files: set[str] = set()
     random_number  = random.randint(1, 50)
     if prompt_records == 0:
-				   return;
+		return;
     
-				desired_eval_names = SIMULATOR_EVALUATOR_MAP.get(
-                     prompt_records[0].simulator,
-                     list(evaluator_map.keys()),
-                 )
+	desired_eval_names = SIMULATOR_EVALUATOR_MAP.get(
+		 prompt_records[0].simulator,
+		 list(evaluator_map.keys()),
+	 )
             
     # Only require that the evaluator actually exists
     selected_eval_names = [
