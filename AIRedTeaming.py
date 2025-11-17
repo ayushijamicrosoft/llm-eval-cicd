@@ -112,6 +112,7 @@ VAULT_URL = "https://eval-agent-kv.vault.azure.net/"
 
 # store collected prompts similar to original
 list_of_prompts: List["PromptRecord"] = []
+jb_list_of_prompts: List["PromptRecord"] = []
 
 # environment placeholders (will be overridden by keyvault loader or env)
 openai_endpoint: Optional[str] = None
@@ -700,7 +701,7 @@ async def main_async(config_path: Optional[str] = None):
         attack_details_list = result.attack_details
         for attack_detail in attack_details_list:
             try:
-                list_of_prompts.append(
+                jb_list_of_prompts.append(
                     PromptRecord(
                         prompt=attack_detail["conversation"][0]["content"],
                         scenario=attack_detail.get("attack_technique"),
@@ -710,8 +711,8 @@ async def main_async(config_path: Optional[str] = None):
                 print("continue")
     except Exception:
         print("No attack_details available or unexpected result format")
-    print("Basic scan done:", result)
-    print(list_of_prompts)
+    print("UPIA scan done:", result)
+    print(jb_list_of_prompts)
 
     # final prints (keep original debug prints)
     print(openai_endpoint)
@@ -719,9 +720,10 @@ async def main_async(config_path: Optional[str] = None):
     print(deployment)
     print(api_version)
     print(openai_key)
-    print("FINAL LIST OF PROMPTS")
+    print("FINAL LIST OF PROMPTS [NON-JAILBREAK]")
     print(list_of_prompts)
-
+    print("FINAL LIST OF PROMPTS [JAILBREAK]")
+    print(jb_list_of_prompts)
 
 def main():
     parser = argparse.ArgumentParser(description="Run AI Red Teaming with optional config")
@@ -777,6 +779,24 @@ if __name__ == "__main__":
     for sim in groups:
         process_prompts_with_agent(
             prompt_records=groups[sim],
+            project_client=project_client,
+            agent_id=agent.id,
+            evaluator_map=evaluator_map,
+            enabled_evals=[],
+            all_pairs_path=all_pairs_path,
+            evaluation_data_file=evaluation_data_file,
+            run_guid=file_suffix,
+            )
+
+    jb_groups = defaultdict(list)
+    for r in jb_list_of_prompts:
+        jb_groups[r.simulator].append(r)
+
+    print(jb_list_of_prompts)
+    print(jb_groups)
+    for sim in jb_groups:
+        process_prompts_with_agent(
+            prompt_records=jb_groups[sim],
             project_client=project_client,
             agent_id=agent.id,
             evaluator_map=evaluator_map,
