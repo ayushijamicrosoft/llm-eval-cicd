@@ -637,7 +637,7 @@ async def main_async(config_path: Optional[str] = None):
         azure_ai_project=AZURE_AI_PROJECT,
         credential=credential,
         risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
-        num_objectives=30,
+        num_objectives=2,
     )
 
     # Run example callback scan (keeps naming and behavior)
@@ -677,55 +677,41 @@ async def main_async(config_path: Optional[str] = None):
     print("Basic scan done:", result)
     print(list_of_prompts)
 
-    # advanced model red team scan (keeps behavior and uses file_suffix)
-    model_red_team = RedTeam(
-        azure_ai_project=AZURE_AI_PROJECT,
-        credential=credential,
-        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
-        num_objectives=30,
-    )
-
+   print("Starting UPIA Direct Attack CALLBACK SCAN")
     try:
-        advanced_result = await maybe_await(
-            model_red_team.scan,
-            azure_openai_callback,
-            scan_name="Advanced-Callback-Scan",
-            attack_strategies=[AttackStrategy.BASELINE],
-            output_path=f"Advanced-Callback-Scan_{file_suffix}.json",
+        result = await red_team.scan(
+            target=custom_simulator_callback,
+            scan_name="Upia-Callback-Scan",
+            attack_strategies=[AttackStrategy.JailBreak],
+            output_path="red_team_output.json",
         )
-    except Exception as e:
-        print(f"Advanced scan failed: {e!s}")
-        advanced_result = None
-    
-    # attempt upload similar to original
-    try:
-        upload_to_blob("advanced-red-teaming-results", [f"Advanced-Callback-Scan_{file_suffix}.json"])
-    except Exception as e:
-        print(f"Upload attempt failed: {e!s}")
+    except TypeError:
+        # some SDKs expose sync scan - support both
+        result = red_team.scan(
+            target=custom_simulator_callback,
+            scan_name="Upia-Callback-Scan",
+            attack_strategies=[AttackStrategy.Baseline],
+            output_path="red_team_output.json",
+        )
 
-    print("ADVANCED RESULT -------------------------------------------------------------------------------")
-    
-    if advanced_result is not None:
-        try:
-            print(advanced_result.attack_details)
-            attack_details_list = advanced_result.attack_details
-            for attack_detail in attack_details_list:
-                try:
-                    list_of_prompts.append(
-                        PromptRecord(
-                            prompt=attack_detail["conversation"][0]["content"],
-                            scenario=attack_detail.get("attack_technique"),
-                            simulator=attack_detail.get("risk_category"),
-                        ))
-                except: 
-                    print("continue")
-        except Exception:
-            print("No attack_details available or unexpected result format")
-            print("Advanced scan done:", advanced_result)
-        except Exception:
-            pprint.pprint(advanced_result)
-    else:
-        print("No advanced result available")
+    print("UPIA RESULT -------------------------------------------------------------------------------")
+    try:
+        print(result.attack_details)
+        attack_details_list = result.attack_details
+        for attack_detail in attack_details_list:
+            try:
+                list_of_prompts.append(
+                    PromptRecord(
+                        prompt=attack_detail["conversation"][0]["content"],
+                        scenario=attack_detail.get("attack_technique"),
+                        simulator=attack_detail.get("risk_category"),
+                    ))
+            except: 
+                print("continue")
+    except Exception:
+        print("No attack_details available or unexpected result format")
+    print("Basic scan done:", result)
+    print(list_of_prompts)
 
     # final prints (keep original debug prints)
     print(openai_endpoint)
