@@ -468,8 +468,23 @@ def process_prompts_with_agent(
     converter = AIAgentConverter(project_client)
     pair_files: set[str] = set()
     random_number  = random.randint(1, 50)
+    if prompt_records == 0:
+				   return;
+    
+				desired_eval_names = SIMULATOR_EVALUATOR_MAP.get(
+                     prompt_records[0].simulator,
+                     list(evaluator_map.keys()),
+                 )
+            
+    # Only require that the evaluator actually exists
+    selected_eval_names = [
+        name
+        for name in desired_eval_names
+        if name in evaluator_map
+    ]
+    dict_active_evaluators = {k: v for k, v in evaluator_map.items() if k in selected_eval_names}
+ 
     for record in prompt_records:
-        dict_active_evaluators
         try:
             print("=" * 80)
             print(f"Simulator: {record.simulator}, scenario: {record.scenario}")
@@ -482,33 +497,20 @@ def process_prompts_with_agent(
             print(converted_data)
 
             append_converted_data_to_jsonl(all_pairs_path, converted_data)
-
-            desired_eval_names = SIMULATOR_EVALUATOR_MAP.get(
-                    record.simulator,
-                    list(evaluator_map.keys()),
-                )
-            
-            # Only require that the evaluator actually exists
-            selected_eval_names = [
-                name
-                for name in desired_eval_names
-                if name in evaluator_map
-            ]
-            dict_active_evaluators = {k: v for k, v in evaluator_map.items() if k in selected_eval_names}
             converter.prepare_evaluation_data(thread_ids=thread_id, filename=f"evaluation_results_{random_number}.jsonl")
         except Exception as exp: 
             print("Exception in evaluation")
             print(exp)
-        try:
-            response = evaluate(
-                data=f"evaluation_results_{random_number}.jsonl",
-                evaluators=dict_active_evaluators,
-                azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
-            )
-        except Exception as e:
-            print("Exception in sending eval results to AI foundry")
-            print(e)
-            continue;
+    try:
+        response = evaluate(
+            data=f"evaluation_results_{random_number}.jsonl",
+            evaluators=dict_active_evaluators,
+            azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+        )
+    except Exception as e:
+        print("Exception in sending eval results to AI foundry")
+        print(e)
+        continue;
 
 # -------------------------
 # Azure OpenAI callback wrapper (kept behavior)
