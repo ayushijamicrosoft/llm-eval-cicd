@@ -682,7 +682,7 @@ async def main_async(config_path: Optional[str] = None):
         result = await red_team.scan(
             target=custom_simulator_callback,
             scan_name="Upia-Callback-Scan",
-            attack_strategies=[AttackStrategy.JailBreak],
+            attack_strategies=[AttackStrategy.Jailbreak],
             output_path="red_team_output.json",
         )
     except TypeError:
