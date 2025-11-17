@@ -726,7 +726,7 @@ async def main_async(config_path: Optional[str] = None):
             model_red_team.scan,
             azure_openai_callback,
             scan_name="Advanced-Callback-Scan",
-            attack_strategies=[AttackStrategy.EASY],
+            attack_strategies=[AttackStrategy.BASELINE],
             output_path=f"Advanced-Callback-Scan_{file_suffix}.json",
         )
     except Exception as e:
