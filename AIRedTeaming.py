@@ -672,8 +672,8 @@ async def main_async(config_path: Optional[str] = None):
     red_team = RedTeam(
         azure_ai_project=AZURE_AI_PROJECT,
         credential=credential,
-        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
-        num_objectives=1,
+        risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
+        num_objectives=30,
     )
 
     # Run example callback scan (keeps naming and behavior)
@@ -682,7 +682,7 @@ async def main_async(config_path: Optional[str] = None):
         result = await red_team.scan(
             target=custom_simulator_callback,
             scan_name="Basic-Callback-Scan",
-            attack_strategies=[AttackStrategy.Flip],
+            attack_strategies=[AttackStrategy.Baseline],
             output_path="red_team_output.json",
         )
     except TypeError:
@@ -690,7 +690,7 @@ async def main_async(config_path: Optional[str] = None):
         result = red_team.scan(
             target=custom_simulator_callback,
             scan_name="Basic-Callback-Scan",
-            attack_strategies=[AttackStrategy.Flip],
+            attack_strategies=[AttackStrategy.Baseline],
             output_path="red_team_output.json",
         )
 
@@ -718,7 +718,7 @@ async def main_async(config_path: Optional[str] = None):
         azure_ai_project=AZURE_AI_PROJECT,
         credential=credential,
         risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
-        num_objectives=5,
+        num_objectives=30,
     )
 
     try:
