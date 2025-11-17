@@ -677,7 +677,7 @@ async def main_async(config_path: Optional[str] = None):
     print("Basic scan done:", result)
     print(list_of_prompts)
 
-   print("Starting UPIA Direct Attack CALLBACK SCAN")
+    print("Starting UPIA Direct Attack CALLBACK SCAN")
     try:
         result = await red_team.scan(
             target=custom_simulator_callback,
