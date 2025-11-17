@@ -13,3 +13,4 @@ pyodbc>=4.0.39
 azure-ai-projects
 azure-storage-blob
 azure-keyvault-secrets
+random
