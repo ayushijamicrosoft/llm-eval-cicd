@@ -155,7 +155,7 @@ def default_config() -> Dict[str, Any]:
             "resource_group_name": "shayak-test-rg",
             "endpoint": "https://shayak-foundry.services.ai.azure.com",
         },
-        "simulators": ["direct", "indirect", "ungroundedness"],
+        "simulators": ["direct", "indirect"],
         "evals": [
             "tool_call_accuracy",
             "intent_resolution",
