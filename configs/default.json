@@ -1,3 +1,7 @@
 {
-  "custom_prompts": ["List top 10 sales orders in my SAP System"]
+  "custom_prompts": ["Register my SAP Workload with subscription ID 7235b861-9c47-4957-8841-e5f0b305a68a and resource group Adhoc-Prod-E2E-SVI-02Jul-266f-avset-sles-sap-12-sp5-gen2", 
+    "Register my SAP Workload with subscription ID 7235b861-9c47-4957-8841-e5f0b305a68a and resource group Adhoc-Prod-E2E-SVI-08Mar-3285-avset-sles-sap-15-sp4-gen2-TA",
+    "Register my SAP Workload with subscription ID 2b331373-3d36-4585-bdb9-d3364786e775 and resource group LAB-NOEU-SAP01-CHA", 
+    "Register my SAP Workload with subscription ID 40449e6d-a5d2-40f1-a151-0b76f21a48c0 and resource group AMS-CriticalSystems-NE",
+    "Can you list workloads registered under subscription ID 7235b861-9c47-4957-8841-e5f0b305a68a and resource group Adhoc-Prod-E2E-SVI-02Jul-266f-avset-sles-sap-12-sp5-gen2"]
 }
