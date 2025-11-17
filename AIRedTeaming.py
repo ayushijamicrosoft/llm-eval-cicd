@@ -733,7 +733,15 @@ def main():
     # call main async and block until completion
     asyncio.run(main_async(config_path=args.config))
 
-
+def append_list(custom_prompt_list, sim):
+    for num in custom_prompt_list:
+        sim.append(PromptRecord(
+           prompt = num,
+           simulator = sim[0].simulator,
+            scenario = sim[0].scenario
+        )
+    return sim
+  
 if __name__ == "__main__":
     main()
     project_client = AIProjectClient(
@@ -741,7 +749,10 @@ if __name__ == "__main__":
         credential=DefaultAzureCredential()
     )
 
-    
+    with open("configs/default.json", "r") as f:
+        config = json.load(f)
+
+    custom_prompts = config["custom_prompts"]
     agent = project_client.agents.get_agent(
         agent_id = "asst_40jxCEVxQniq4Pr7lDxTxeYu"
     )
@@ -769,16 +780,18 @@ if __name__ == "__main__":
     evaluation_data_file = "evaluationDataRedTeaming.jsonl"
 
     records_sorted = sorted(list_of_prompts, key=lambda r: r.simulator)
-
+   
     groups = defaultdict(list)
     for r in list_of_prompts:
         groups[r.simulator].append(r)
 
+    
     print(list_of_prompts)
     print(groups)
     for sim in groups:
+        sim_list = append_list(custom_prompts, groups[sim])
         process_prompts_with_agent(
-            prompt_records=groups[sim],
+            prompt_records=sim_list,
             project_client=project_client,
             agent_id=agent.id,
             evaluator_map=evaluator_map,
