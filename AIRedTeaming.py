@@ -739,7 +739,7 @@ def append_list(custom_prompt_list, sim):
            prompt = num,
            simulator = sim[0].simulator,
             scenario = sim[0].scenario
-        )
+        ))
     return sim
   
 if __name__ == "__main__":
