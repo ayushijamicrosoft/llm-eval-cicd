@@ -637,7 +637,7 @@ async def main_async(config_path: Optional[str] = None):
         azure_ai_project=AZURE_AI_PROJECT,
         credential=credential,
         risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
-        num_objectives=1,
+        num_objectives=30,
     )
 
     # Run example callback scan (keeps naming and behavior)
@@ -682,7 +682,7 @@ async def main_async(config_path: Optional[str] = None):
         azure_ai_project=AZURE_AI_PROJECT,
         credential=credential,
         risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
-        num_objectives=1,
+        num_objectives=30,
     )
 
     try:
