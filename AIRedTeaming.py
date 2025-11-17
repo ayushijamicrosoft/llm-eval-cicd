@@ -808,8 +808,9 @@ if __name__ == "__main__":
     print(jb_list_of_prompts)
     print(jb_groups)
     for sim in jb_groups:
+        sim_list = append_list(custom_prompts, jb_groups[sim])
         process_prompts_with_agent(
-            prompt_records=jb_groups[sim],
+            prompt_records=jb_groups[sim_list],
             project_client=project_client,
             agent_id=agent.id,
             evaluator_map=evaluator_map,
