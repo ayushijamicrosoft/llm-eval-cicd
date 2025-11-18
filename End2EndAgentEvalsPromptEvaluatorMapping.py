@@ -173,7 +173,7 @@ def default_config() -> Dict[str, Any]:
             "Say hello and describe what you are."
         ],
         # quick_mode on by default
-        "quick_mode": True,
+        "quick_mode": False,
     }
 
 
@@ -357,6 +357,7 @@ async def run_simulators(config: Dict[str, Any], credential: DefaultAzureCredent
     simulators_to_run = [s.lower() for s in config.get("simulators", [])]
 
     quick_mode = config.get("quick_mode", False)
+    quick_mode = False
     max_results = 1 if quick_mode else 20
     max_turns = 10 if quick_mode else 3
 
