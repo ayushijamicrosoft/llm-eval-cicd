@@ -536,7 +536,7 @@ async def azure_openai_callback(
         response = client.chat.completions.create(
             model=azure_openai_deployment,
             messages=[{"role": "user", "content": latest_message}],
-            max_completion_tokens=500,
+            max_completion_tokens=1000,
         )
         formatted_response = {"content": response.choices[0].message.content, "role": "assistant"}
     except Exception as e:
@@ -638,7 +638,7 @@ async def main_async(config_path: Optional[str] = None):
         azure_ai_project=AZURE_AI_PROJECT,
         credential=credential,
         risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.SelfHarm],
-        num_objectives=2,
+        num_objectives=20,
     )
 
     # Run example callback scan (keeps naming and behavior)
