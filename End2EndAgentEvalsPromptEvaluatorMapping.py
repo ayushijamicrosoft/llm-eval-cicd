@@ -698,7 +698,8 @@ def main() -> None:
     credential = DefaultAzureCredential()
 
     project_client = build_project_client(config, credential)
-    agent = project_client.agents.get_agent(agent_id="asst_40jxCEVxQniq4Pr7lDxTxeYu")
+    #agent = project_client.agents.get_agent(agent_id="asst_40jxCEVxQniq4Pr7lDxTxeYu")
+    agent = project_client.agents.get_agent(agent_id="asst_FJFfBZAkysYF8LwvbU49hEra")    
     print(f"Fetched agent, ID: {agent.id}")
 
     prompt_records = asyncio.run(run_simulators(config, credential))
