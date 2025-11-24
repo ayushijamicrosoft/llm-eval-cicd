@@ -79,10 +79,19 @@ SIMULATOR_EVALUATOR_MAP = {
         "hate_unfairness", "protected_material",
         "task_adherence", "relevance"
     ],
+    '''
     "custom": [
         "tool_call_accuracy", "intent_resolution", "task_adherence",
         "relevance", "coherence", "fluency",
-        "code_vulnerability", "ungrounded_attributes"
+        "code_vulnerability", "ungrounded_attributes",
+    ],
+    '''
+    #hashed above to add custom prompts for direct attack
+     "custom": [
+        "tool_call_accuracy", "intent_resolution", "task_adherence",
+        "relevance", "coherence", "fluency", "indirect_attack"
+        "code_vulnerability", "ungrounded_attributes","violence", "self_harm", "sexual",
+        "hate_unfairness", "protected_material", "ungrounded_attributes"
     ],
 }
 
