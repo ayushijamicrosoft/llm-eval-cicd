@@ -1,11 +1,240 @@
-Register my SAP Workload with subscription ID 7235b861-9c47-4957-8841-e5f0b305a68a and resource group Adhoc-Prod-E2E-SVI-02Jul-266f-avset-sles-sap-12-sp5-gen2
+SAP workloads registration as a virtual instance, is a process to represent SAP workload which consists of Database instance, SAP central instance, SAP application server's
+
+This grouping of resources as a virtual instance gives a logical representation of an SAP system
+
+Examples for Virtual instance to be produced as output by the agent-
+
+FIRST EXAMPLE-
+"requests": [
+        {
+            "method": "PUT",
+            "id": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-BulkRegister-Demo/providers/microsoft.workloads/virtualinstances/BulkRegister-VI1",
+            "body": {
+                "location": "centraluseuap",
+                "tags": {
+                    "TestSystem": "true"
+                },
+                "apiVersion": "2024-12-01-preview",
+                "type": "microsoft.workloads/virtualinstances",
+                "kind": "sap",
+                "identity": {
+                    "type": "UserAssigned",
+                    "userAssignedIdentities": {
+                        "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourcegroups/ajgupt-test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ajgupttest": {}
+                    }
+                },
+                "properties": {
+                    "architectureId": "sap-highavailability",
+                    "environmentType": "NonProduction",
+                    "environmentLabel": "Test",
+                    "systemLifecycleStage": "Active",
+                    "systemPriority": 3,
+                    "metadata": {
+                        "SID": "VIS"
+                    }
+                },
+                "childresources": [
+                    {
+                        "name": "app01",
+                        "type": "components",
+                        "tags": {
+                            "TestSystem": "true"
+                        },
+                        "properties": {
+                            "componentType": "applicationserver",
+                            "componentRole": "default",
+                            "resources": [
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-vm1"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "app02",
+                        "type": "components",
+                        "tags": {
+                            "TestSystem": "true"
+                        },
+                        "properties": {
+                            "componentType": "applicationserver",
+                            "componentRole": "default",
+                            "resources": [
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-vm2"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "db01",
+                        "type": "components",
+                        "tags": {
+                            "TestSystem": "true"
+                        },
+                        "properties": {
+                                      "componentType": "databaseserver",
+                            "componentRole": "default",
+                            "metadata": {
+                                "DBType": "HANA"
+                            },
+                            "resources": [
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-vm3"
+                                },
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-vm4"
+                                },
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Network/loadBalancers/selfhost-lb1"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "cs01",
+                        "type": "components",
+                        "tags": {
+                            "TestSystem": "true"
+                        },
+                        "properties": {
+                            "componentType": "sapcentralservices",
+                            "componentRole": "default",
+                            "resources": [
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-ascs1"
+                                },
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-ascs2"
+                                },
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.NetApp/netAppAccounts/selfhost-netapp1"
+                                },
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Storage/storageAccounts/selfhostsa/fileServices/default/shares/selfhost-fileshare1"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
 
 
-Register my SAP Workload with subscription ID 7235b861-9c47-4957-8841-e5f0b305a68a and resource group Adhoc-Prod-E2E-SVI-08Mar-3285-avset-sles-sap-15-sp4-gen2-TA
 
 
-Register my SAP Workload with subscription ID 2b331373-3d36-4585-bdb9-d3364786e775 and resource group LAB-NOEU-SAP01-CHA
+SECOND EXAMPLE-
+ {
+            "method": "PUT",
+            "id": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-BulkRegister-Demo/providers/microsoft.workloads/virtualinstances/BulkRegister-VI2",
+            "body": {
+                "location": "centraluseuap",
+                "tags": {
+                    "TestSystem": "true"
+                },
+                "apiVersion": "2024-12-01-preview",
+                "type": "microsoft.workloads/virtualinstances",
+                "kind": "sap",
+                "identity": {
+                    "type": "UserAssigned",
+                    "userAssignedIdentities": {
+                        "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourcegroups/ajgupt-test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ajgupttest": {}
+                    }
+                },
+                "properties": {
+                    "architectureId": "sap-highavailability",
+                    "environmentType": "NonProduction",
+                    "environmentLabel": "Test",
+                    "systemLifecycleStage": "Active",
+                    "systemPriority": 3,
+                    "metadata": {
+                        "SID": "VIS"
+                    }
+                },
+                "childresources": [
+                    {
+                        "name": "app01",
+                        "type": "components",
+                        "tags": {
+                            "TestSystem": "true"
+                        },
+                        "properties": {
+                            "componentType": "applicationserver",
+                            "componentRole": "default",
+                            "resources": [
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-vm1"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "app02",
+                        "type": "components",
+                        "tags": {
+                            "TestSystem": "true"
+                        },
+                        "properties": {
+                            "componentType": "applicationserver",
+                            "componentRole": "default",
+                            "resources": [
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-vm2"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "db01",
+                        "type": "components",
+                        "tags": {
+                            "TestSystem": "true"
+                              },
+                        "properties": {
+                            "componentType": "databaseserver",
+                            "componentRole": "default",
+                            "metadata": {
+                                "DBType": "HANA"
+                            },
+                            "resources": [
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-vm3"
+                                },
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-vm4"
+                                },
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Network/loadBalancers/selfhost-lb1"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "cs01",
+                        "type": "components",
+                        "tags": {
+                            "TestSystem": "true"
+                        },
+                        "properties": {
+                            "componentType": "sapcentralservices",
+                            "componentRole": "default",
+                            "resources": [
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-ascs1"
+                                },
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Compute/virtualMachines/selfhost-ascs2"
+                                },
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.NetApp/netAppAccounts/selfhost-netapp1"
+                                },
+                                {
+                                    "resourceId": "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/AWC-Selfhost-RG/providers/Microsoft.Storage/storageAccounts/selfhostsa/fileServices/default/shares/selfhost-fileshare1"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
 
-Register my SAP Workload with subscription ID 40449e6d-a5d2-40f1-a151-0b76f21a48c0 and resource group AMS-CriticalSystems-NE
-
-Register my SAP Workload with subscription ID 7235b861-9c47-4957-8841-e5f0b305a68a and resource group SAP-TST-ANF-SYS-FN1
