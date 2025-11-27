@@ -90,8 +90,10 @@ SIMULATOR_EVALUATOR_MAP = {
      "custom": [
         "tool_call_accuracy", "intent_resolution", "task_adherence",
         "relevance", "coherence", "fluency", "indirect_attack"
+       '''
         "code_vulnerability", "ungrounded_attributes","violence", "self_harm", "sexual",
         "hate_unfairness", "protected_material", "ungrounded_attributes"
+       '''
     ],
 }
 
