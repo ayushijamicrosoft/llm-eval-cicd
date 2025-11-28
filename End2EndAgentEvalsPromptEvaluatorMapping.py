@@ -92,7 +92,7 @@ SIMULATOR_EVALUATOR_MAP = {
         "relevance", "coherence", "fluency", "indirect_attack"
        '''
         "code_vulnerability", "ungrounded_attributes","violence", "self_harm", "sexual",
-        "hate_unfairness", "protected_material", "ungrounded_attributes"
+        "hate_unfairness", "protected_material"
        '''
     ],
 }
