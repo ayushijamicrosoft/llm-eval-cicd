@@ -709,8 +709,13 @@ def main() -> None:
     credential = DefaultAzureCredential()
 
     project_client = build_project_client(config, credential)
+    '''
+    The below are validator and Discovery of workloads agents
     #agent = project_client.agents.get_agent(agent_id="asst_40jxCEVxQniq4Pr7lDxTxeYu")
     agent = project_client.agents.get_agent(agent_id="asst_FJFfBZAkysYF8LwvbU49hEra") 
+    ''''
+    # Troubleshooting AI foundry agent in MSFT and AI hub service deployments below
+    agent = project_client.agents.get_agent(agent_id="asst_OmtWFZGuXJXSfiJ7C41fHDk6")
     #agent = project_client.agents.get_agent(agent_id="asst_cUo5n03tG9VhuAY4wsQIL07c") 
     print(f"Fetched agent, ID: {agent.id}")
 
