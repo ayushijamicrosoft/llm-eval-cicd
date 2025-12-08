@@ -754,9 +754,11 @@ if __name__ == "__main__":
 
     custom_prompts = config["custom_prompts"]
     agent = project_client.agents.get_agent(
-        #agent_id = "asst_40jxCEVxQniq4Pr7lDxTxeYu"
-        agent_id = "asst_FJFfBZAkysYF8LwvbU49hEra"
-    )
+        #agent_id = "asst_40jxCEVxQniq4Pr7lDxTxeYu"-ValidatorAgent
+        #agent_id = "asst_FJFfBZAkysYF8LwvbU49hEra"-DiscoveryAgent
+        #Troubleshooting Agent below
+        agent_id = "asst_OmtWFZGuXJXSfiJ7C41fHDk6"
+   )
     credential = DefaultAzureCredential()
     eval_model_config = AzureOpenAIModelConfiguration(
         azure_endpoint="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
