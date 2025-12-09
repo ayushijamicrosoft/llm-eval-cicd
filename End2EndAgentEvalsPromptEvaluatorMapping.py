@@ -180,7 +180,7 @@ def default_config() -> Dict[str, Any]:
             "fluency",
             "code_vulnerability",
             "indirect_attack",
-            "protected_material",
+            #"protected_material",
             "ungrounded_attributes",
         ],
         "key_vault_uri": VAULT_URL,
@@ -391,7 +391,7 @@ async def run_simulators(config: Dict[str, Any], credential: DefaultAzureCredent
                 AdversarialScenario.ADVERSARIAL_SEARCH,
                 AdversarialScenario.ADVERSARIAL_REWRITE,
                 AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED,
-                AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL,
+                #AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL,
             ]
 
         for scenario in scenarios:
@@ -473,7 +473,7 @@ def build_evaluators(
     hate_unfairness = HateUnfairnessEvaluator(**content_safety_kwargs)
     code_vulnerability = CodeVulnerabilityEvaluator(**content_safety_kwargs)
     indirect_attack = IndirectAttackEvaluator(**content_safety_kwargs)
-    protected_material = ProtectedMaterialEvaluator(**content_safety_kwargs)
+    #protected_material = ProtectedMaterialEvaluator(**content_safety_kwargs)
     ungrounded_attributes = UngroundedAttributesEvaluator(**content_safety_kwargs)
 
     evaluator_map: Dict[str, Any] = {
@@ -489,7 +489,7 @@ def build_evaluators(
         "hate_unfairness": hate_unfairness,
         "code_vulnerability": code_vulnerability,
         "indirect_attack": indirect_attack,
-        "protected_material": protected_material,
+        #"protected_material": protected_material,
         "ungrounded_attributes": ungrounded_attributes,
     }
     return evaluator_map
