@@ -107,7 +107,7 @@ def default_config() -> Dict[str, Any]:
             "endpoint": "https://shayak-foundry.services.ai.azure.com",
         },
         "agent_id": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
-        "storage_connection_string": "",
+        "storage_connection_string": "DefaultEndpointsProtocol=https;AccountName=evalsofagents;AccountKey=1zVYXqPzCUVTRVcROPypVju8FVcKTX9hHpLIJVfg9w6vxwsmdDanWz+lqj7UI+cDTntKyJrfaEvP+AStDxM2Yg==;EndpointSuffix=core.windows.net",
         "storage_container": "list-of-thread-ids",
         "storage_blob": "thread_ids_run_ca577c11a2a84c738dfc08d7513f488d.txt",
         "simulators": ["direct", "indirect"],
