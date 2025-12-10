@@ -1,20 +1,22 @@
-import os
-import sys
+import argparse
+import asyncio
 import json
+import os
 import time
+import uuid
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
-import pandas as pd
-
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AIAgentConverter
-from azure.storage.blob import BlobClient
+from azure.keyvault.secrets import SecretClient
+from azure.storage.blob import BlobServiceClient
 
-from packaging.version import Version
-from azure.ai.projects import __version__ as projects_version
+from openai import AzureOpenAI
 
 from azure.ai.evaluation import (
+    evaluate,
     ToolCallAccuracyEvaluator,
     AzureOpenAIModelConfiguration,
     IntentResolutionEvaluator,
@@ -29,7 +31,22 @@ from azure.ai.evaluation import (
     CodeVulnerabilityEvaluator,
     IndirectAttackEvaluator,
     ProtectedMaterialEvaluator,
-    evaluate,
+    AIAgentConverter,
+    UngroundedAttributesEvaluator,
+)
+from azure.ai.evaluation.simulator import (
+    AdversarialSimulator,
+    AdversarialScenario,
+    DirectAttackSimulator,
+    IndirectAttackSimulator,
+)
+from azure.ai.projects import AIProjectClient
+from azure.ai.agents.models import (
+    FunctionTool,
+    ListSortOrder,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput,
 )
 
 # --------------------------------------------------------------------
