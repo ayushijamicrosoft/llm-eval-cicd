@@ -414,12 +414,14 @@ def main():
 
     active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
 
+    print(active_evaluators)
     try:
         response = evaluate(
             data=data_file,
             evaluators=active_evaluators,
             azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
         )
+        print(response)
     except Exception as exc:
         print("Batch evaluate failed:")
         print(exc)
