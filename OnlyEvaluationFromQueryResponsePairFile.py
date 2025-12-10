@@ -49,6 +49,8 @@ from azure.ai.agents.models import (
     ToolOutput,
 )
 
+VAULT_URL = "https://eval-agent-kv.vault.azure.net/"
+
 # --------------------------------------------------------------------
 # Configuration helpers
 # --------------------------------------------------------------------
