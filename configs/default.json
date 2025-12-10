@@ -1,9 +1,5 @@
 {
   "custom_prompts": [
-"Is any WVI impacted multiple times across different timestamps within the same region?",
-"Based on the blast radius on AJ106 , what early-warning indicators should we monitor to prevent similar outages?",
-"Summarize the number of impacted resources grouped by WVI ID in the eastus region",
-"Are there any Azure platform issues in eastus?",
-"WVI AJ2 was impacted with VM hec44v1140007, provide the blast radius and reason for impact"
+    "VMs hec44v1140020 in WVI AJ20 are impacted. Is this an Azure issue?"
 ]
 }
