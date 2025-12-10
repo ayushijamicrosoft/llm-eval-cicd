@@ -388,6 +388,7 @@ def main():
     global AZURE_AI_PROJECT
     args = parse_args()
     config = merge_config(default_config(), load_config(args.config))
+    print(args.path_to_thread_ids)
     config["storage_blob"] = args.path_to_thread_ids
     credential = DefaultAzureCredential()
 
