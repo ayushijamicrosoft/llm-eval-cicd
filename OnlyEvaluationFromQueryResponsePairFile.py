@@ -198,58 +198,6 @@ def create_openai_client() -> AzureOpenAI:
         api_key=OPENAI_API_KEY,
     )
 
-def load_config():
-    """
-    Load environment variables and return a config dict.
-    Expected env vars:
-      - AZURE_OPENAI_ENDPOINT
-      - AZURE_OPENAI_CHAT_DEPLOYMENT
-      - AZURE_OPENAI_API_KEY
-      - AZURE_OPENAI_API_VERSION
-      - AZURE_AI_PROJECT_ENDPOINT
-      - AZURE_AI_PROJECT_NAME
-      - AZURE_AI_RESOURCE_GROUP
-      - AZURE_AI_SUBSCRIPTION_ID
-      - AZURE_AGENT_ID
-      - AZURE_STORAGE_CONNECTION_STRING
-      - AZURE_STORAGE_CONTAINER_NAME
-      - AZURE_STORAGE_BLOB_NAME
-    """
-    load_dotenv()
-
-    config = {
-        "openai_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
-        "deployment": os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT"),
-        "openai_key": os.environ.get("AZURE_OPENAI_API_KEY"),
-        "api_version": os.environ.get("AZURE_OPENAI_API_VERSION"),
-        "project_endpoint": os.environ.get(
-            "AZURE_AI_PROJECT_ENDPOINT",
-            # fallback to your hard coded endpoint if not set
-            "https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
-        ),
-        "project_name": os.environ.get(
-            "AZURE_AI_PROJECT_NAME", "padmajat-agenticai-hackathon25"
-        ),
-        "resource_group_name": os.environ.get(
-            "AZURE_AI_RESOURCE_GROUP", "rg-padmajat-2824"
-        ),
-        "subscription_id": os.environ.get(
-            "AZURE_AI_SUBSCRIPTION_ID", "49d64d54-e966-4c46-a868-1999802b762c"
-        ),
-        "agent_id": os.environ.get("AZURE_AGENT_ID", "asst_Un6Sw51vsuhlOFjVrW6ksO1D"),
-        "storage_connection_string": os.environ.get("AZURE_STORAGE_CONNECTION_STRING"),
-        "storage_container": os.environ.get("AZURE_STORAGE_CONTAINER_NAME"),
-        "storage_blob": os.environ.get("AZURE_STORAGE_BLOB_NAME"),
-    }
-
-    # propagate to SDK env vars that expect them
-    os.environ["AZURE_OPENAI_ENDPOINT"] = config["openai_endpoint"] or ""
-    os.environ["AZURE_DEPLOYMENT_NAME"] = config["deployment"] or ""
-    os.environ["AZURE_API_VERSION"] = config["api_version"] or ""
-    os.environ["AZURE_IDENTITY_ENABLE_INTERACTIVE"] = "1"
-
-    return config
-
 
 def is_updated_agents():
     """Flag for whether updated agents API needs to be used."""
