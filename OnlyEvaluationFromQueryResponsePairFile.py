@@ -135,7 +135,7 @@ def default_config() -> Dict[str, Any]:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run E2E Agent Evaluation with optional config")
     parser.add_argument("--config", type=str, default=None, help="Path to config JSON/YAML file")
-    parser.add_argument("--path_to_thread_ids", type=str, default=None, help="Path to the file in storage account containing thread ids for evaluation")
+    parser.add_argument("--path_to_thread_ids", type=str, required=True, default=None, help="Path to the file in storage account containing thread ids for evaluation")
     return parser.parse_args()
 
 
