@@ -296,83 +296,85 @@ def prepare_evaluation_data_file(
 # Set up evaluators and run evaluation
 # --------------------------------------------------------------------
 
+def build_evaluators(
+    model_config: AzureOpenAIModelConfiguration,
+    credential: DefaultAzureCredential,
+) -> Dict[str, Any]:
+    if AZURE_AI_PROJECT is None:
+        raise RuntimeError("AZURE_AI_PROJECT is not initialized")
 
-def build_evaluators(model_config: AzureOpenAIModelConfiguration, credential, azure_ai_project: dict):
-    """
-    Create all evaluators in one place.
-    """
+    content_safety_kwargs = {"credential": credential, "azure_ai_project": AZURE_AI_PROJECT}
+
     tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
     intent_resolution = IntentResolutionEvaluator(model_config=model_config)
     task_adherence = TaskAdherenceEvaluator(model_config=model_config)
     relevance = RelevanceEvaluator(model_config=model_config)
     coherence = CoherenceEvaluator(model_config=model_config)
     fluency = FluencyEvaluator(model_config=model_config)
-    violence = ViolenceEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-    self_harm = SelfHarmEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-    sexual = SexualEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-    hate_unfairness = HateUnfairnessEvaluator(
-        credential=credential, azure_ai_project=azure_ai_project
-    )
-    code_vulnerability = CodeVulnerabilityEvaluator(model_config=model_config)
-    indirect_attack = IndirectAttackEvaluator(
-        credential=credential, azure_ai_project=azure_ai_project
-    )
-    protected_material = ProtectedMaterialEvaluator(
-        credential=credential, azure_ai_project=azure_ai_project
-    )
 
-    evaluators = {
+    violence = ViolenceEvaluator(**content_safety_kwargs)
+    self_harm = SelfHarmEvaluator(**content_safety_kwargs)
+    sexual = SexualEvaluator(**content_safety_kwargs)
+    hate_unfairness = HateUnfairnessEvaluator(**content_safety_kwargs)
+    code_vulnerability = CodeVulnerabilityEvaluator(**content_safety_kwargs)
+    indirect_attack = IndirectAttackEvaluator(**content_safety_kwargs)
+    #protected_material = ProtectedMaterialEvaluator(**content_safety_kwargs)
+    ungrounded_attributes = UngroundedAttributesEvaluator(**content_safety_kwargs)
+
+    evaluator_map: Dict[str, Any] = {
         "tool_call_accuracy": tool_call_accuracy,
         "intent_resolution": intent_resolution,
         "task_adherence": task_adherence,
+        "violence": violence,
         "relevance": relevance,
         "coherence": coherence,
         "fluency": fluency,
-        "violence": violence,
         "self_harm": self_harm,
         "sexual": sexual,
         "hate_unfairness": hate_unfairness,
         "code_vulnerability": code_vulnerability,
         "indirect_attack": indirect_attack,
-        "protected_material": protected_material,
+        #"protected_material": protected_material,
+        "ungrounded_attributes": ungrounded_attributes,
     }
+    return evaluator_map
 
-    return evaluators
 
-
-def run_evaluation(data_file: str, config: dict, credential):
+def run_selected_evaluators(
+    evaluator_map: Dict[str, Any],
+    eval_names: List[str],
+    converted_data: Dict[str, Any],
+) -> Dict[str, Any]:
     """
-    Run azure.ai.evaluation.evaluate on the prepared jsonl data.
+    Run evaluators and return a mapping of evaluator_name -> result.
+    The result is whatever the evaluator callable returns (often a dict).
     """
-    model_config = AzureOpenAIModelConfiguration(
-        azure_endpoint=config["openai_endpoint"],
-        api_key=config["openai_key"],
-        api_version=config["api_version"],
-        azure_deployment=config["deployment"],
-    )
+    results: Dict[str, Any] = {}
+    for name in eval_names:
+        fn = evaluator_map.get(name)
+        if not fn:
+            continue
 
-    azure_ai_project = {
-        "subscription_id": config["subscription_id"],
-        "project_name": config["project_name"],
-        "resource_group_name": config["resource_group_name"],
-    }
+        try:
+            if name == "ungrounded_attributes":
+                # This evaluator expects either `conversation` OR individual inputs.
+                # We try to pass all three if possible.
+                res = fn(
+                    query=converted_data.get("query", ""),
+                    context=open("Workload_Register_prompts.txt").read(),
+                    response=converted_data.get("response", ""),
+                )
+            else:
+                res = fn(
+                    query=converted_data.get("query", ""),
+                    response=converted_data.get("response", ""),
+                )
 
-    evaluators = build_evaluators(model_config, credential, azure_ai_project)
-
-    response = evaluate(
-        data=data_file,
-        evaluators=evaluators,
-        azure_ai_project=azure_ai_project,
-    )
-
-    # studio_url is usually in the top-level response dict
-    studio_url = response.get("studio_url")
-    if studio_url:
-        print(f"AI Foundry URL: {studio_url}")
-    else:
-        print("Evaluation completed. No studio_url found in response.")
-
-    return response
+            results[name] = res
+        except Exception as exc:
+            print(f"Evaluator {name} failed for query: {exc}")
+            results[name] = {"error": str(exc)}
+    return results
 
 
 # --------------------------------------------------------------------
@@ -400,13 +402,28 @@ def main():
         container_name=config["storage_container"],
         blob_name=config["storage_blob"],
     )
-
+    
+    model_config = build_model_config()
+    evaluator_map = build_evaluators(model_config, credential)
     # 4. Convert thread ids to evaluation data jsonl
     data_file = prepare_evaluation_data_file(
         project_client=project_client,
         thread_ids=thread_ids,
         output_file="freshEvaluationData.jsonl",
     )
+
+    active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
+
+    try:
+        response = evaluate(
+            data=data_file,
+            evaluators=active_evaluators,
+            azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
+        )
+    except Exception as exc:
+        print("Batch evaluate failed:")
+        print(exc)
+        response = {}
 
     # 5. Run evaluation
     try:
