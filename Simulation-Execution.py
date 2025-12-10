@@ -694,12 +694,7 @@ def main() -> None:
         print("Exception in uploading list of prompts")
         print(exc)
 
-    try:
-        print("Uploading list of thread ids from conversations to azure storage")
-        upload_to_blob(container_name = "list-of-thread-ids", file_paths = [thread_ids_file])
-    except Exception as exec:
-        print("Exception in uploading list of thread ids")
-        print(exec)
+    
         
     model_config = build_model_config()
     evaluator_map = build_evaluators(model_config=model_config, credential=credential)
@@ -716,6 +711,13 @@ def main() -> None:
         run_guid=file_suffix,
     )
 
+    try:
+        print("Uploading list of thread ids from conversations to azure storage")
+        upload_to_blob(container_name = "list-of-thread-ids", file_paths = [thread_ids_file])
+    except Exception as exec:
+        print("Exception in uploading list of thread ids")
+        print(exec)
+        
     try:
         print("Uploading the query-response pairs to the storage account")
         upload_to_blob(container_name="query-response-pairs-1", file_paths=[all_pairs_path])
