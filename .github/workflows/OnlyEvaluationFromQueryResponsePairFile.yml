@@ -53,7 +53,7 @@ jobs:
         run: |
           echo "🧠 Using config file: ${{ github.event.inputs.config_file }}"
           python OnlyEvaluationFromQueryResponsePairFile.py \
-          --config "configs/${{ github.event.inputs.config_file }}" \
+          --config "configs/${{ github.event.inputs.config_file }}" --path_to_thread_ids "${{ github.events.inputs.path_to_thread_ids }}"\
           2>&1 | tee output.log
 
       - name: Upload logs
