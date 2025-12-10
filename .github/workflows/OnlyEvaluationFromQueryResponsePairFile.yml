@@ -54,7 +54,7 @@ jobs:
           echo "🧠 Using config file: ${{ github.event.inputs.config_file }} ${{ github.event.inputs.path_to_thread_ids }}"  
           python OnlyEvaluationFromQueryResponsePairFile.py \
           --config "configs/${{ github.event.inputs.config_file }}" --path_to_thread_ids "${{ github.event.inputs.path_to_thread_ids }}"\
-          2>&1 | tee output.log
+           2>&1 | tee output.log
           
       - name: Upload logs
         if: always()
