@@ -588,7 +588,7 @@ def append_converted_data_to_jsonl(all_pairs_path: str, converted_data: Any) -> 
         except Exception as write_err:
             print("Failed to append converted_data to JSONL:", write_err)
 
-list_of_thread_ids = []
+
 def process_prompts_with_agent(
     prompt_records: List[PromptRecord],
     project_client: AIProjectClient,
@@ -598,7 +598,8 @@ def process_prompts_with_agent(
     all_pairs_path: str,
     evaluation_data_file: str,
     run_guid: str,
-) -> None:
+):
+    list_of_thread_ids = []
     converter = AIAgentConverter(project_client)
     pair_files: set[str] = set()
     global list_of_thread_ids
@@ -613,14 +614,15 @@ def process_prompts_with_agent(
             converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
             print("Converted data:")
             print(converted_data)
+            print("Thread ID")
+            print(thread_id)
             list_of_thread_ids.append(thread_id);
 
-            append_converted_data_to_jsonl(all_pairs_path, converted_data)      
+            append_converted_data_to_jsonl(all_pairs_path, converted_data)
         except Exception as exc:
             print("Exception while processing prompt:")
             print(exc)
             continue
-
     # upload all simulator-evaluator pair files for this run
     if pair_files:
         try:
@@ -629,7 +631,7 @@ def process_prompts_with_agent(
         except Exception as exc:
             print("Exception uploading sim-eval pairing logs")
             print(exc)
-
+    return list_of_thread_ids
 
 # ---------------------------------------------------------------------------
 # Top level driver
@@ -683,10 +685,6 @@ def main() -> None:
             indent=2,
         )
 
-    with open(thread_ids_file, "w", encoding="utf-8") as f:
-        for item in list_of_thread_ids:
-            f.write(str(item) + "\n")
-
     try:
         print("Uploading list of prompts information to azure storage")
         upload_to_blob(container_name="list-of-prompts-1", file_paths=[prompts_file])
@@ -700,7 +698,7 @@ def main() -> None:
     evaluator_map = build_evaluators(model_config=model_config, credential=credential)
     enabled_evals = config.get("evals", [])
 
-    process_prompts_with_agent(
+    list_of_thread_ids = process_prompts_with_agent(
         prompt_records=prompt_records,
         project_client=project_client,
         agent_id=agent.id,
@@ -710,6 +708,10 @@ def main() -> None:
         evaluation_data_file=evaluation_data_file,
         run_guid=file_suffix,
     )
+
+    with open(thread_ids_file, "w", encoding="utf-8") as f:
+        for item in list_of_thread_ids:
+            f.write(str(item) + "\n")
 
     try:
         print("Uploading list of thread ids from conversations to azure storage")
