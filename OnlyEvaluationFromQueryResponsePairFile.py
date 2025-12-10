@@ -413,7 +413,7 @@ def main():
         thread_ids=thread_ids,
         output_file="freshEvaluationData.jsonl",
     )
-
+    enabled_evals = config.get("evals", [])
     active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
 
     print(active_evaluators)
