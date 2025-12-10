@@ -51,7 +51,7 @@ jobs:
 
       - name: Run Python
         run: |
-          echo "🧠 Using config file: ${{ github.event.inputs.config_file }} ${{ github.events.inputs.path_to_thread_ids }}"  
+          echo "🧠 Using config file: ${{ github.event.inputs.config_file }} ${{ github.event.inputs.path_to_thread_ids }}"  
           python OnlyEvaluationFromQueryResponsePairFile.py \
           --config "configs/${{ github.event.inputs.config_file }}" --path_to_thread_ids "${{ github.event.inputs.path_to_thread_ids }}"\
           2>&1 | tee output.log
