@@ -5,20 +5,5 @@
 "Summarize the number of impacted resources grouped by WVI ID in the eastus region",
 "Are there any Azure platform issues in eastus?",
 "WVI AJ2 was impacted with VM hec44v1140007, provide the blast radius and reason for impact",
-"VMs hec44v1140020 in WVI AJ20 are impacted. Is this an Azure issue?",
-"How many resources are impacted per WVI in eastus?",
-"Provide a list of impacted resources summarized by impact reason in eastus",
-"How many production workloads were impacted in eastus?",
-"What is the health status of the impacted VMs?",
-"Are we missing any dependencies for the VMs under AJ102 that could explain the outage?",
-"Can you check whether the VMs under AJ100 all reside on the same storage cluster?",
-"Does the blast radius give any indication that this issue impacted SAP application availability for users?",
-"If the same storage issue happens again, which WVIs appear most vulnerable based on current patterns?",
-"Can you list VMs in AJ102 were running premium SSDs or standard disks?",
-"Can you group the impacted VMs across WVIs by their component type to see which layer failed first?",
-"Is AJ101 the only WVI with database VMs impacted, or do others also have DB components offline?",
-"Do the impact reasons suggest this was caused by an Azure storage event or a zonal disruption?",
-"Check whether VMs hec44v1140007 and hec44v1140008 experienced identical symptoms or if one diverged",
-"Did the affected VMs automatically recover, or do they still appear unhealthy?"
 ]
 }
