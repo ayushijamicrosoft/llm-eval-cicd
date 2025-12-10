@@ -604,7 +604,7 @@ def append_converted_data_to_jsonl(all_pairs_path: str, converted_data: Any) -> 
         except Exception as write_err:
             print("Failed to append converted_data to JSONL:", write_err)
 
-
+list_of_thread_ids = []
 def process_prompts_with_agent(
     prompt_records: List[PromptRecord],
     project_client: AIProjectClient,
@@ -629,6 +629,7 @@ def process_prompts_with_agent(
             converted_data = converter.convert(thread_id=thread_id, run_id=run_id)
             print("Converted data:")
             print(converted_data)
+            list_of_thread_ids.append(thread_id);
 
             append_converted_data_to_jsonl(all_pairs_path, converted_data)
             '''
@@ -704,6 +705,7 @@ def main() -> None:
     all_pairs_path = f"query_response_pairs_{file_suffix}.jsonl"
     all_evals_path = f"eval_results_{file_suffix}.txt"
     evaluation_data_file = "evaluationDataAdversarialData.jsonl"
+    thread_ids_file = f"thread_ids_run_{file_suffix}.txt"
 
     init_openai_from_env()
 
@@ -742,6 +744,10 @@ def main() -> None:
             indent=2,
         )
 
+    with open(thread_ids_file, "w", encoding="utf-8") as f:
+        for item in list_of_thread_ids:
+            f.write(str(item) + "\n")
+
     try:
         print("Uploading list of prompts information to azure storage")
         upload_to_blob(container_name="list-of-prompts-1", file_paths=[prompts_file])
@@ -749,6 +755,13 @@ def main() -> None:
         print("Exception in uploading list of prompts")
         print(exc)
 
+    try:
+        print("Uploading list of thread ids from conversations to azure storage")
+        upload_to_blob(container_name = "list-of-thread-ids", file_paths = [thread_ids_file])
+    except Exception as exec:
+        print("Exception in uploading list of thread ids")
+        print(exec)
+        
     model_config = build_model_config()
     evaluator_map = build_evaluators(model_config=model_config, credential=credential)
     enabled_evals = config.get("evals", [])
