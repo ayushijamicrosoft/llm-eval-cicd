@@ -602,7 +602,6 @@ def process_prompts_with_agent(
     list_of_thread_ids = []
     converter = AIAgentConverter(project_client)
     pair_files: set[str] = set()
-    global list_of_thread_ids
     for record in prompt_records:
         try:
             print("=" * 80)
