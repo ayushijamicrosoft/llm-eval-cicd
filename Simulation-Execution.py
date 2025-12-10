@@ -62,8 +62,6 @@ class PromptRecord:
 
 # Simulator -> evaluators mapping
 SIMULATOR_EVALUATOR_MAP = {
-    '''
-    hashed for now on 9th Dec to test the quality
     "adversarial": [
         "violence", "self_harm", "sexual",
         "hate_unfairness", "protected_material",
@@ -84,10 +82,6 @@ SIMULATOR_EVALUATOR_MAP = {
      "custom": [
         "tool_call_accuracy", "intent_resolution", "task_adherence",
         "relevance", "coherence", "fluency", "indirect_attack", "code_vulnerability", "ungrounded_attributes"
-        #removd this eval on 9th Dec for Quality testing, "protected_material"
-       '''
-        "code_vulnerability", "ungrounded_attributes","violence", "self_harm", "sexual",
-        "hate_unfairness", "protected_material"
     ],
 }
 
@@ -670,7 +664,7 @@ def main() -> None:
     #agent = project_client.agents.get_agent(agent_id="asst_cUo5n03tG9VhuAY4wsQIL07c") 
     print(f"Fetched agent, ID: {agent.id}")
 
-    prompt_records = asyncio.run(run_simulators(config, credential))
+    prompt_records = []
 
     # Add custom prompts to the same list, tagged with simulator "custom"
     custom_prompts = config.get("custom_prompts", [])
