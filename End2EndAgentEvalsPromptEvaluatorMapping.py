@@ -622,7 +622,6 @@ def process_prompts_with_agent(
             list_of_thread_ids.append(thread_id);
 
             append_converted_data_to_jsonl(all_pairs_path, converted_data)
-            '''
             converter.prepare_evaluation_data(thread_ids=thread_id, filename=evaluation_data_file)
 
             if isinstance(converted_data, dict):
@@ -660,7 +659,7 @@ def process_prompts_with_agent(
                     with open(pair_file, "a", encoding="utf-8") as pf:
                         pf.write(json.dumps(log_entry, ensure_ascii=False, default=str) + "\n")
                     pair_files.add(pair_file)
-        '''
+        
         except Exception as exc:
             print("Exception while processing prompt:")
             print(exc)
