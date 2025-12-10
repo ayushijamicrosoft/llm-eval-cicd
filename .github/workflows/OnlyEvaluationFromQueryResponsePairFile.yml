@@ -12,6 +12,11 @@ on:
             - prod.json
             - debug.json
             - test.yaml
+        path_to_thread_ids:
+          description: "Enter the name of the file in storage account for the thread ids list"
+          required: true
+          default: "default.json"
+          type: string
 
 jobs:
   run-python:
