@@ -36,6 +36,148 @@ from azure.ai.evaluation import (
 # Configuration helpers
 # --------------------------------------------------------------------
 
+_credential = DefaultAzureCredential(exclude_interactive_browser_credential=True)
+_secret_client = SecretClient(vault_url=VAULT_URL, credential=_credential)
+
+
+def get_secret(name: str, *, version: Optional[str] = None) -> str:
+    return _secret_client.get_secret(name, version=version).value
+
+
+def load_env_from_keyvault(mapping: Dict[str, str]) -> None:
+    for env_var, secret_name in mapping.items():
+        try:
+            value = get_secret(secret_name)
+            os.environ[env_var] = value
+        except Exception as exc:
+            print(f"Warning: could not load secret {secret_name}: {exc}")
+
+
+# ---------------------------------------------------------------------------
+# Config helpers
+# ---------------------------------------------------------------------------
+
+def load_config(path: Optional[str]) -> Dict[str, Any]:
+    if not path:
+        return {}
+    if not os.path.exists(path):
+        print(f"Config file '{path}' not found. Using defaults.")
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        if path.endswith(".yaml") or path.endswith(".yml"):
+            import yaml
+            return yaml.safe_load(f) or {}
+        return json.load(f) or {}
+
+
+def merge_config(defaults: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[str, Any]:
+    for k, v in overrides.items():
+        if isinstance(v, dict) and k in defaults and isinstance(defaults.get(k), dict):
+            defaults[k] = merge_config(defaults[k], v)
+        else:
+            defaults[k] = v
+    return defaults
+
+
+def default_config() -> Dict[str, Any]:
+    return {
+        "project": {
+            "subscription_id": "49d64d54-e966-4c46-a868-1999802b762c",
+            "project_name": "shayakproject",
+            "resource_group_name": "shayak-test-rg",
+            "endpoint": "https://shayak-foundry.services.ai.azure.com",
+        },
+        "agent_id": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
+        "storage_connection_string": "",
+        "storage_container": "list-of-thread-ids",
+        "storage_blob": "thread_ids_run_ca577c11a2a84c738dfc08d7513f488d.txt",
+        "simulators": ["direct", "indirect"],
+        "evals": [
+            "tool_call_accuracy",
+            "intent_resolution",
+            "task_adherence",
+            "relevance",
+            "coherence",
+            "fluency",
+            "code_vulnerability",
+            "indirect_attack",
+            #"protected_material",
+            "ungrounded_attributes",
+        ],
+        "key_vault_uri": VAULT_URL,
+        "custom_prompts": [
+            "Say hello and describe what you are."
+        ],
+        # quick_mode on by default
+        "quick_mode": False,
+    }
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run E2E Agent Evaluation with optional config")
+    parser.add_argument("--config", type=str, default=None, help="Path to config JSON/YAML file")
+    return parser.parse_args()
+
+
+# ---------------------------------------------------------------------------
+# Azure clients and helpers
+# ---------------------------------------------------------------------------
+
+def init_openai_from_env() -> None:
+    global OPENAI_ENDPOINT, OPENAI_API_KEY, OPENAI_API_VERSION, OPENAI_DEPLOYMENT
+
+    load_dotenv()
+
+    load_env_from_keyvault(
+        {
+            "AZURE_OPENAI_ENDPOINT": "az-openai-endpoint",
+            "AZURE_OPENAI_API_KEY": "az-openai-api-key",
+            "AZURE_OPENAI_API_VERSION": "az-openai-api-version",
+            "AZURE_OPENAI_CHAT_DEPLOYMENT": "az-openai-deploy",
+        }
+    )
+
+    OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT")
+    OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY")
+    OPENAI_API_VERSION = os.environ.get("AZURE_OPENAI_API_VERSION")
+    OPENAI_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
+
+    print("AOAI endpoint:", OPENAI_ENDPOINT)
+    print("AOAI deployment:", OPENAI_DEPLOYMENT)
+    print("AOAI api_version:", OPENAI_API_VERSION)
+
+
+def build_azure_ai_project(config: Dict[str, Any]) -> Dict[str, str]:
+    return {
+        "subscription_id": config["project"]["subscription_id"],
+        "project_name": config["project"]["project_name"],
+        "resource_group_name": config["project"]["resource_group_name"],
+    }
+def build_project_client(config: Dict[str, Any], credential: DefaultAzureCredential) -> AIProjectClient:
+    project_name = config["project"]["project_name"]
+    endpoint_base = config["project"]["endpoint"].rstrip("/")
+    endpoint = f"{endpoint_base}/api/projects/{project_name}"
+    return AIProjectClient(endpoint=endpoint, credential=credential)
+
+
+def build_model_config() -> AzureOpenAIModelConfiguration:
+    if not all([OPENAI_ENDPOINT, OPENAI_API_KEY, OPENAI_API_VERSION, OPENAI_DEPLOYMENT]):
+        raise RuntimeError("OpenAI settings are not fully initialized.")
+    return AzureOpenAIModelConfiguration(
+        azure_endpoint=OPENAI_ENDPOINT,
+        api_key=OPENAI_API_KEY,
+        api_version=OPENAI_API_VERSION,
+        azure_deployment=OPENAI_DEPLOYMENT,
+    )
+
+
+def create_openai_client() -> AzureOpenAI:
+    if not all([OPENAI_ENDPOINT, OPENAI_API_KEY, OPENAI_API_VERSION]):
+        raise RuntimeError("OpenAI settings are not fully initialized.")
+    return AzureOpenAI(
+        api_version=OPENAI_API_VERSION,
+        azure_endpoint=OPENAI_ENDPOINT,
+        api_key=OPENAI_API_KEY,
+    )
 
 def load_config():
     """
@@ -272,18 +414,19 @@ def run_evaluation(data_file: str, config: dict, credential):
 
 
 def main():
-    config = load_config()
+    args = parse_args()
+    config = merge_config(default_config(), load_config(args.config))
     credential = DefaultAzureCredential()
 
-    # 1. Get project client
-    project_client = get_project_client(
-        project_endpoint=config["project_endpoint"],
-        credential=credential,
-    )
+    init_openai_from_env()
 
-    # 2. Fetch agent
-    agent = get_agent(project_client, config["agent_id"])
+    AZURE_AI_PROJECT = build_azure_ai_project(config)
+    print("Azure AI project:", AZURE_AI_PROJECT)
 
+    credential = DefaultAzureCredential()
+
+    project_client = build_project_client(config, credential)
+    agent = project_client.agents.get_agent(agent_id=config["agent_id"])
     # 3. Fetch thread ids from blob txt file
     thread_ids = get_thread_ids_from_blob(
         connection_string=config["storage_connection_string"],
