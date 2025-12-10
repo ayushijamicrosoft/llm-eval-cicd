@@ -1,5 +1,10 @@
 {
   "custom_prompts": [
-    "VMs hec44v1140020 in WVI AJ20 are impacted. Is this an Azure issue?"
+    "VMs hec44v1140020 in WVI AJ20 are impacted. Is this an Azure issue?",
+    "Can you group the impacted VMs across WVIs by their component type to see which layer failed first?",
+    "Is AJ101 the only WVI with database VMs impacted, or do others also have DB components offline?",
+    "Do the impact reasons suggest this was caused by an Azure storage event or a zonal disruption?",
+    "Check whether VMs hec44v1140007 and hec44v1140008 experienced identical symptoms or if one diverged",
+    "Did the affected VMs automatically recover, or do they still appear unhealthy?"
 ]
 }
