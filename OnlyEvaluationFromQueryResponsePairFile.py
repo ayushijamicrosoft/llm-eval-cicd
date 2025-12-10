@@ -135,6 +135,7 @@ def default_config() -> Dict[str, Any]:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run E2E Agent Evaluation with optional config")
     parser.add_argument("--config", type=str, default=None, help="Path to config JSON/YAML file")
+    parser.add_argument("--path_to_thread_ids", type=str, default=None, help="Path to the file in storage account containing thread ids for evaluation")
     return parser.parse_args()
 
 
@@ -387,6 +388,7 @@ def main():
     global AZURE_AI_PROJECT
     args = parse_args()
     config = merge_config(default_config(), load_config(args.config))
+    config["storage_blob"] = args.path_to_thread_ids
     credential = DefaultAzureCredential()
 
     init_openai_from_env()
@@ -395,7 +397,7 @@ def main():
     print("Azure AI project:", AZURE_AI_PROJECT)
 
     credential = DefaultAzureCredential()
-
+    
     project_client = build_project_client(config, credential)
     agent = project_client.agents.get_agent(agent_id=config["agent_id"])
     # 3. Fetch thread ids from blob txt file
