@@ -759,29 +759,7 @@ def main() -> None:
         evaluation_data_file=evaluation_data_file,
         run_guid=file_suffix,
     )
-    active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
-
-    try:
-        response = evaluate(
-            data=evaluation_data_file,
-            evaluators=active_evaluators,
-            azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
-        )
-    except Exception as exc:
-        print("Batch evaluate failed:")
-        print(exc)
-        response = {}
-
-    pprint([pr.prompt for pr in prompt_records], width=200)
-    if isinstance(response, dict):
-        pprint(f"Azure ML Studio URL: {response.get('studio_url')}")
-    pprint(response)
-
-    try:
-        with open(all_evals_path, "a", encoding="utf-8") as evals_handle:
-            evals_handle.write(str(response) + "\n")
-    except Exception as write_err:
-        print("Failed to append evals to txt file:", write_err)
+    
 
     try:
         print("Uploading the query-response pairs to the storage account")
