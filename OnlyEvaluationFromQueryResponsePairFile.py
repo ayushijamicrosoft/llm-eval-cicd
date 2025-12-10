@@ -109,7 +109,7 @@ def default_config() -> Dict[str, Any]:
         "agent_id": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
         "storage_connection_string": "DefaultEndpointsProtocol=https;AccountName=evalsofagents;AccountKey=1zVYXqPzCUVTRVcROPypVju8FVcKTX9hHpLIJVfg9w6vxwsmdDanWz+lqj7UI+cDTntKyJrfaEvP+AStDxM2Yg==;EndpointSuffix=core.windows.net",
         "storage_container": "list-of-thread-ids",
-        "storage_blob": "thread_ids_run_ca577c11a2a84c738dfc08d7513f488d.txt",
+        "storage_blob": "thread_ids_run_ad39f36067ee48f4a89ca43271266a5c.txt",
         "simulators": ["direct", "indirect"],
         "evals": [
             "tool_call_accuracy",
