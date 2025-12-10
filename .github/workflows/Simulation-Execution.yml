@@ -1,0 +1,60 @@
+name: Simulation-Execution Only
+
+on:
+  workflow_dispatch:
+    inputs:
+        config_file:
+          description: "Select the config file to use for evaluation"
+          required: false
+          default: "default.json"
+          type: choice
+          options:
+            - default.json
+            - prod.json
+            - debug.json
+            - test.yaml
+
+jobs:
+  run-python:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write   # REQUIRED for OIDC
+      contents: read
+
+    env:
+      # prevent interactive prompts on CI
+      AZURE_IDENTITY_ENABLE_INTERACTIVE: "0"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # OIDC login: NO client secret needed
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.OIDC_AZURE_CLIENT_ID }}     # App registration's Application (client) ID
+          tenant-id: ${{ secrets.OIDC_AZURE_TENANT_ID }}     # Directory (tenant) ID
+          subscription-id: ${{ secrets.OIDC_AZURE_SUBSCRIPTION_ID }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run Python
+        run: |
+          echo "🧠 Using config file: ${{ github.event.inputs.config_file }}"
+          python Simulation-Execution.py \
+          --config "configs/${{ github.event.inputs.config_file }}" \
+          2>&1 | tee output.log
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-job-output
+          path: output.log
