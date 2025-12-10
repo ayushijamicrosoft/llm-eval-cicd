@@ -50,6 +50,7 @@ from azure.ai.agents.models import (
 )
 
 VAULT_URL = "https://eval-agent-kv.vault.azure.net/"
+AZURE_AI_PROJECT = None
 
 # --------------------------------------------------------------------
 # Configuration helpers
@@ -383,6 +384,7 @@ def run_selected_evaluators(
 
 
 def main():
+    global AZURE_AI_PROJECT
     args = parse_args()
     config = merge_config(default_config(), load_config(args.config))
     credential = DefaultAzureCredential()
