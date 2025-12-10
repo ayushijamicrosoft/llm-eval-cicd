@@ -428,14 +428,5 @@ def main():
         print("Batch evaluate failed:")
         print(exc)
         response = {}
-
-    # 5. Run evaluation
-    try:
-        run_evaluation(data_file=data_file, config=config, credential=credential)
-    except Exception as exp:
-        # fall back to printing the exception
-        print(f"Evaluation failed with error: {exp}")
-
-
 if __name__ == "__main__":
     main()
