@@ -631,7 +631,7 @@ def process_prompts_with_agent(
             print(converted_data)
 
             append_converted_data_to_jsonl(all_pairs_path, converted_data)
-
+            '''
             converter.prepare_evaluation_data(thread_ids=thread_id, filename=evaluation_data_file)
 
             if isinstance(converted_data, dict):
@@ -669,7 +669,7 @@ def process_prompts_with_agent(
                     with open(pair_file, "a", encoding="utf-8") as pf:
                         pf.write(json.dumps(log_entry, ensure_ascii=False, default=str) + "\n")
                     pair_files.add(pair_file)
-
+        '''
         except Exception as exc:
             print("Exception while processing prompt:")
             print(exc)
@@ -763,7 +763,7 @@ def main() -> None:
         evaluation_data_file=evaluation_data_file,
         run_guid=file_suffix,
     )
-
+    '''
     active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
 
     try:
@@ -787,7 +787,7 @@ def main() -> None:
             evals_handle.write(str(response) + "\n")
     except Exception as write_err:
         print("Failed to append evals to txt file:", write_err)
-
+    '''
     try:
         print("Uploading the query-response pairs to the storage account")
         upload_to_blob(container_name="query-response-pairs-1", file_paths=[all_pairs_path])
