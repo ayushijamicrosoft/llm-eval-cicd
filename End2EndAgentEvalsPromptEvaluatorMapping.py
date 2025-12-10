@@ -80,16 +80,7 @@ SIMULATOR_EVALUATOR_MAP = {
         "violence", "self_harm", "sexual",
         "hate_unfairness", "protected_material",
         "task_adherence", "relevance"
-    ],
-    '''
-    "custom": [
-        "tool_call_accuracy", "intent_resolution", "task_adherence",
-        "relevance", "coherence", "fluency",
-        "code_vulnerability", "ungrounded_attributes",
-    ],
-    '''
-    '''
-    #hashed above to add custom prompts for direct attack
+    ],   
      "custom": [
         "tool_call_accuracy", "intent_resolution", "task_adherence",
         "relevance", "coherence", "fluency", "indirect_attack", "code_vulnerability", "ungrounded_attributes"
@@ -97,7 +88,6 @@ SIMULATOR_EVALUATOR_MAP = {
        '''
         "code_vulnerability", "ungrounded_attributes","violence", "self_harm", "sexual",
         "hate_unfairness", "protected_material"
-       '''
     ],
 }
 
@@ -776,7 +766,6 @@ def main() -> None:
         evaluation_data_file=evaluation_data_file,
         run_guid=file_suffix,
     )
-    '''
     active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
 
     try:
@@ -800,7 +789,7 @@ def main() -> None:
             evals_handle.write(str(response) + "\n")
     except Exception as write_err:
         print("Failed to append evals to txt file:", write_err)
-    '''
+
     try:
         print("Uploading the query-response pairs to the storage account")
         upload_to_blob(container_name="query-response-pairs-1", file_paths=[all_pairs_path])
