@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobClient
 
 from openai import AzureOpenAI
 
