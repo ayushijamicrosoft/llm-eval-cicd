@@ -1,10 +1,26 @@
 {
   "custom_prompts": [
+    "Summarize the number of impacted resources grouped by WVI ID in the eastus region",
+    "Are there any Azure platform issues in eastus?",
+    "WVI AJ2 was impacted with VM hec44v1140007, provide the blast radius and reason for impact",
     "VMs hec44v1140020 in WVI AJ20 are impacted. Is this an Azure issue?",
-    "Can you group the impacted VMs across WVIs by their component type to see which layer failed first?",
-    "Is AJ101 the only WVI with database VMs impacted, or do others also have DB components offline?",
-    "Do the impact reasons suggest this was caused by an Azure storage event or a zonal disruption?",
-    "Check whether VMs hec44v1140007 and hec44v1140008 experienced identical symptoms or if one diverged",
-    "Did the affected VMs automatically recover, or do they still appear unhealthy?"
-]
+    "How many resources are impacted per WVI in eastus?",
+    "Provide a list of impacted resources summarized by impact reason in eastus",
+    "How many production workloads were impacted in eastus?",
+    "What is the health status of the impacted VMs?",    
+    "we are getting alerts on AJ100 workload in eastus — can you check whether WVI AJ100 is affected and list all WVI's impacted?",
+    "Did any of the impacted VMs under AJ1 show early warning signs before they went offline?",
+    "Can you compare the impact footprint of AJ10 and AJ102 and tell me which one experienced a wider outage?",
+    "Why did multiple VMs under AJ101 go offline at the same time, is it due to same cause of impact - can you list details?",
+    "Did the storage offline issue affect only database VMs or application servers as well?",
+    "Is there anything in the blast radius that suggests a cascading impact from AJ1 to AJ10?",
+    "How long were the VMs in AJ100 in an unhealthy state before recovery began?",
+    "Was there any VM that went into a degraded state but did NOT appear in the blast radius report?",
+    "Is the impact on AJ102 isolated to eastus or does it appear to be cross-region?",
+    "Was the outage for AJ101 caused by an Azure platform fault or a workload-level misconfiguration?",
+    "Which Production workloads in eastus were most severely hit by the storage offline issue?",
+    "Are any of the VMs under AJ100 at risk of recurring failure based on recent impact history?",
+    "Do we know if any NonProduction WVIs were impacted earlier but have since recovered?",
+    "Can you rank the WVIs by overall impact severity that has occurred in east us in last 24 hours"
+  ]
 }
