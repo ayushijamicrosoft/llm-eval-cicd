@@ -197,10 +197,10 @@ def build_model_config() -> AzureOpenAIModelConfiguration:
     if not all([OPENAI_ENDPOINT_EVALS, OPENAI_API_KEY_EVALS, OPENAI_API_VERSION_EVALS, OPENAI_DEPLOYMENT_EVALS]):
         raise RuntimeError("OpenAI settings are not fully initialized.")
     return AzureOpenAIModelConfiguration(
-        azure_endpoint=OPENAI_ENDPOINT,
-        api_key=OPENAI_API_KEY,
-        api_version=OPENAI_API_VERSION,
-        azure_deployment=OPENAI_DEPLOYMENT,
+        azure_endpoint=OPENAI_ENDPOINT_EVALS,
+        api_key=OPENAI_API_KEY_EVALS,
+        api_version=OPENAI_API_VERSION_EVALS,
+        azure_deployment=OPENAI_DEPLOYMENT_EVALS,
     )
 
 
