@@ -154,6 +154,10 @@ def init_openai_from_env() -> None:
             "AZURE_OPENAI_API_KEY": "az-openai-api-key",
             "AZURE_OPENAI_API_VERSION": "az-openai-api-version",
             "AZURE_OPENAI_CHAT_DEPLOYMENT": "az-openai-deploy",
+            "AZURE_OPENAI_ENDPOINT_EVALS": "az-openai-endpoint-evals",
+            "AZURE_OPENAI_API_KEY_EVALS": "az-openai-api-key-evals",
+            "AZURE_OPENAI_API_VERSION_EVALS": "az-openai-api-version-evals",
+            "AZURE_OPENAI_CHAT_DEPLOYMENT_EVALS": "az-openai-deploy-evals"
         }
     )
 
@@ -162,6 +166,11 @@ def init_openai_from_env() -> None:
     OPENAI_API_VERSION = os.environ.get("AZURE_OPENAI_API_VERSION")
     OPENAI_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT")
 
+    OPENAI_ENDPOINT_EVALS = os.environ.get("AZURE_OPENAI_ENDPOINT_EVALS")
+    OPENAI_API_KEY_EVALS = os.environ.get("AZURE_OPENAI_API_KEY_EVALS")
+    OPENAI_API_VERSION_EVALS = os.environ.get("AZURE_OPENAI_API_VERSION_EVALS")
+    OPENAI_DEPLOYMENT_EVALS = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT_EVALS")
+    
     print("AOAI endpoint:", OPENAI_ENDPOINT)
     print("AOAI deployment:", OPENAI_DEPLOYMENT)
     print("AOAI api_version:", OPENAI_API_VERSION)
@@ -181,7 +190,7 @@ def build_project_client(config: Dict[str, Any], credential: DefaultAzureCredent
 
 
 def build_model_config() -> AzureOpenAIModelConfiguration:
-    if not all([OPENAI_ENDPOINT, OPENAI_API_KEY, OPENAI_API_VERSION, OPENAI_DEPLOYMENT]):
+    if not all([OPENAI_ENDPOINT_EVALS, OPENAI_API_KEY_EVALS, OPENAI_API_VERSION_EVALS, OPENAI_DEPLOYMENT_EVALS]):
         raise RuntimeError("OpenAI settings are not fully initialized.")
     return AzureOpenAIModelConfiguration(
         azure_endpoint=OPENAI_ENDPOINT,
