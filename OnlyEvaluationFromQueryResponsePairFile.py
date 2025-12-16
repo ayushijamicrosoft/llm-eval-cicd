@@ -175,6 +175,10 @@ def init_openai_from_env() -> None:
     print("AOAI deployment:", OPENAI_DEPLOYMENT)
     print("AOAI api_version:", OPENAI_API_VERSION)
 
+    print("AOAI evals endpoint:", OPENAI_ENDPOINT_EVALS)
+    print("AOAI evals deployment:", OPENAI_DEPLOYMENT_EVALS)
+    print("AOAI evals api_version:", OPENAI_API_VERSION_EVALS)
+
 
 def build_azure_ai_project(config: Dict[str, Any]) -> Dict[str, str]:
     return {
