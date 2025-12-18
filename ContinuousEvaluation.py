@@ -573,7 +573,7 @@ def main():
         
 
         eval_object = openai_client.evals.create(
-            name="Continuous Evaluation",
+            name="cont-evals",
             data_source_config=data_source_config,  # type: ignore
             testing_criteria=testing_criteria,  # type: ignore
         )
