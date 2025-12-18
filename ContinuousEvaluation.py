@@ -46,6 +46,11 @@ from azure.ai.agents.models import (
     RequiredFunctionToolCall,
     SubmitToolOutputsAction,
     ToolOutput,
+    PromptAgentDefinition,
+    EvaluationRule,
+    ContinuousEvaluationRuleAction,
+    EvaluationRuleFilter,
+    EvaluationRuleEventType,
 )
 
 VAULT_URL = "https://eval-agent-kv.vault.azure.net/"
