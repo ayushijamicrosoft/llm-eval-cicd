@@ -434,7 +434,7 @@ def main():
         run_id = messages[0].run_id
         thread_id = thread
         '''
-        openai_client = project_client.get_openai_client();
+        openai_client = project_client.get_openai_client(api_version="2024-10-21");
         data_source_config = {"type": "azure_ai_source", "scenario": "responses"}
         testing_criteria = [
             {"type": "azure_ai_evaluator", "name": "violence_detection", "evaluator_name": "builtin.violence"}
