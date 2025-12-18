@@ -431,7 +431,7 @@ def main():
     for thread in thread_ids:
         messages = list(project_client.agents.messages.list(thread))
         run_id = messages[0].run_id
-        thread_id = thread.id
+        thread_id = thread
         project_client.evaluation.create_agent_evaluation(
           AgentEvaluationRequest(  
               thread=thread_id,  
