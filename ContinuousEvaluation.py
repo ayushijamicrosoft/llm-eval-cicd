@@ -421,9 +421,6 @@ def main():
         blob_name=config["storage_blob"],
     )
 
-    messages = list(project_client.agents.messages.list(thread_ids[0]))
-    for message in messages: 
-      print(message)
     model_config = build_model_config()
     evaluators={
         "Relevance": {"Id": EvaluatorIds.Relevance.value},
@@ -431,14 +428,18 @@ def main():
         "Coherence": {"Id": EvaluatorIds.Coherence.value},
       },
 
-    project_client.evaluation.create_agent_evaluation(
-      AgentEvaluationRequest(  
-          thread=thread.id,  
-          run=run.id,   
-          evaluators=evaluators,
-          appInsightsConnectionString = project_client.telemetry.get_application_insights_connection_string(),
-        )
-      )
+    for thread in thread_ids:
+        messages = list(project_client.agents.messages.list(thread))
+        run_id = message[0].run_id
+        thread_id = thread.id
+        project_client.evaluation.create_agent_evaluation(
+          AgentEvaluationRequest(  
+              thread=thread_id,  
+              run=run_id,   
+              evaluators=evaluators,
+              appInsightsConnectionString = project_client.telemetry.get_application_insights_connection_string(),
+            )
+          )
 
     
 if __name__ == "__main__":
