@@ -432,14 +432,47 @@ def main():
         messages = list(project_client.agents.messages.list(thread))
         run_id = messages[0].run_id
         thread_id = thread
-        project_client.evaluation.create_agent_evaluation(
-          AgentEvaluationRequest(  
-              thread=thread_id,  
-              run=run_id,   
-              evaluators=evaluators,
-              appInsightsConnectionString = project_client.telemetry.get_application_insights_connection_string(),
+        openai_client = project_client.get_openai_client();
+        data_source_config = {"type": "azure_ai_source", "scenario": "responses"}
+        testing_criteria = [
+            {"type": "azure_ai_evaluator", "name": "violence_detection", "evaluator_name": "builtin.violence"}
+        ]
+        eval_object = openai_client.evals.create(
+            name="Continuous Evaluation",
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
+        )
+    
+        continuous_eval_rule = project_client.evaluation_rules.create_or_update(
+        id="my-continuous-eval-rule",
+        evaluation_rule=EvaluationRule(
+            display_name="My Continuous Eval Rule",
+            description="An eval rule that runs on agent response completions",
+            action=ContinuousEvaluationRuleAction(eval_id=eval_object.id, max_hourly_runs=100),
+            event_type=EvaluationRuleEventType.RESPONSE_COMPLETED,
+            filter=EvaluationRuleFilter(agent_name=agent.name),
+            enabled=True,
+            ),
+        )
+
+        MAX_LOOP = 20
+        for _ in range(0, MAX_LOOP):
+            print(f"Waiting for eval run to complete...")
+        
+            eval_run_list = openai_client.evals.runs.list(
+                eval_id=eval_object.id,
+                order="desc",
+                limit=10,
             )
-          )
+        
+            if len(eval_run_list.data) > 0 and eval_run_list.data[0].report_url:
+                run_report_url = eval_run_list.data[0].report_url
+                # Remove the last 2 URL path segments (run/continuousevalrun_xxx)
+                report_url = '/'.join(run_report_url.split('/')[:-2])
+                print(f"To check evaluation runs, please open {report_url} from the browser")
+                break
+        
+            time.sleep(10)
 
     
 if __name__ == "__main__":
