@@ -439,8 +439,8 @@ def main():
         testing_criteria = [
             {"type": "azure_ai_evaluator", "name": "violence_detection", "evaluator_name": "builtin.violence"}
         ]
-        os.environ["AZURE_AI_AGENT_NAME"] = ""
-        os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"] = ""
+        os.environ["AZURE_AI_AGENT_NAME"] = "Insights Generator Agent"
+        os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"] = "gpt-4.1"
 
         eval_object = openai_client.evals.create(
             name="Continuous Evaluation",
