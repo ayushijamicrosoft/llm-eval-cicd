@@ -12,7 +12,6 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import BlobClient
-from azure.ai.projects.models import EvaluatorIds
 from openai import AzureOpenAI
 
 from azure.ai.evaluation import (
