@@ -40,18 +40,7 @@ from azure.ai.evaluation.simulator import (
     IndirectAttackSimulator,
 )
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import (
-    FunctionTool,
-    ListSortOrder,
-    RequiredFunctionToolCall,
-    SubmitToolOutputsAction,
-    ToolOutput,
-    PromptAgentDefinition,
-    EvaluationRule,
-    ContinuousEvaluationRuleAction,
-    EvaluationRuleFilter,
-    EvaluationRuleEventType,
-)
+
 
 VAULT_URL = "https://eval-agent-kv.vault.azure.net/"
 AZURE_AI_PROJECT = None
