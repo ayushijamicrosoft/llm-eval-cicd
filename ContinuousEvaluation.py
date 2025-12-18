@@ -426,7 +426,7 @@ def main():
     os.environ["AZURE_AI_AGENT_NAME"] = "Continuous evals testing agent"
     os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"] = "gpt-4.1"
     
-    with project_client.get_openai_client(api_version="2024-10-21")as openai_client:
+    with project_client.get_openai_client() as openai_client:
         agent = project_client.agents.create_version(
             agent_name=os.environ["AZURE_AI_AGENT_NAME"],
             definition=PromptAgentDefinition(
