@@ -439,6 +439,9 @@ def main():
         testing_criteria = [
             {"type": "azure_ai_evaluator", "name": "violence_detection", "evaluator_name": "builtin.violence"}
         ]
+        os.environ["AZURE_AI_AGENT_NAME"] = ""
+        os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"] = ""
+
         eval_object = openai_client.evals.create(
             name="Continuous Evaluation",
             data_source_config=data_source_config,  # type: ignore
