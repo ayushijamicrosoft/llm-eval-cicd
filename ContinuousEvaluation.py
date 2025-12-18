@@ -423,7 +423,7 @@ def main():
     credential = DefaultAzureCredential()
     
     project_client = build_project_client(config, credential)
-    os.environ["AZURE_AI_AGENT_NAME"] = "Continuous evals testing agent"
+    os.environ["AZURE_AI_AGENT_NAME"] = "contevals"
     os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"] = "gpt-4.1"
     
     with project_client.get_openai_client() as openai_client:
