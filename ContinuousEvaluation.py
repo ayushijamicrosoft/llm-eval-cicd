@@ -429,9 +429,11 @@ def main():
       },
 
     for thread in thread_ids:
+        '''
         messages = list(project_client.agents.messages.list(thread))
         run_id = messages[0].run_id
         thread_id = thread
+        '''
         openai_client = project_client.get_openai_client();
         data_source_config = {"type": "azure_ai_source", "scenario": "responses"}
         testing_criteria = [
