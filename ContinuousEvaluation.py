@@ -400,7 +400,150 @@ def run_selected_evaluators(
 # Main
 # --------------------------------------------------------------------
 
+import os
+import time
+from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import (
+    PromptAgentDefinition,
+    EvaluationRule,
+    ContinuousEvaluationRuleAction,
+    EvaluationRuleFilter,
+    EvaluationRuleEventType,
+)
 
+load_dotenv()
+
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+
+global AZURE_AI_PROJECT
+args = parse_args()
+config = merge_config(default_config(), load_config(args.config))
+print(args.path_to_thread_ids)
+config["storage_blob"] = args.path_to_thread_ids
+credential = DefaultAzureCredential()
+
+init_openai_from_env()
+
+AZURE_AI_PROJECT = build_azure_ai_project(config)
+print("Azure AI project:", AZURE_AI_PROJECT)
+
+credential = DefaultAzureCredential()
+
+project_client = build_project_client(config, credential)
+os.environ["AZURE_AI_AGENT_NAME"] = "Continuous evals testing agent"
+os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"] = "gpt-4.1"
+with (
+    project_client.get_openai_client("api_version="2024-10-21") as openai_client,
+):
+
+    # Create agent
+
+    agent = project_client.agents.create_version(
+        agent_name=os.environ["AZURE_AI_AGENT_NAME"],
+        definition=PromptAgentDefinition(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
+        ),
+    )
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+    # Setup agent continuous evaluation
+
+    data_source_config = {"type": "azure_ai_source", "scenario": "responses"}
+    testing_criteria = [
+        {"type": "azure_ai_evaluator", "name": "violence_detection", "evaluator_name": "builtin.violence"}
+    ]
+    eval_object = openai_client.evals.create(
+        name="Continuous Evaluation",
+        data_source_config=data_source_config,  # type: ignore
+        testing_criteria=testing_criteria,  # type: ignore
+    )
+    print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
+
+    continuous_eval_rule = project_client.evaluation_rules.create_or_update(
+        id="my-continuous-eval-rule",
+        evaluation_rule=EvaluationRule(
+            display_name="My Continuous Eval Rule",
+            description="An eval rule that runs on agent response completions",
+            action=ContinuousEvaluationRuleAction(eval_id=eval_object.id, max_hourly_runs=100),
+            event_type=EvaluationRuleEventType.RESPONSE_COMPLETED,
+            filter=EvaluationRuleFilter(agent_name=agent.name),
+            enabled=True,
+        ),
+    )
+    print(
+        f"Continuous Evaluation Rule created (id: {continuous_eval_rule.id}, name: {continuous_eval_rule.display_name})"
+    )
+
+    # Run agent
+
+    conversation = openai_client.conversations.create(
+        items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
+    )
+    print(f"Created conversation with initial user message (id: {conversation.id})")
+
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
+    )
+    print(f"Response output: {response.output_text}")
+
+    # Loop for 5 questions
+
+    MAX_QUESTIONS = 10
+    for i in range(0, MAX_QUESTIONS):
+        openai_client.conversations.items.create(
+            conversation_id=conversation.id,
+            items=[{"type": "message", "role": "user", "content": f"Question {i}: What is the capital city?"}],
+        )
+        print(f"Added a user message to the conversation")
+
+        response = openai_client.responses.create(
+            conversation=conversation.id,
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            input="",
+        )
+        print(f"Response output: {response.output_text}")
+
+        # Wait for 10 seconds for evaluation, and then retrieve eval results
+
+        time.sleep(10)
+        eval_run_list = openai_client.evals.runs.list(
+            eval_id=eval_object.id,
+            order="desc",
+            limit=10,
+        )
+
+        if len(eval_run_list.data) > 0:
+            eval_run_ids = [eval_run.id for eval_run in eval_run_list.data]
+            print(f"Finished evals: {' '.join(eval_run_ids)}")
+
+    # Get the report_url
+
+    print("Agent runs finished")
+
+    MAX_LOOP = 20
+    for _ in range(0, MAX_LOOP):
+        print(f"Waiting for eval run to complete...")
+
+        eval_run_list = openai_client.evals.runs.list(
+            eval_id=eval_object.id,
+            order="desc",
+            limit=10,
+        )
+
+        if len(eval_run_list.data) > 0 and eval_run_list.data[0].report_url:
+            run_report_url = eval_run_list.data[0].report_url
+            # Remove the last 2 URL path segments (run/continuousevalrun_xxx)
+            report_url = '/'.join(run_report_url.split('/')[:-2])
+            print(f"To check evaluation runs, please open {report_url} from the browser")
+            break
+
+        time.sleep(10)
+        
 def main():
     global AZURE_AI_PROJECT
     args = parse_args()
@@ -443,8 +586,7 @@ def main():
         testing_criteria = [
             {"type": "azure_ai_evaluator", "name": "violence_detection", "evaluator_name": "builtin.violence"}
         ]
-        os.environ["AZURE_AI_AGENT_NAME"] = "Insights Generator Agent"
-        os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"] = "gpt-4.1"
+        
 
         eval_object = openai_client.evals.create(
             name="Continuous Evaluation",
