@@ -463,6 +463,71 @@ def main():
         print(
             f"Continuous Evaluation Rule created (id: {continuous_eval_rule.id}, name: {continuous_eval_rule.display_name})"
         )
+
+        conversation = openai_client.conversations.create(
+            items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
+        )
+        print(f"Created conversation with initial user message (id: {conversation.id})")
+    
+        response = openai_client.responses.create(
+            conversation=conversation.id,
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            input="",
+        )
+        print(f"Response output: {response.output_text}")
+    
+        # Loop for 5 questions
+    
+        MAX_QUESTIONS = 10
+        for i in range(0, MAX_QUESTIONS):
+            openai_client.conversations.items.create(
+                conversation_id=conversation.id,
+                items=[{"type": "message", "role": "user", "content": f"Question {i}: What is the capital city?"}],
+            )
+            print(f"Added a user message to the conversation")
+    
+            response = openai_client.responses.create(
+                conversation=conversation.id,
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                input="",
+            )
+            print(f"Response output: {response.output_text}")
+    
+            # Wait for 10 seconds for evaluation, and then retrieve eval results
+    
+            time.sleep(10)
+            eval_run_list = openai_client.evals.runs.list(
+                eval_id=eval_object.id,
+                order="desc",
+                limit=10,
+            )
+    
+            if len(eval_run_list.data) > 0:
+                eval_run_ids = [eval_run.id for eval_run in eval_run_list.data]
+                print(f"Finished evals: {' '.join(eval_run_ids)}")
+    
+        # Get the report_url
+    
+        print("Agent runs finished")
+    
+        MAX_LOOP = 20
+        for _ in range(0, MAX_LOOP):
+            print(f"Waiting for eval run to complete...")
+    
+            eval_run_list = openai_client.evals.runs.list(
+                eval_id=eval_object.id,
+                order="desc",
+                limit=10,
+            )
+    
+            if len(eval_run_list.data) > 0 and eval_run_list.data[0].report_url:
+                run_report_url = eval_run_list.data[0].report_url
+                # Remove the last 2 URL path segments (run/continuousevalrun_xxx)
+                report_url = '/'.join(run_report_url.split('/')[:-2])
+                print(f"To check evaluation runs, please open {report_url} from the browser")
+                break
+    
+            time.sleep(10)
     
     
 if __name__ == "__main__":
