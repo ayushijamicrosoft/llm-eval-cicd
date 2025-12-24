@@ -118,7 +118,7 @@ def default_config() -> Dict[str, Any]:
             "relevance",
             "coherence",
             "fluency",
-            #"code_vulnerability",
+            "code_vulnerability",
             #"indirect_attack",
             #"protected_material",
             #"ungrounded_attributes",
