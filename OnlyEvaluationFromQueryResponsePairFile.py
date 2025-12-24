@@ -31,8 +31,7 @@ from azure.ai.evaluation import (
     CodeVulnerabilityEvaluator,
     IndirectAttackEvaluator,
     ProtectedMaterialEvaluator,
-    AIAgentConverter,
-    UngroundedAttributesEvaluator,
+    AIAgentConverter
 )
 from azure.ai.evaluation.simulator import (
     AdversarialSimulator,
@@ -334,7 +333,6 @@ def build_evaluators(
     code_vulnerability = CodeVulnerabilityEvaluator(**content_safety_kwargs)
     indirect_attack = IndirectAttackEvaluator(**content_safety_kwargs)
     #protected_material = ProtectedMaterialEvaluator(**content_safety_kwargs)
-    ungrounded_attributes = UngroundedAttributesEvaluator(**content_safety_kwargs)
 
     evaluator_map: Dict[str, Any] = {
         "tool_call_accuracy": tool_call_accuracy,
@@ -349,8 +347,7 @@ def build_evaluators(
         "hate_unfairness": hate_unfairness,
         "code_vulnerability": code_vulnerability,
         "indirect_attack": indirect_attack,
-        #"protected_material": protected_material,
-        "ungrounded_attributes": ungrounded_attributes,
+        #"protected_material": protected_material
     }
     return evaluator_map
 
