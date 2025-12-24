@@ -62,3 +62,11 @@ jobs:
         with:
           name: full-job-output
           path: output.log
+  
+      - name: Upload outputs (downloadable)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-run-${{ github.run_id }}
+          path: artifacts/**
+          if-no-files-found: warn
