@@ -583,7 +583,7 @@ def main():
             evaluators=active_evaluators,
             azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
         )
-        evaluation_result = upload_evaluation_results_to_ai_foundry(response)
+        evaluation_result = upload_evaluation_results_to_foundry(response)
         print(evaluation_result)
         '''
         try:
