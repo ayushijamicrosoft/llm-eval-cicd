@@ -596,6 +596,8 @@ def main():
 
     print(f"Printed the output file: freshEvaluationData_{guid_str}.jsonl")
     print_file_contents(f"freshEvaluationData_{guid_str}.jsonl")
+    print("Printing contents of data file")
+    print(data_file)
     enabled_evals = config.get("evals", [])
     active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
 
