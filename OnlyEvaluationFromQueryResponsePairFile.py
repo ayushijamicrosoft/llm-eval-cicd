@@ -423,7 +423,7 @@ def main():
     
     model_config = build_model_config()
     evaluator_map = build_evaluators(model_config, credential)
-    file_suffix = "lambda-nu"
+    file_suffix = "lambda-nu-15"
     # 4. Convert thread ids to evaluation data jsonl
     for thread_id in thread_ids:
         data_file = prepare_evaluation_data_file(
