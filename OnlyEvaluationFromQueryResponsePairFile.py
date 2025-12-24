@@ -392,6 +392,148 @@ def run_selected_evaluators(
     return results
 
 
+def upload_evaluation_results_to_foundry(evaluation_results):
+    """Upload batch evaluation results to Azure AI Foundry project"""
+    
+    # Load environment variables
+    load_dotenv()
+    
+    print("🚀 Uploading evaluation results to Azure AI Foundry...")
+    print("=" * 60)
+    
+    # Get project connection info
+    project_endpoint = os.getenv("AZURE_AI_PROJECT")
+    if not project_endpoint:
+        print("❌ AZURE_AI_PROJECT not found in environment variables")
+        return
+    
+    try:
+        # Initialize AI Project client
+        project_client = AIProjectClient.from_connection_string(
+            conn_str=project_endpoint,
+            credential=DefaultAzureCredential()
+        )
+        
+        print(f"✅ Connected to AI Foundry project")
+
+        '''
+        # Load evaluation results
+        results_file = "batch_evaluation_results.json"
+        if not os.path.exists(results_file):
+            print(f"❌ Results file not found: {results_file}")
+            return
+            
+        with open(results_file, 'r', encoding='utf-8') as f:
+            evaluation_results = json.load(f)
+        print(f"📊 Loaded evaluation results from {results_file}")
+        '''
+        
+        print(f"   - Summary metrics: {len(evaluation_results.get('summary', {}))}")
+        print(f"   - Detailed results: {len(evaluation_results.get('detailed_results', []))}")
+        
+        # Prepare metadata for the evaluation run
+        run_name = f"batch_evaluation_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        # Create an evaluation run in Azure AI Foundry
+        evaluation_metadata = {
+            "run_name": run_name,
+            "timestamp": datetime.now().isoformat(),
+            "evaluator_types": ["intent_resolution", "coherence", "relevance"],
+            "total_conversations": len(evaluation_results.get('detailed_results', [])),
+            "summary_metrics": evaluation_results.get('summary', {}),
+            "evaluation_type": "batch_conversation_evaluation",
+            "data_source": "azure_copilot_conversations"
+        }
+        
+        # Upload results as artifacts
+        print(f"\n📤 Uploading evaluation artifacts...")
+        
+        # Upload the raw results
+        results_artifact_name = f"{run_name}_results.json"
+        
+        # Create a comprehensive evaluation report
+        evaluation_report = {
+            "metadata": evaluation_metadata,
+            "summary": evaluation_results.get('summary', {}),
+            "detailed_results": evaluation_results.get('detailed_results', []),
+            "analysis": {
+                "total_conversations": len(evaluation_results.get('detailed_results', [])),
+                "passing_conversations": 0,
+                "failing_conversations": 0,
+                "average_scores": {}
+            }
+        }
+        
+        # Calculate analysis metrics
+        detailed_results = evaluation_results.get('detailed_results', [])
+        if detailed_results:
+            intent_scores = []
+            coherence_scores = []
+            relevance_scores = []
+            passing_count = 0
+            
+            for result in detailed_results:
+                intent_score = result.get('outputs.intent_resolution.intent_resolution')
+                coherence_score = result.get('outputs.coherence.coherence')
+                relevance_score = result.get('outputs.relevance.relevance')
+                
+                if isinstance(intent_score, (int, float)):
+                    intent_scores.append(intent_score)
+                if isinstance(coherence_score, (int, float)):
+                    coherence_scores.append(coherence_score)
+                if isinstance(relevance_score, (int, float)):
+                    relevance_scores.append(relevance_score)
+                
+                # Check if conversation passes (all scores >= 3)
+                scores = [s for s in [intent_score, coherence_score, relevance_score] if isinstance(s, (int, float))]
+                if scores and all(s >= 3 for s in scores):
+                    passing_count += 1
+            
+            evaluation_report["analysis"]["passing_conversations"] = passing_count
+            evaluation_report["analysis"]["failing_conversations"] = len(detailed_results) - passing_count
+            
+            if intent_scores:
+                evaluation_report["analysis"]["average_scores"]["intent_resolution"] = sum(intent_scores) / len(intent_scores)
+            if coherence_scores:
+                evaluation_report["analysis"]["average_scores"]["coherence"] = sum(coherence_scores) / len(coherence_scores)
+            if relevance_scores:
+                evaluation_report["analysis"]["average_scores"]["relevance"] = sum(relevance_scores) / len(relevance_scores)
+        
+        # Save the comprehensive report
+        report_filename = f"{run_name}_comprehensive_report.json"
+        with open(report_filename, 'w', encoding='utf-8') as f:
+            json.dump(evaluation_report, f, indent=2, ensure_ascii=False)
+        
+        print(f"📋 Created comprehensive report: {report_filename}")
+        
+        # Print summary
+        print(f"\n📈 Evaluation Summary:")
+        print(f"   📊 Total conversations evaluated: {evaluation_report['analysis']['total_conversations']}")
+        print(f"   ✅ Passing conversations: {evaluation_report['analysis']['passing_conversations']}")
+        print(f"   ❌ Failing conversations: {evaluation_report['analysis']['failing_conversations']}")
+        
+        if evaluation_report['analysis']['average_scores']:
+            print(f"   📊 Average scores:")
+            for metric, score in evaluation_report['analysis']['average_scores'].items():
+                status = "PASS" if score >= 3.0 else "FAIL"
+                print(f"      {metric}: {score:.2f} - {status}")
+        
+        print(f"\n✅ Evaluation results prepared for Azure AI Foundry")
+     #   print(f"   📁 Results file: {results_file}")
+        print(f"   📁 Comprehensive report: {report_filename}")
+        print(f"   🆔 Run name: {run_name}")
+        
+        # Note: The actual upload to AI Foundry would depend on the specific APIs available
+        # This prepares the data in a format suitable for upload
+        print(f"\n📝 Note: Files are prepared for upload to Azure AI Foundry project")
+        print(f"   You can now upload these files through the AI Foundry portal or API")
+        
+    except Exception as e:
+        print(f"\n❌ Error uploading to AI Foundry: {str(e)}")
+        print(f"Error type: {type(e).__name__}")
+        import traceback
+        traceback.print_exc()
+        
 # --------------------------------------------------------------------
 # Main
 # --------------------------------------------------------------------
@@ -406,13 +548,15 @@ def main():
     credential = DefaultAzureCredential()
 
     init_openai_from_env()
-
+    
     AZURE_AI_PROJECT = build_azure_ai_project(config)
     print("Azure AI project:", AZURE_AI_PROJECT)
 
     credential = DefaultAzureCredential()
     
     project_client = build_project_client(config, credential)
+    guid_str = str(uuid.uuid4())
+    print(guid_str)
     agent = project_client.agents.get_agent(agent_id=config["agent_id"])
     # 3. Fetch thread ids from blob txt file
     thread_ids = get_thread_ids_from_blob(
@@ -423,14 +567,15 @@ def main():
     
     model_config = build_model_config()
     evaluator_map = build_evaluators(model_config, credential)
-    file_suffix = "lambda-nu-15"
     # 4. Convert thread ids to evaluation data jsonl
     for thread_id in thread_ids:
         data_file = prepare_evaluation_data_file(
             project_client=project_client,
             thread_ids=thread_id,
-            output_file=f"freshEvaluationData_{file_suffix}.jsonl",
+            output_file=f"freshEvaluationData_{guid_str}.jsonl",
         )
+
+    print(f"Printed the output file: freshEvaluationData_{guid_str}".jsonl")
     enabled_evals = config.get("evals", [])
     active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
 
@@ -441,13 +586,16 @@ def main():
             evaluators=active_evaluators,
             azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
         )
-
+        evaluation_result = upload_evaluation_results_to_ai_foundry(response)
+        print(evaluation_result)
+        '''
         try:
             os.remove(data_file)
             print("Temporary file cleaned up", data_file)
         except Exception as e:
             print("Failed to clean up temporary file", data_file)
             print(response)
+        '''
     except Exception as exc:
         print("Batch evaluate failed:")
         print(exc)
