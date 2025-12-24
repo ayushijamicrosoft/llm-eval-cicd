@@ -13,9 +13,9 @@ on:
             - debug.json
             - test.yaml
         path_to_thread_ids:
-          description: "Enter the name of the file in storage account for the thread ids list"
+          description: "Enter the name of the file in storage account for the query-response pairs"
           required: true
-          default: "thread_ids_run_89665ee412ba4893bd270fdef8d7b344.txt"
+          default: "query_response_pairs_44ecf3abc39c4e349aded3b32e2b316d.jsonl"
           type: string
 
 jobs:
