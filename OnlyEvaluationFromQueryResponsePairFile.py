@@ -388,8 +388,8 @@ def build_evaluators(
         "self_harm": self_harm,
         "sexual": sexual,
         "hate_unfairness": hate_unfairness,
-        #"code_vulnerability": code_vulnerability,
-        #"indirect_attack": indirect_attack,
+        "code_vulnerability": code_vulnerability,
+        "indirect_attack": indirect_attack,
         #"protected_material": protected_material
     }
     return evaluator_map
