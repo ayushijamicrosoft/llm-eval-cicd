@@ -617,7 +617,7 @@ def main():
         output_path=f"freshEvaluationData_{guid_str}.jsonl",
     )
     
-    print(f"✅ Blob downloaded to: {local_file}")
+    print(f"✅ Blob downloaded to: {data_file}")
 
     # 3. Fetch thread ids from blob txt file
     
