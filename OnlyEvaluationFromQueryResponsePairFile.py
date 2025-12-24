@@ -309,9 +309,22 @@ def get_thread_ids_from_blob(
     return thread_ids
 
 def get_query_response_pairs_file(
-connection_string: str, container_name: str, blob_name: str
+connection_string: str, container_name: str, blob_name: str, output_path: str
 ):
-    content = 
+    content = content = get_file_from_blob(
+        connection_string=connection_string,
+        container_name=container_name,
+        blob_name=blob_name,
+    )
+
+    output_path = os.path.abspath(output_path)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+    return output_path
+
 # --------------------------------------------------------------------
 # Prepare evaluation data
 # --------------------------------------------------------------------
