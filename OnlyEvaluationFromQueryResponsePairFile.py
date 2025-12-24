@@ -224,6 +224,19 @@ def is_updated_agents():
 # Modular functions for Azure AI Project + Agent
 # --------------------------------------------------------------------
 
+def print_file_contents(file_path: str) -> None:
+    """
+    Prints the full contents of a file to stdout.
+    """
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print(f"❌ File not found: {file_path}")
+    except PermissionError:
+        print(f"❌ Permission denied: {file_path}")
+    except Exception as e:
+        print(f"❌ Error reading file {file_path}: {type(e).__name__}: {e}")
 
 def get_project_client(project_endpoint: str, credential=None) -> AIProjectClient:
     """
@@ -538,7 +551,8 @@ def upload_evaluation_results_to_foundry(evaluation_results, project_client):
         print(f"Error type: {type(e).__name__}")
         import traceback
         traceback.print_exc()
-        
+
+
 # --------------------------------------------------------------------
 # Main
 # --------------------------------------------------------------------
@@ -581,6 +595,7 @@ def main():
         )
 
     print(f"Printed the output file: freshEvaluationData_{guid_str}.jsonl")
+    print_file_contents(f"freshEvaluationData_{guid_str}.jsonl")
     enabled_evals = config.get("evals", [])
     active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
 
