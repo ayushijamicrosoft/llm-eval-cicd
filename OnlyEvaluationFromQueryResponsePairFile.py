@@ -399,7 +399,7 @@ def upload_evaluation_results_to_foundry(evaluation_results):
     print("=" * 60)
     
     # Get project connection info
-    project_endpoint = os.getenv("AZURE_AI_PROJECT")
+    project_endpoint = "https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25"
     if not project_endpoint:
         print("❌ AZURE_AI_PROJECT not found in environment variables")
         return
