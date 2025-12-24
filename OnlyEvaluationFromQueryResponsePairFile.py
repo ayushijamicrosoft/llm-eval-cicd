@@ -389,7 +389,7 @@ def run_selected_evaluators(
     return results
 
 
-def upload_evaluation_results_to_foundry(evaluation_results):
+def upload_evaluation_results_to_foundry(evaluation_results, project_client):
     """Upload batch evaluation results to Azure AI Foundry project"""
     
     # Load environment variables
@@ -406,15 +406,16 @@ def upload_evaluation_results_to_foundry(evaluation_results):
     
     try:
         # Initialize AI Project client
-        project_client = AIProjectClient.from_connection_string(
-            conn_str=project_endpoint,
-            credential=DefaultAzureCredential()
-        )
+        
         
         print(f"✅ Connected to AI Foundry project")
 
         '''
         # Load evaluation results
+        project_client = AIProjectClient.from_connection_string(
+            conn_str=project_endpoint,
+            credential=DefaultAzureCredential()
+        )
         results_file = "batch_evaluation_results.json"
         if not os.path.exists(results_file):
             print(f"❌ Results file not found: {results_file}")
@@ -583,7 +584,7 @@ def main():
             evaluators=active_evaluators,
             azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
         )
-        evaluation_result = upload_evaluation_results_to_foundry(response)
+        evaluation_result = upload_evaluation_results_to_foundry(response, project_client)
         print(evaluation_result)
         '''
         try:
