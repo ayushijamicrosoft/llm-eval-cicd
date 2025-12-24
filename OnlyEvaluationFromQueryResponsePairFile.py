@@ -118,10 +118,10 @@ def default_config() -> Dict[str, Any]:
             "relevance",
             "coherence",
             "fluency",
-            "code_vulnerability",
-            "indirect_attack",
+            #"code_vulnerability",
+            #"indirect_attack",
             #"protected_material",
-            "ungrounded_attributes",
+            #"ungrounded_attributes",
         ],
         "key_vault_uri": VAULT_URL,
         "custom_prompts": [
@@ -373,8 +373,8 @@ def build_evaluators(
         "self_harm": self_harm,
         "sexual": sexual,
         "hate_unfairness": hate_unfairness,
-        "code_vulnerability": code_vulnerability,
-        "indirect_attack": indirect_attack,
+        #"code_vulnerability": code_vulnerability,
+        #"indirect_attack": indirect_attack,
         #"protected_material": protected_material
     }
     return evaluator_map
