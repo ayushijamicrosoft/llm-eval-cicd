@@ -498,7 +498,8 @@ def upload_evaluation_results_to_foundry(evaluation_results, project_client):
                 evaluation_report["analysis"]["average_scores"]["relevance"] = sum(relevance_scores) / len(relevance_scores)
         
         # Save the comprehensive report
-        report_filename = f"{run_name}_comprehensive_report.json"
+        
+        report_filename = os.path.join(output_dir, f"{run_name}_comprehensive_report.json")
         with open(report_filename, 'w', encoding='utf-8') as f:
             json.dump(evaluation_report, f, indent=2, ensure_ascii=False)
         
