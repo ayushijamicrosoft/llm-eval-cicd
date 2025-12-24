@@ -265,6 +265,25 @@ def get_agent(project_client: AIProjectClient, agent_id: str):
 # Fetch thread ids from Azure Blob Storage
 # --------------------------------------------------------------------
 
+def get_file_from_blob(
+    connection_string: str,
+    container_name: str,
+    blob_name: str,
+): 
+    if not all([connection_string, container_name, blob_name]):
+        raise ValueError(
+            "Storage connection string, container, and blob name must all be set."
+        )
+
+    blob_client = BlobClient.from_connection_string(
+        conn_str=connection_string,
+        container_name=container_name,
+        blob_name=blob_name,
+    )
+
+    download_stream = blob_client.download_blob()
+    content = download_stream.readall().decode("utf-8")
+    return content
 
 def download_blob_to_file(
     connection_string: str,
@@ -307,23 +326,6 @@ def get_thread_ids_from_blob(
     ]
     print(f"Fetched {len(thread_ids)} thread ids from blob {container_name}/{blob_name}")
     return thread_ids
-
-def get_query_response_pairs_file(
-connection_string: str, container_name: str, blob_name: str, output_path: str
-):
-    content = content = get_file_from_blob(
-        connection_string=connection_string,
-        container_name=container_name,
-        blob_name=blob_name,
-    )
-
-    output_path = os.path.abspath(output_path)
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(content)
-
-    return output_path
 
 # --------------------------------------------------------------------
 # Prepare evaluation data
