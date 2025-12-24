@@ -628,8 +628,7 @@ def main():
         blob_name=config["storage_blob"],
     )
     
-    model_config = build_model_config()
-    evaluator_map = build_evaluators(model_config, credential)
+    
     # 4. Convert thread ids to evaluation data jsonl
     for thread_id in thread_ids:
         data_file = prepare_evaluation_data_file(
@@ -638,6 +637,8 @@ def main():
             output_file=f"freshEvaluationData_{guid_str}.jsonl",
         )
     '''
+    model_config = build_model_config()
+    evaluator_map = build_evaluators(model_config, credential)
     print(f"Printed the output file: freshEvaluationData_{guid_str}.jsonl")
     print_file_contents(f"freshEvaluationData_{guid_str}.jsonl")
     print("Printing contents of data file")
