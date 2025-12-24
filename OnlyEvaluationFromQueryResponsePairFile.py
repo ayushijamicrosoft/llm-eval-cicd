@@ -442,12 +442,12 @@ def main():
             azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
         )
 
-    try:
-        os.remove(data_file)
-        print("Temporary file cleaned up", data_file)
-    except Exception as e:
-        print("Failed to clean up temporary file", data_file)
-        print(response)
+        try:
+            os.remove(data_file)
+            print("Temporary file cleaned up", data_file)
+        except Exception as e:
+            print("Failed to clean up temporary file", data_file)
+            print(response)
     except Exception as exc:
         print("Batch evaluate failed:")
         print(exc)
