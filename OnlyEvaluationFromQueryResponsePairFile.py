@@ -423,12 +423,13 @@ def main():
     
     model_config = build_model_config()
     evaluator_map = build_evaluators(model_config, credential)
+    file_suffix = "lambda-nu"
     # 4. Convert thread ids to evaluation data jsonl
     for thread_id in thread_ids:
         data_file = prepare_evaluation_data_file(
             project_client=project_client,
             thread_ids=thread_id,
-            output_file="freshEvaluationData.jsonl",
+            output_file=f"freshEvaluationData_{file_suffix}.jsonl",
         )
     enabled_evals = config.get("evals", [])
     active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
