@@ -108,8 +108,8 @@ def default_config() -> Dict[str, Any]:
         },
         "agent_id": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
         "storage_connection_string": "DefaultEndpointsProtocol=https;AccountName=evalsofagents;AccountKey=1zVYXqPzCUVTRVcROPypVju8FVcKTX9hHpLIJVfg9w6vxwsmdDanWz+lqj7UI+cDTntKyJrfaEvP+AStDxM2Yg==;EndpointSuffix=core.windows.net",
-        "storage_container": "list-of-thread-ids",
-        "storage_blob": "thread_ids_run_2c844df6f7a64a5f93c65f0040726045.txt",
+        "storage_container": "query-response-pairs-1",
+        "storage_blob": "query_response_pairs_3ecbd817b92b4d10bc49582d7ec6a6fd.jsonl",
         "simulators": ["direct", "indirect"],
         "evals": [
             "tool_call_accuracy",
@@ -266,6 +266,30 @@ def get_agent(project_client: AIProjectClient, agent_id: str):
 # --------------------------------------------------------------------
 
 
+def download_blob_to_file(
+    connection_string: str,
+    container_name: str,
+    blob_name: str,
+    output_path: str,
+) -> str:
+    """
+    Downloads a blob and writes it to a local file.
+    Returns the absolute path of the written file.
+    """
+    content = get_file_from_blob(
+        connection_string=connection_string,
+        container_name=container_name,
+        blob_name=blob_name,
+    )
+
+    output_path = os.path.abspath(output_path)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+    return output_path
+
 def get_thread_ids_from_blob(
     connection_string: str, container_name: str, blob_name: str
 ) -> list[str]:
@@ -274,19 +298,7 @@ def get_thread_ids_from_blob(
     Assumes:
       - One thread id per line in the blob.
     """
-    if not all([connection_string, container_name, blob_name]):
-        raise ValueError(
-            "Storage connection string, container, and blob name must all be set."
-        )
-
-    blob_client = BlobClient.from_connection_string(
-        conn_str=connection_string,
-        container_name=container_name,
-        blob_name=blob_name,
-    )
-
-    download_stream = blob_client.download_blob()
-    content = download_stream.readall().decode("utf-8")
+    content = get_file_from_blob(connection_string, container_name, blob_name)
 
     thread_ids = [
         line.strip()
@@ -296,7 +308,10 @@ def get_thread_ids_from_blob(
     print(f"Fetched {len(thread_ids)} thread ids from blob {container_name}/{blob_name}")
     return thread_ids
 
-
+def get_query_response_pairs_file(
+connection_string: str, container_name: str, blob_name: str
+):
+    content = 
 # --------------------------------------------------------------------
 # Prepare evaluation data
 # --------------------------------------------------------------------
@@ -577,7 +592,21 @@ def main():
     guid_str = str(uuid.uuid4())
     print(guid_str)
     agent = project_client.agents.get_agent(agent_id=config["agent_id"])
+
+    
+    
+    data_file = download_blob_to_file(
+        connection_string=config["storage_connection_string"],
+        container_name=config["storage_container"],
+        blob_name=config["storage_blob"],
+        output_path=f"freshEvaluationData_{guid_str}.jsonl",
+    )
+    
+    print(f"✅ Blob downloaded to: {local_file}")
+
     # 3. Fetch thread ids from blob txt file
+    
+    '''
     thread_ids = get_thread_ids_from_blob(
         connection_string=config["storage_connection_string"],
         container_name=config["storage_container"],
@@ -593,7 +622,7 @@ def main():
             thread_ids=thread_id,
             output_file=f"freshEvaluationData_{guid_str}.jsonl",
         )
-
+    '''
     print(f"Printed the output file: freshEvaluationData_{guid_str}.jsonl")
     print_file_contents(f"freshEvaluationData_{guid_str}.jsonl")
     print("Printing contents of data file")
