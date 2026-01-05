@@ -7,6 +7,7 @@ import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from datetime import datetime, timezone
 
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
@@ -154,6 +155,7 @@ def default_config() -> Dict[str, Any]:
             "resource_group_name": "shayak-test-rg",
             "endpoint": "https://shayak-foundry.services.ai.azure.com",
         },
+        "agentId": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
         "simulators": ["direct", "indirect"],
         "evals": [
             "tool_call_accuracy",
@@ -302,7 +304,7 @@ async def custom_simulator_callback(
     }
 
 
-# ---------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Storage helper
 # ---------------------------------------------------------------------------
 
@@ -644,11 +646,13 @@ def main() -> None:
     args = parse_args()
     config = merge_config(default_config(), load_config(args.config))
 
-    file_suffix = uuid.uuid4().hex
+    file_suffix = f"{datetime.now():%Y%m%d_%H%M%S}"
+    agent_id = config.get("agentId", "asst_OmtWFZGuXJXSfiJ7C41fHDk6")
     print("Run GUID:", file_suffix)
 
+    agentName = 
     prompts_file = f"list_of_prompts_{file_suffix}.txt"
-    all_pairs_path = f"query_response_pairs_{file_suffix}.jsonl"
+    all_pairs_path = f"query_response_pairs_{agent_id}_{file_suffix}.jsonl"
     all_evals_path = f"eval_results_{file_suffix}.txt"
     evaluation_data_file = "evaluationDataAdversarialData.jsonl"
     thread_ids_file = f"thread_ids_run_{file_suffix}.txt"
@@ -661,7 +665,7 @@ def main() -> None:
     credential = DefaultAzureCredential()
 
     project_client = build_project_client(config, credential)
-    agent = project_client.agents.get_agent(agent_id="asst_OmtWFZGuXJXSfiJ7C41fHDk6")
+    agent = project_client.agents.get_agent(agent_id=agent_id)
     #agent = project_client.agents.get_agent(agent_id="asst_cUo5n03tG9VhuAY4wsQIL07c") 
     print(f"Fetched agent, ID: {agent.id}")
 
