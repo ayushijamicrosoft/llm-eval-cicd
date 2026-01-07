@@ -546,7 +546,6 @@ def main() -> None:
 
     args = parse_args()'
     config = merge_config(default_config(), load_config(args.config))
-    agent_id = args.agent_id
     
     file_suffix = f"{datetime.now():%Y%m%d_%H%M%S}"
     agent_id = config.get("agentId", "asst_OmtWFZGuXJXSfiJ7C41fHDk6")
