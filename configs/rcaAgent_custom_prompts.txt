@@ -1,3 +1,4 @@
 {
+"agent_id": "",
   "custom_prompts": "prompts/custom_prompts.txt"
 }
