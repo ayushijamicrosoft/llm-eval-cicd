@@ -1,12 +1,3 @@
 {
-  "custom_prompts": [
-"Summarize the number of impacted resources grouped by WVI ID in the eastus region",
-"Are there any Azure platform issues in eastus?",
-"WVI AJ2 was impacted with VM hec44v1140007, provide the blast radius and reason for impact.",
-"VMs hec44v1140020 in WVI AJ20 are impacted. Is this an Azure issue?",
-"How many resources are impacted per WVI in eastus?",
-"Provide a list of impacted resources summarized by impact reason in eastus",
-"How many production workloads were impacted in eastus?",
-"What is the health status of the impacted VMs?"
-  ]
+  "custom_prompts": "prompts/custom_prompts.txt"
 }
