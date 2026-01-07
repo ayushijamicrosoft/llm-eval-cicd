@@ -551,7 +551,6 @@ def main() -> None:
     agent_id = config.get("agentId", "asst_OmtWFZGuXJXSfiJ7C41fHDk6")
     print("Run GUID:", file_suffix)
 
-    agentName = 
     prompts_file = f"list_of_prompts_{file_suffix}.txt"
     all_pairs_path = f"query_response_pairs_{agent_id}_{file_suffix}.jsonl"
     all_evals_path = f"eval_results_{file_suffix}.txt"
