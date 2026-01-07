@@ -544,7 +544,7 @@ def main() -> None:
 
     from pprint import pprint
 
-    args = parse_args()'
+    args = parse_args()
     config = merge_config(default_config(), load_config(args.config))
     
     file_suffix = f"{datetime.now():%Y%m%d_%H%M%S}"
