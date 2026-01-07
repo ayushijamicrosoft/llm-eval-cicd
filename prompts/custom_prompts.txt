@@ -42,5 +42,5 @@
 "How many resources are impacted per WVI in eastus?",
 "Provide a list of impacted resources summarized by impact reason in eastus",
 "How many production workloads were impacted in eastus?",
-"What is the health status of the impacted VMs?",
+"What is the health status of the impacted VMs?"
 ]
