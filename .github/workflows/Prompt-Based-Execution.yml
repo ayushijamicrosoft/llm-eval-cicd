@@ -43,7 +43,7 @@ jobs:
       - name: Run Python
         run: |
           echo "🧠 Using config file: ${{ github.event.inputs.config_file }}"
-          python Simulation-Execution.py \
+          python Prompt-Based-Execution.py \
           --config "configs/${{ github.event.inputs.config_file }}" \
           2>&1 | tee output.log
 
