@@ -158,7 +158,7 @@ def default_config() -> Dict[str, Any]:
         "agentId": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
         "simulators": ["direct", "indirect"],
         "key_vault_uri": VAULT_URL,
-        "custom_prompts": "custom_prompts.txt",
+        "custom_prompts": "prompts/custom_prompts.txt",
         "quick_mode": False,
     }
 
@@ -573,6 +573,7 @@ def main() -> None:
 
     # Add custom prompts to the same list, tagged with simulator "custom"
     custom_prompts_file = config.get("custom_prompts", "custom_prompts.txt")
+    print(custom_prompts_file)
 
     custom_prompts = []
 
