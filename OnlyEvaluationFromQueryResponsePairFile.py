@@ -122,12 +122,11 @@ def default_config() -> Dict[str, Any]:
             "fluency",
         ],
             "sexual": ["sexual"],
-            "violence": "violence"],
+            "violence": ["violence"],
             "hate": ["hate"],
             "self-harm": ["self-harm"],
             "code_vulnerability": ["code_vulnerability"],
             "indirect_attack": ["indirect_attack"]
-            ]
         },
         "key_vault_uri": VAULT_URL,
         "custom_prompts": [
