@@ -657,7 +657,7 @@ def main():
     try:
         query_response_pair_file = config["storage_blob"].removesuffix(".jsonl");
         query_response_pair_file = query_response_pair_file[25:]
-        evals_name =f"results_{query_response_pair_file}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        evals_name =f"results_{query_response_pair_file}_evals"
         response = evaluate(
             data=data_file,
             evaluation_name = evals_name
