@@ -581,7 +581,7 @@ def main() -> None:
         custom_prompts = json.load(f)
     
     for p in custom_prompts:
-        prompt_records.append(PromptRecord(prompt=p, simulator=custom_prompts.removesuffix(".txt"), scenario=None))
+        prompt_records.append(PromptRecord(prompt=p, simulator=custom_prompts_file.removesuffix(".txt").removeprefix("prompts/"), scenario=None))
 
     print("Final list of prompts (with simulator tags):")
     pprint(prompt_records, width=200)
