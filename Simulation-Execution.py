@@ -157,22 +157,8 @@ def default_config() -> Dict[str, Any]:
         },
         "agentId": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
         "simulators": ["direct", "indirect"],
-        "evals": [
-            "tool_call_accuracy",
-            "intent_resolution",
-            "task_adherence",
-            "relevance",
-            "coherence",
-            "fluency",
-            "code_vulnerability",
-            "indirect_attack",
-            #"protected_material",
-            "ungrounded_attributes",
-        ],
         "key_vault_uri": VAULT_URL,
-        "custom_prompts": [
-            "Say hello and describe what you are."
-        ],
+        "custom_prompts": "custom_prompts.txt"
         # quick_mode on by default
         "quick_mode": False,
     }
@@ -434,90 +420,6 @@ async def run_simulators(config: Dict[str, Any], credential: DefaultAzureCredent
 
 
 # ---------------------------------------------------------------------------
-# Evaluation setup
-# ---------------------------------------------------------------------------
-
-def build_evaluators(
-    model_config: AzureOpenAIModelConfiguration,
-    credential: DefaultAzureCredential,
-) -> Dict[str, Any]:
-    if AZURE_AI_PROJECT is None:
-        raise RuntimeError("AZURE_AI_PROJECT is not initialized")
-
-    content_safety_kwargs = {"credential": credential, "azure_ai_project": AZURE_AI_PROJECT}
-
-    tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
-    intent_resolution = IntentResolutionEvaluator(model_config=model_config)
-    task_adherence = TaskAdherenceEvaluator(model_config=model_config)
-    relevance = RelevanceEvaluator(model_config=model_config)
-    coherence = CoherenceEvaluator(model_config=model_config)
-    fluency = FluencyEvaluator(model_config=model_config)
-
-    violence = ViolenceEvaluator(**content_safety_kwargs)
-    self_harm = SelfHarmEvaluator(**content_safety_kwargs)
-    sexual = SexualEvaluator(**content_safety_kwargs)
-    hate_unfairness = HateUnfairnessEvaluator(**content_safety_kwargs)
-    code_vulnerability = CodeVulnerabilityEvaluator(**content_safety_kwargs)
-    indirect_attack = IndirectAttackEvaluator(**content_safety_kwargs)
-    #protected_material = ProtectedMaterialEvaluator(**content_safety_kwargs)
-    ungrounded_attributes = UngroundedAttributesEvaluator(**content_safety_kwargs)
-
-    evaluator_map: Dict[str, Any] = {
-        "tool_call_accuracy": tool_call_accuracy,
-        "intent_resolution": intent_resolution,
-        "task_adherence": task_adherence,
-        "violence": violence,
-        "relevance": relevance,
-        "coherence": coherence,
-        "fluency": fluency,
-        "self_harm": self_harm,
-        "sexual": sexual,
-        "hate_unfairness": hate_unfairness,
-        "code_vulnerability": code_vulnerability,
-        "indirect_attack": indirect_attack,
-        #"protected_material": protected_material,
-        "ungrounded_attributes": ungrounded_attributes,
-    }
-    return evaluator_map
-
-
-def run_selected_evaluators(
-    evaluator_map: Dict[str, Any],
-    eval_names: List[str],
-    converted_data: Dict[str, Any],
-) -> Dict[str, Any]:
-    """
-    Run evaluators and return a mapping of evaluator_name -> result.
-    The result is whatever the evaluator callable returns (often a dict).
-    """
-    results: Dict[str, Any] = {}
-    for name in eval_names:
-        fn = evaluator_map.get(name)
-        if not fn:
-            continue
-
-        try:
-            if name == "ungrounded_attributes":
-                # This evaluator expects either `conversation` OR individual inputs.
-                # We try to pass all three if possible.
-                res = fn(
-                    query=converted_data.get("query", ""),
-                    context=open("Workload_Register_prompts.txt").read(),
-                    response=converted_data.get("response", ""),
-                )
-            else:
-                res = fn(
-                    query=converted_data.get("query", ""),
-                    response=converted_data.get("response", ""),
-                )
-
-            results[name] = res
-        except Exception as exc:
-            print(f"Evaluator {name} failed for query: {exc}")
-            results[name] = {"error": str(exc)}
-    return results
-
-# ---------------------------------------------------------------------------
 # Agent run and conversion
 # ---------------------------------------------------------------------------
 
@@ -672,9 +574,15 @@ def main() -> None:
     prompt_records = []
 
     # Add custom prompts to the same list, tagged with simulator "custom"
-    custom_prompts = config.get("custom_prompts", [])
+    custom_prompts_file = config.get("custom_prompts", "custom_prompts.txt")
+
+    custom_prompts = []
+
+    with open(custom_prompts_file, "r", encoding="utf-8") as f:
+        custom_prompts = json.load(f)
+    
     for p in custom_prompts:
-        prompt_records.append(PromptRecord(prompt=p, simulator="custom", scenario=None))
+        prompt_records.append(PromptRecord(prompt=p, simulator=custom_prompts.removesuffix(".txt"), scenario=None))
 
     print("Final list of prompts (with simulator tags):")
     pprint(prompt_records, width=200)
