@@ -158,8 +158,7 @@ def default_config() -> Dict[str, Any]:
         "agentId": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
         "simulators": ["direct", "indirect"],
         "key_vault_uri": VAULT_URL,
-        "custom_prompts": "custom_prompts.txt"
-        # quick_mode on by default
+        "custom_prompts": "custom_prompts.txt",
         "quick_mode": False,
     }
 
