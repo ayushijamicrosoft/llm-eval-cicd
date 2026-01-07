@@ -111,18 +111,26 @@ def default_config() -> Dict[str, Any]:
         "storage_container": "query-response-pairs-1",
         "storage_blob": "query_response_pairs_3ecbd817b92b4d10bc49582d7ec6a6fd.jsonl",
         "simulators": ["direct", "indirect"],
-        "evals": [
+        "evals": {
+            "quality": [
             "tool_call_accuracy",
             "intent_resolution",
             "task_adherence",
             "relevance",
             "coherence",
             "fluency",
-            #"code_vulnerability",
+        ], 
+            "safety": [
+                "sexual", 
+                "self-harm", 
+                "violence", 
+                "hate"
+             #"code_vulnerability",
             #"indirect_attack",
             #"protected_material",
-            #"ungrounded_attributes",
-        ],
+            ]
+        }
+        },
         "key_vault_uri": VAULT_URL,
         "custom_prompts": [
             "Say hello and describe what you are."
@@ -648,7 +656,8 @@ def main():
 
     print(active_evaluators)
     try:
-        query_response_pair_file = config["storage_blob"].removesuffix(".txt");
+        query_response_pair_file = config["storage_blob"].removesuffix(".jsonl");
+        query_response_pair_file = query_response_pair_file[25:]
         evals_name =f"results_{query_response_pair_file}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
         response = evaluate(
             data=data_file,
