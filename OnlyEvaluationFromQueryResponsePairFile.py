@@ -129,7 +129,6 @@ def default_config() -> Dict[str, Any]:
             "indirect_attack",
             #"protected_material",
             ]
-        }
         },
         "key_vault_uri": VAULT_URL,
         "custom_prompts": [
