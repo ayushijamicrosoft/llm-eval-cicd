@@ -650,13 +650,16 @@ def main():
     print_file_contents(f"freshEvaluationData_{guid_str}.jsonl")
     print("Printing contents of data file")
     print(data_file)
-    enabled_evals = config.get("evals", [])["quality"]
-    active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
 
+    query_response_pair_file = config["storage_blob"].removesuffix(".jsonl");
+    query_response_pair_file = query_response_pair_file[25:]
+    type_of_prompt = query_response_pair_file.rsplit("_", 1)[-1]
+    enabled_evals = config.get("evals", [])[type_of_prompt]
+    active_evaluators = {k: v for k, v in evaluator_map.items() if k in enabled_evals}
+    
     print(active_evaluators)
     try:
-        query_response_pair_file = config["storage_blob"].removesuffix(".jsonl");
-        query_response_pair_file = query_response_pair_file[25:]
+        
         evals_name =f"results_{query_response_pair_file}_evals"
         response = evaluate(
             data=data_file,
