@@ -1,4 +1,4 @@
-name: Simulation-Execution Only
+name: Prompt based execution
 
 on:
   workflow_dispatch:
