@@ -17,6 +17,7 @@ from openai import AzureOpenAI
 
 from azure.ai.evaluation import (
     evaluate,
+    GroundednessEvaluator,
     ToolCallAccuracyEvaluator,
     AzureOpenAIModelConfiguration,
     IntentResolutionEvaluator,
@@ -375,7 +376,8 @@ def build_evaluators(
     relevance = RelevanceEvaluator(model_config=model_config)
     coherence = CoherenceEvaluator(model_config=model_config)
     fluency = FluencyEvaluator(model_config=model_config)
-
+    groundedness = GroundednessEvaluator(model_config = model_config)
+    
     violence = ViolenceEvaluator(**content_safety_kwargs)
     self_harm = SelfHarmEvaluator(**content_safety_kwargs)
     sexual = SexualEvaluator(**content_safety_kwargs)
@@ -388,6 +390,7 @@ def build_evaluators(
         "tool_call_accuracy": tool_call_accuracy,
         "intent_resolution": intent_resolution,
         "task_adherence": task_adherence,
+        "groundedness": groundedness,
         "violence": violence,
         "relevance": relevance,
         "coherence": coherence,
