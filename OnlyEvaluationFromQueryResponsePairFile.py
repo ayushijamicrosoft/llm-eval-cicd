@@ -660,7 +660,7 @@ def main():
         evals_name =f"results_{query_response_pair_file}_evals"
         response = evaluate(
             data=data_file,
-            evaluation_name = evals_name
+            evaluation_name=evals_name,
             evaluators=active_evaluators,
             azure_ai_project="https://padmajat-agenticai-hack-resource.services.ai.azure.com/api/projects/padmajat-agenticai-hackathon25",
         )
