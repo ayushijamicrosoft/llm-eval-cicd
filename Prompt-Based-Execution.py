@@ -80,7 +80,7 @@ SIMULATOR_EVALUATOR_MAP = {
         "hate_unfairness", "protected_material",
         "task_adherence", "relevance"
     ],   
-     "custom": [
+     "quality": [
         "tool_call_accuracy", "intent_resolution", "task_adherence",
         "relevance", "coherence", "fluency", "indirect_attack", "code_vulnerability", "ungrounded_attributes"
     ],
@@ -158,7 +158,7 @@ def default_config() -> Dict[str, Any]:
         "agentId": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
         "simulators": ["direct", "indirect"],
         "key_vault_uri": VAULT_URL,
-        "custom_prompts": "prompts/custom_prompts.txt",
+        "prompt_type": "prompts/quality.txt",
         "quick_mode": False,
     }
 
@@ -548,11 +548,7 @@ def main() -> None:
     agent_id = config.get("agentId", "asst_OmtWFZGuXJXSfiJ7C41fHDk6")
     print("Run GUID:", file_suffix)
 
-    prompts_file = f"list_of_prompts_{file_suffix}.txt"
-    all_pairs_path = f"query_response_pairs_{agent_id}_{file_suffix}.jsonl"
-    all_evals_path = f"eval_results_{file_suffix}.txt"
-    evaluation_data_file = "evaluationDataAdversarialData.jsonl"
-    thread_ids_file = f"thread_ids_run_{file_suffix}.txt"
+    
 
     init_openai_from_env()
 
@@ -569,9 +565,18 @@ def main() -> None:
     prompt_records = []
 
     # Add custom prompts to the same list, tagged with simulator "custom"
-    custom_prompts_file = config.get("custom_prompts", "custom_prompts.txt")
+    custom_prompts_file = config.get("prompt_type", "prompts/quality.txt")
     print(custom_prompts_file)
 
+    type_of_prompt = custom_prompts_file.removesuffix(".txt").removeprefix("prompts/")
+
+
+    prompts_file = f"list_of_prompts_{file_suffix}_{type_of_prompt}.txt"
+    all_pairs_path = f"query_response_pairs_{agent_id}_{file_suffix}_{type_of_prompt}.jsonl"
+    all_evals_path = f"eval_results_{file_suffix}_{type_of_prompt}.txt"
+    evaluation_data_file = "evaluationDataAdversarialData.jsonl"
+    thread_ids_file = f"thread_ids_run_{file_suffix}.txt"
+    
     custom_prompts = []
 
     with open(custom_prompts_file, "r", encoding="utf-8") as f:
@@ -583,6 +588,7 @@ def main() -> None:
     print("Final list of prompts (with simulator tags):")
     pprint(prompt_records, width=200)
 
+    
     # Save prompt records as JSON so simulator info is preserved
     with open(prompts_file, "w", encoding="utf-8") as f:
         json.dump(
