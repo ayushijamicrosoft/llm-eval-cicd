@@ -125,8 +125,8 @@ def default_config() -> Dict[str, Any]:
                 "self-harm", 
                 "violence", 
                 "hate"
-             #"code_vulnerability",
-            #"indirect_attack",
+             "code_vulnerability",
+            "indirect_attack",
             #"protected_material",
             ]
         }
