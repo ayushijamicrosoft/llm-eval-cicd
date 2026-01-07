@@ -7,12 +7,7 @@ on:
           description: "Select the config file to use for evaluation"
           required: false
           default: "default.json"
-          type: choice
-          options:
-            - default.json
-            - prod.json
-            - debug.json
-            - test.yaml
+          type: string
 
 jobs:
   run-python:
