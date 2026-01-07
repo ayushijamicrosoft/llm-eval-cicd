@@ -496,10 +496,7 @@ def process_prompts_with_agent(
     prompt_records: List[PromptRecord],
     project_client: AIProjectClient,
     agent_id: str,
-    evaluator_map: Dict[str, Any],
-    enabled_evals: List[str],
     all_pairs_path: str,
-    evaluation_data_file: str,
     run_guid: str,
 ):
     list_of_thread_ids = []
@@ -605,17 +602,11 @@ def main() -> None:
     
         
     model_config = build_model_config()
-    evaluator_map = build_evaluators(model_config=model_config, credential=credential)
-    enabled_evals = config.get("evals", [])
-
     list_of_thread_ids = process_prompts_with_agent(
         prompt_records=prompt_records,
         project_client=project_client,
         agent_id=agent.id,
-        evaluator_map=evaluator_map,
-        enabled_evals=enabled_evals,
         all_pairs_path=all_pairs_path,
-        evaluation_data_file=evaluation_data_file,
         run_guid=file_suffix,
     )
 
