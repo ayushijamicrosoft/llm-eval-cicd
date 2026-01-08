@@ -158,7 +158,7 @@ def default_config() -> Dict[str, Any]:
         "agentId": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
         "simulators": ["direct", "indirect"],
         "key_vault_uri": VAULT_URL,
-        "prompt_type": "prompts/quality.txt",
+        "prompt_type": "prompts/sexual.txt",
         "quick_mode": False,
     }
 
