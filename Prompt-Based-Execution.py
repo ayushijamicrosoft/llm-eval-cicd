@@ -158,7 +158,7 @@ def default_config() -> Dict[str, Any]:
         "agentId": "asst_OmtWFZGuXJXSfiJ7C41fHDk6",
         "simulators": ["direct", "indirect"],
         "key_vault_uri": VAULT_URL,
-        "prompt_type": "prompts/sexual.txt",
+        "custom_prompts": "prompts/sexual.txt",
         "quick_mode": False,
     }
 
@@ -565,7 +565,7 @@ def main() -> None:
     prompt_records = []
 
     # Add custom prompts to the same list, tagged with simulator "custom"
-    custom_prompts_file = config.get("prompt_type", "prompts/quality.txt")
+    custom_prompts_file = config.get("custom_prompts", "prompts/quality.txt")
     print(custom_prompts_file)
 
     type_of_prompt = custom_prompts_file.removesuffix(".txt").removeprefix("prompts/")
