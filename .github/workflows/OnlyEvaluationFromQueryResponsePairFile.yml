@@ -20,7 +20,7 @@ on:
 
 jobs:
   run-python:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     permissions:
       id-token: write   # REQUIRED for OIDC
